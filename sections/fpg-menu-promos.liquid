@@ -1,0 +1,119 @@
+{%- comment -%}
+  FP&G menu promos: picture cards shown on the right of the desktop menu
+  dropdowns. Each "Promo" block names the top-level menu item it belongs to
+  (matched on the item's title, ignoring capitals). The cards are kept in
+  <template> tags here and placed into the dropdown by assets/fpg-design.js,
+  so Horizon's own header files stay untouched. Lives in the footer group so
+  it's on every page; it takes up no space itself.
+{%- endcomment -%}
+
+<div class="fpg-menu-promos" hidden>
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign promo = block.settings
+      assign menu_key = promo.menu_title | strip | downcase
+    -%}
+    {%- if menu_key != blank -%}
+      <template data-fpg-menu-promo="{{ menu_key | escape }}" {{ block.shopify_attributes }}>
+        <div class="fpg-menu-promo">
+          {%- if promo.link != blank -%}
+            <a class="fpg-menu-promo__card" href="{{ promo.link }}">
+          {%- else -%}
+            <div class="fpg-menu-promo__card">
+          {%- endif -%}
+          {%- if promo.image != blank -%}
+            <span class="fpg-menu-promo__media">
+              {{
+                promo.image
+                | image_url: width: 640
+                | image_tag: loading: 'lazy', widths: '320, 480, 640', sizes: '280px', alt: ''
+              }}
+            </span>
+          {%- endif -%}
+          <span class="fpg-menu-promo__body">
+            {%- if promo.eyebrow != blank -%}
+              <span class="fpg-menu-promo__eyebrow">{{ promo.eyebrow | escape }}</span>
+            {%- endif -%}
+            {%- if promo.heading != blank -%}
+              <span class="fpg-menu-promo__heading">{{ promo.heading | escape }}</span>
+            {%- endif -%}
+            {%- if promo.text != blank -%}
+              <span class="fpg-menu-promo__text">{{ promo.text | escape }}</span>
+            {%- endif -%}
+            {%- if promo.label != blank and promo.link != blank -%}
+              <span class="fpg-menu-promo__cta">
+                {{ promo.label | escape }}
+                <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            {%- endif -%}
+          </span>
+          {%- if promo.link != blank -%}
+            </a>
+          {%- else -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </template>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+{% schema %}
+{
+  "name": "FP&G menu promos",
+  "class": "fpg-menu-promos-section",
+  "max_blocks": 12,
+  "blocks": [
+    {
+      "type": "promo",
+      "name": "Promo",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_title",
+          "label": "Menu item title",
+          "info": "The top-level menu item to show this under, e.g. Parts & Servicing"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Small heading"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Link label",
+          "default": "Find out more"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G menu promos"
+    }
+  ]
+}
+{% endschema %}

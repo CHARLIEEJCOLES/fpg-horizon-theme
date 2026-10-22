@@ -1,0 +1,134 @@
+{%- doc -%}
+  FP&G hire rate table. Lists every variant of a hire product with its price,
+  using the variant name as the label (Day, Extra Day, Week, Weekend).
+  Use it on the hire product template. It can also hide the quantity
+  selector on that page, since a hire is booked per period.
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+-%}
+
+<div
+  class="fpg-hire spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  {% if block_settings.hide_quantity %}
+    data-fpg-hide-quantity
+  {% endif %}
+  {{ block.shopify_attributes }}
+>
+  {%- if block_settings.heading != blank -%}
+    <p class="fpg-hire__heading">{{ block_settings.heading | escape }}</p>
+  {%- endif -%}
+  {%- if product != blank -%}
+    <dl class="fpg-hire__list">
+      {%- for variant in product.variants -%}
+        <div class="fpg-hire__row">
+          <dt>{{ variant.title | escape }}</dt>
+          <dd>
+            {%- if block_settings.show_inc_vat -%}
+              {% render 'fpg-vat-price', amount: variant.price, taxable: variant.taxable %}
+            {%- else -%}
+              {{ variant.price | money }}
+              <span class="fpg-vat">{{ settings.fpg_exc_vat_text | default: '(Exc. VAT)' | escape }}</span>
+            {%- endif -%}
+          </dd>
+        </div>
+      {%- endfor -%}
+    </dl>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .product-details:has(.fpg-hire[data-fpg-hide-quantity]) .quantity-selector-wrapper {
+    display: none;
+  }
+
+  .fpg-hire__heading {
+    margin: 0 0 var(--padding-xs);
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  .fpg-hire__list {
+    display: grid;
+    gap: var(--gap-2xs);
+    margin: 0;
+  }
+
+  .fpg-hire__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap-xs);
+  }
+
+  .fpg-hire__row dt {
+    font-weight: 700;
+  }
+
+  .fpg-hire__row dt::after {
+    content: ':';
+  }
+
+  .fpg-hire__row dd {
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FP&G hire rates",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Hire Duration:"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_quantity",
+      "label": "Hide the quantity selector on this page",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_inc_vat",
+      "label": "Show inc-VAT price too",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G hire rates",
+      "category": "FP&G"
+    }
+  ]
+}
+{% endschema %}

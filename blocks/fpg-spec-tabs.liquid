@@ -1,0 +1,235 @@
+{%- doc -%}
+  FP&G product detail tabs filled from product metafields. A tab only appears
+  when its metafield has a value, so empty tabs never show (this replaces the
+  old script that removed empty accordions):
+  - Features: custom.features
+  - Specifications: custom.specs
+  - Battery details: the custom.battery_operated metaobject (battery,
+    charge time to 80% and 100%, run time)
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign features = product.metafields.custom.features
+  assign specs = product.metafields.custom.specs
+  assign battery = product.metafields.custom.battery_operated.value
+
+  assign has_battery = false
+  if battery != blank
+    if battery.battery.value != blank or battery.battery_charge_time_80.value != blank or battery.battery_charge_time_100.value != blank or battery.working_time.value != blank
+      assign has_battery = true
+    endif
+  endif
+
+  assign type_preset = block_settings.type_preset | default: 'h5'
+-%}
+
+{%- if features != blank or specs != blank or has_battery -%}
+  <div
+    class="accordion accordion--caret accordion--dividers spacing-style fpg-spec-tabs"
+    style="
+      --summary-font-family: var(--font-{{ type_preset }}--family);
+      --summary-font-style: var(--font-{{ type_preset }}--style);
+      --summary-font-weight: var(--font-{{ type_preset }}--weight);
+      --summary-font-size: var(--font-{{ type_preset }}--size);
+      --summary-font-line-height: var(--font-{{ type_preset }}--line-height);
+      --summary-font-case: var(--font-{{ type_preset }}--case);
+      {% render 'spacing-style', settings: block_settings %}
+    "
+    {{ block.shopify_attributes }}
+  >
+    {%- if features != blank -%}
+      {% capture features_row %}
+        <details class="details" {% if block_settings.open_first %}open{% endif %}>
+          <summary class="details__header">
+            {{ block_settings.features_heading | escape }}
+            <span class="svg-wrapper icon-caret icon-animated">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+            <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+          </summary>
+          <div class="details-content rte">{{ features | metafield_tag }}</div>
+        </details>
+      {% endcapture %}
+      {% render 'accordion-custom-component',
+        children: features_row,
+        open_by_default_on_desktop: block_settings.open_first,
+        open_by_default_on_mobile: block_settings.open_first
+      %}
+    {%- endif -%}
+
+    {%- if specs != blank -%}
+      {%- liquid
+        assign open_specs = false
+        if features == blank and block_settings.open_first
+          assign open_specs = true
+        endif
+      -%}
+      {% capture specs_row %}
+        <details class="details" {% if open_specs %}open{% endif %}>
+          <summary class="details__header">
+            {{ block_settings.specs_heading | escape }}
+            <span class="svg-wrapper icon-caret icon-animated">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+            <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+          </summary>
+          <div class="details-content rte">{{ specs | metafield_tag }}</div>
+        </details>
+      {% endcapture %}
+      {% render 'accordion-custom-component',
+        children: specs_row,
+        open_by_default_on_desktop: open_specs,
+        open_by_default_on_mobile: open_specs
+      %}
+    {%- endif -%}
+
+    {%- if has_battery -%}
+      {% capture battery_row %}
+        <details class="details">
+          <summary class="details__header">
+            {{ block_settings.battery_heading | escape }}
+            <span class="svg-wrapper icon-caret icon-animated">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+            <span class="svg-wrapper icon-plus">{{- 'icon-plus.svg' | inline_asset_content -}}</span>
+          </summary>
+          <div class="details-content rte">
+            <dl class="fpg-spec-tabs__battery">
+              {%- if battery.battery.value != blank -%}
+                <div><dt>Battery</dt><dd>{{ battery.battery.value | escape }}</dd></div>
+              {%- endif -%}
+              {%- if battery.battery_charge_time_80.value != blank -%}
+                <div><dt>Charge to 80%</dt><dd>{{ battery.battery_charge_time_80.value | escape }} mins</dd></div>
+              {%- endif -%}
+              {%- if battery.battery_charge_time_100.value != blank -%}
+                <div><dt>Charge to 100%</dt><dd>{{ battery.battery_charge_time_100.value | escape }} mins</dd></div>
+              {%- endif -%}
+              {%- if battery.working_time.value != blank -%}
+                <div><dt>Run time</dt><dd>{{ battery.working_time.value | escape }} mins</dd></div>
+              {%- endif -%}
+            </dl>
+          </div>
+        </details>
+      {% endcapture %}
+      {% render 'accordion-custom-component', children: battery_row %}
+    {%- endif -%}
+  </div>
+
+  {% render 'accordion-styles' %}
+{%- elsif request.design_mode -%}
+  <div class="fpg-spec-tabs fpg-spec-tabs--empty" {{ block.shopify_attributes }}>
+    <p>{{ block_settings.empty_editor_text | escape }}</p>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .fpg-spec-tabs--empty {
+    padding: var(--padding-sm);
+    border: 1px dashed rgb(var(--color-foreground-rgb) / var(--opacity-30));
+    font-size: var(--font-size--sm);
+  }
+
+  .fpg-spec-tabs__battery {
+    display: grid;
+    gap: var(--gap-2xs);
+    margin: 0;
+  }
+
+  .fpg-spec-tabs__battery div {
+    display: flex;
+    gap: var(--gap-xs);
+  }
+
+  .fpg-spec-tabs__battery dt {
+    font-weight: 700;
+  }
+
+  .fpg-spec-tabs__battery dt::after {
+    content: ':';
+  }
+
+  .fpg-spec-tabs__battery dd {
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FP&G spec tabs",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Tabs only appear when the product has that metafield filled in."
+    },
+    {
+      "type": "text",
+      "id": "features_heading",
+      "label": "Features heading",
+      "default": "Features"
+    },
+    {
+      "type": "text",
+      "id": "specs_heading",
+      "label": "Specifications heading",
+      "default": "Specifications"
+    },
+    {
+      "type": "text",
+      "id": "battery_heading",
+      "label": "Battery heading",
+      "default": "Battery Details"
+    },
+    {
+      "type": "text",
+      "id": "empty_editor_text",
+      "label": "Placeholder shown only in the editor",
+      "default": "No features, specifications or battery details on this product"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open the first tab",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "Heading style",
+      "options": [
+        { "value": "paragraph", "label": "Paragraph" },
+        { "value": "h6", "label": "Heading 6" },
+        { "value": "h5", "label": "Heading 5" },
+        { "value": "h4", "label": "Heading 4" }
+      ],
+      "default": "h5"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G spec tabs",
+      "category": "FP&G"
+    }
+  ]
+}
+{% endschema %}

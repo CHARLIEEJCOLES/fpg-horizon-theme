@@ -1,0 +1,44 @@
+{%- doc -%}
+  Compact FP&G product card: square image on a soft background, vendor,
+  title and the FP&G VAT price. Used by the "Recently viewed" row, where the
+  cards are fetched through the Section Rendering API, so it doesn't depend on
+  Horizon's product card blocks.
+
+  @param {product} product - The product to show
+
+  @example
+  {% render 'fpg-mini-card', product: product %}
+{%- enddoc -%}
+
+{%- liquid
+  assign media = product.featured_media
+  assign alt = media.alt | default: product.title
+-%}
+
+<div class="fpg-mini-card" role="listitem" data-fpg-rv-card data-product-id="{{ product.id }}">
+  <a class="fpg-mini-card__link" href="{{ product.url }}">
+    <span class="fpg-mini-card__media">
+      {%- if media != blank -%}
+        {{
+          media.preview_image
+          | image_url: width: 600
+          | image_tag:
+            loading: 'lazy',
+            widths: '200, 300, 400, 600',
+            sizes: '(min-width: 1200px) 200px, (min-width: 750px) 25vw, 45vw',
+            alt: alt
+        }}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'fpg-mini-card__placeholder' }}
+      {%- endif -%}
+    </span>
+    {%- if product.vendor != blank -%}
+      <span class="fpg-mini-card__vendor">{{ product.vendor | escape }}</span>
+    {%- endif -%}
+    <span class="fpg-mini-card__title">{{ product.title | escape }}</span>
+  </a>
+  <div class="fpg-mini-card__price">
+    {%- render 'price', product_resource: product -%}
+  </div>
+</div>
+

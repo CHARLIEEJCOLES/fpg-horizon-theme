@@ -1,0 +1,153 @@
+{%- doc -%}
+  FP&G "This variant pairs well with" products. Lists the products saved on the
+  selected variant's metafield custom.variant_complementary_products_
+  (a list of product references). Renders nothing when the variant has none.
+  Updates when the shopper changes variant (assets/fpg-variant-block.js).
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign variant = product.selected_or_first_available_variant
+  assign paired_products = variant.metafields.custom.variant_complementary_products_.value
+  assign columns = block_settings.columns | default: 2
+-%}
+
+<fpg-variant-block
+  class="fpg-pairs spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %} --fpg-pairs-columns: {{ columns }};"
+  data-block-id="{{ block.id }}"
+  data-product-id="{{ product.id }}"
+  {{ block.shopify_attributes }}
+>
+  {%- if paired_products != blank and paired_products.count > 0 -%}
+    {%- if block_settings.heading != blank -%}
+      <h3 class="fpg-pairs__heading h5">{{ block_settings.heading | escape }}</h3>
+    {%- endif -%}
+    <ul class="fpg-pairs__list list-unstyled" role="list">
+      {%- for paired_product in paired_products limit: block_settings.max_products -%}
+        {%- if paired_product == blank -%}
+          {%- continue -%}
+        {%- endif -%}
+        <li class="fpg-pairs__item">
+          {% render 'resource-card',
+            resource_type: 'product',
+            resource: paired_product,
+            image_width: 500,
+            image_aspect_ratio: block_settings.image_ratio,
+            image_sizes: '(min-width: 750px) 200px, 45vw'
+          %}
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</fpg-variant-block>
+
+<script
+  src="{{ 'fpg-variant-block.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% stylesheet %}
+  .fpg-pairs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-sm);
+    min-width: 0;
+  }
+
+  .fpg-pairs__heading {
+    margin: 0;
+  }
+
+  .fpg-pairs__list {
+    display: grid;
+    grid-template-columns: repeat(var(--fpg-pairs-columns, 2), minmax(0, 1fr));
+    gap: var(--gap-md);
+    margin: 0;
+    padding: 0;
+  }
+
+  .fpg-pairs__item {
+    min-width: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FP&G variant pairs",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows products from the selected variant's metafield custom.variant_complementary_products_."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "This variant pairs well with:"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Products to show",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image shape",
+      "options": [
+        { "value": "adapt", "label": "Original" },
+        { "value": "1", "label": "Square" },
+        { "value": "4 / 5", "label": "Portrait" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G variant pairs",
+      "category": "FP&G"
+    }
+  ]
+}
+{% endschema %}

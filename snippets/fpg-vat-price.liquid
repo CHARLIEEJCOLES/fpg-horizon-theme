@@ -1,0 +1,58 @@
+{%- doc -%}
+  FP&G price formatting. Store prices are entered without VAT, so a taxable
+  item shows "£41.66 + VAT (£49.99)" and a non-taxable item shows
+  "£41.66 (Exc. VAT)". The VAT rate and wording come from the FP&G theme
+  settings. Called from snippets/price.liquid.
+
+  @param {number} [amount] - Price in the shop's smallest currency unit (pence)
+  @param {boolean} [taxable] - Whether VAT applies to this variant
+  @param {boolean} [use_currency] - Whether to include the currency code
+  @param {string} [mode] - 'full' (default) or 'suffix' to output only the VAT wording
+
+  @example
+  {% render 'fpg-vat-price', amount: variant.price, taxable: variant.taxable %}
+{%- enddoc -%}
+
+{%- liquid
+  assign vat_rate = settings.fpg_vat_rate | default: 20
+  assign plus_vat_text = settings.fpg_plus_vat_text | default: '+ VAT' | escape
+  assign exc_vat_text = settings.fpg_exc_vat_text | default: '(Exc. VAT)' | escape
+
+  assign ex_vat_amount = amount | default: 0
+  assign vat_amount = ex_vat_amount | times: vat_rate | divided_by: 100.0
+  assign inc_vat_amount = ex_vat_amount | plus: vat_amount | round
+
+  if use_currency
+    assign ex_vat_money = ex_vat_amount | money_with_currency
+    assign inc_vat_money = inc_vat_amount | money_with_currency
+  else
+    assign ex_vat_money = ex_vat_amount | money
+    assign inc_vat_money = inc_vat_amount | money
+  endif
+-%}
+
+{%- if mode == 'suffix' -%}
+  <span class="fpg-vat">{% if taxable %}{{ plus_vat_text }}{% else %}{{ exc_vat_text }}{% endif %}</span>
+{%- elsif taxable -%}
+  {{ ex_vat_money }} <span class="fpg-vat">{{ plus_vat_text }}</span>
+  <span class="fpg-vat fpg-vat--inc">({{ inc_vat_money }})</span>
+{%- else -%}
+  {{ ex_vat_money }} <span class="fpg-vat">{{ exc_vat_text }}</span>
+{%- endif -%}
+
+{% stylesheet %}
+  /* Horizon keeps prices on one line; let the longer VAT price wrap between its parts. */
+  .price:has(.fpg-vat),
+  .compare-at-price:has(.fpg-vat) {
+    white-space: normal;
+  }
+
+  .fpg-vat {
+    font-size: 0.8em;
+    white-space: nowrap;
+  }
+
+  .fpg-vat--inc {
+    font-size: 0.9em;
+  }
+{% endstylesheet %}

@@ -1,0 +1,136 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "t:names.title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h2",
+            "font": "var(--font-body--family)",
+            "font_size": "",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "page-content"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      },
+      "disabled": true
+    },
+    "fpg_intro": {
+      "type": "section",
+      "blocks": {
+        "fpg_heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h1><strong>Common Parts Look Up</strong></h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "h2",
+            "case": "none"
+          },
+          "blocks": {}
+        },
+        "fpg_byline": {
+          "type": "text",
+          "settings": {
+            "text": "<p>By Forest Park and Garden</p>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "paragraph",
+            "case": "uppercase"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "fpg_heading",
+        "fpg_byline"
+      ],
+      "settings": {}
+    },
+    "fpg_finder": {
+      "type": "section",
+      "blocks": {
+        "fpg_ymm_search": {
+          "type": "shopify://apps/c-year-make-model-search/blocks/ymm-searchbox-basic/ce35ea35-ef50-4f43-8cb6-7c34cae4c285",
+          "settings": {
+            "searchbox_title": "Search By Year, Make and Model",
+            "searchbox_style": "horizontal"
+          }
+        }
+      },
+      "block_order": [
+        "fpg_ymm_search"
+      ],
+      "settings": {}
+    },
+    "fpg_outro": {
+      "type": "section",
+      "blocks": {
+        "fpg_text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>To use our new Common Parts Look Up provide simple details of any <strong>STIHL, HUSQVARNA, Echo, Mitox, OLEO-MAC or Performance Power </strong>product and you will be provided with the correct parts for the product which can be purchased here <strong>online now!</strong></p>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "paragraph",
+            "case": "none"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "fpg_text"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "fpg_intro",
+    "fpg_finder",
+    "fpg_outro"
+  ]
+}

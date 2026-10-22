@@ -1,0 +1,46 @@
+{%- doc -%}
+  FP&G scripts for the page head, controlled from Theme settings > FP&G:
+  - the FP&G design layer (assets/fpg-design.css and assets/fpg-design.js) on every page
+  - jQuery 3.7.1 for the FPG Part Finder app (the same file the current theme
+    loads), only on the Part Finder page template (or site-wide if ticked)
+  - an optional GA4 tag. Leave the GA4 ID blank when the Google & YouTube app
+    is installed, otherwise visits are counted twice.
+  Rendered from layout/theme.liquid.
+
+  @example
+  {% render 'fpg-head-scripts' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign load_jquery = false
+  if settings.fpg_jquery_everywhere
+    assign load_jquery = true
+  elsif settings.fpg_part_finder_template != blank and template.suffix == settings.fpg_part_finder_template
+    assign load_jquery = true
+  endif
+-%}
+
+{{ 'fpg-design.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'fpg-design.js' | asset_url }}" type="module"></script>
+
+{%- if load_jquery -%}
+  <script
+    src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+    crossorigin="anonymous"
+    defer
+  ></script>
+{%- endif -%}
+
+{%- if settings.fpg_ga4_id != blank -%}
+  {%- assign ga4_id = settings.fpg_ga4_id | strip -%}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4_id | url_encode }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', {{ ga4_id | json }});
+  </script>
+{%- endif -%}

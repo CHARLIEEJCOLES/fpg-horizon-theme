@@ -1,0 +1,119 @@
+{%- comment -%}
+  FP&G "Recently viewed" row for product pages.
+
+  The browser keeps the last 20 product IDs a shopper has opened
+  (localStorage key "fpg:recently-viewed", written by assets/fpg-design.js).
+  On a product page this section renders an empty, hidden row; the script
+  then asks the storefront search for those IDs and renders this same section
+  file through the Section Rendering API (on the search route), which outputs
+  only the cards. Nothing shows until the shopper has viewed another product.
+{%- endcomment -%}
+
+{%- if request.page_type == 'search' -%}
+  <div data-fpg-rv-results>
+    {%- paginate search.results by 24 -%}
+      {%- for item in search.results -%}
+        {%- if item.object_type == 'product' -%}
+          {%- render 'fpg-mini-card', product: item -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endpaginate -%}
+  </div>
+{%- else -%}
+  {%- liquid
+    if section.settings.background_color != blank
+      render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+    endif
+  -%}
+  <div
+    class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  ></div>
+  <fpg-recently-viewed
+    class="section section--page-width spacing-style fpg-rv{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+    style="{% render 'spacing-padding', settings: section.settings %}"
+    data-product-id="{{ product.id }}"
+    data-limit="{{ section.settings.max_products }}"
+    data-search-url="{{ routes.search_url }}"
+    {% unless request.design_mode %}
+      hidden
+    {% endunless %}
+  >
+    <div class="fpg-rv__inner">
+      <div class="fpg-rv__head">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="fpg-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        <h2 class="fpg-rv__title h3">{{ section.settings.heading | escape }}</h2>
+      </div>
+      <div class="fpg-rv__track" data-fpg-rv-track role="list"></div>
+      {%- if request.design_mode -%}
+        <p class="fpg-rv__editor-note">
+          Shoppers see the products they have viewed most recently here, newest first. The row stays hidden until
+          they have looked at another product.
+        </p>
+      {%- endif -%}
+    </div>
+  </fpg-recently-viewed>
+{%- endif -%}
+
+
+{% schema %}
+{
+  "name": "FP&G recently viewed",
+  "tag": "section",
+  "class": "fpg-rv-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading",
+      "default": "Pick up where you left off"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Recently viewed"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Products to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background colour"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G recently viewed"
+    }
+  ]
+}
+{% endschema %}

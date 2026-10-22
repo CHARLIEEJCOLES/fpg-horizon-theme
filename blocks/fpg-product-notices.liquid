@@ -1,0 +1,255 @@
+{%- doc -%}
+  FP&G product notices, shown only when they apply to the product:
+  - personal use note when the selected variant is not taxable
+  - over-18s warning from the product metafield custom.age_restricted_item
+  - oversized / large shipping note from product tags
+  - collection-only note from a product tag
+  - a link to the shipping policy
+  Each notice can be switched off and reworded per template (for example the
+  hire template uses "Hire items are collection only…").
+  Updates when the shopper changes variant (assets/fpg-variant-block.js).
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign variant = product.selected_or_first_available_variant
+
+  assign show_personal_use = false
+  if block_settings.show_personal_use and variant != blank and variant.taxable == false
+    assign show_personal_use = true
+  endif
+
+  assign show_age = false
+  if block_settings.show_age_restricted and product.metafields.custom.age_restricted_item.value == true
+    assign show_age = true
+  endif
+
+  assign shipping_text = ''
+  if block_settings.show_shipping_size
+    if block_settings.oversized_tag != blank and product.tags contains block_settings.oversized_tag
+      assign shipping_text = block_settings.oversized_text
+    elsif block_settings.large_tag != blank and product.tags contains block_settings.large_tag
+      assign shipping_text = block_settings.large_text
+    endif
+  endif
+
+  assign show_collection_only = false
+  if block_settings.show_collection_only and block_settings.collection_tag != blank
+    if product.tags contains block_settings.collection_tag
+      assign show_collection_only = true
+    endif
+  endif
+-%}
+
+<fpg-variant-block
+  class="fpg-notices spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  data-block-id="{{ block.id }}"
+  data-product-id="{{ product.id }}"
+  {{ block.shopify_attributes }}
+>
+  {%- if show_personal_use and block_settings.personal_use_text != blank -%}
+    <p class="fpg-notice">{{ block_settings.personal_use_text | escape }}</p>
+  {%- endif -%}
+
+  {%- if show_age and block_settings.age_restricted_text != blank -%}
+    <p class="fpg-notice fpg-notice--alert">{{ block_settings.age_restricted_text | escape }}</p>
+  {%- endif -%}
+
+  {%- if shipping_text != blank -%}
+    <p class="fpg-notice fpg-notice--strong">{{ shipping_text | escape }}</p>
+  {%- endif -%}
+
+  {%- if show_collection_only and block_settings.collection_text != blank -%}
+    <p class="fpg-notice fpg-notice--alert">{{ block_settings.collection_text | escape }}</p>
+  {%- endif -%}
+
+  {%- if block_settings.shipping_link != blank and block_settings.shipping_link_text != blank -%}
+    <p class="fpg-notice fpg-notice--link">
+      <a href="{{ block_settings.shipping_link }}">{{ block_settings.shipping_link_text | escape }}</a>
+    </p>
+  {%- endif -%}
+</fpg-variant-block>
+
+<script
+  src="{{ 'fpg-variant-block.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% stylesheet %}
+  .fpg-notices {
+    --fpg-notice-alert: #c30f16;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-xs);
+  }
+
+  .fpg-notice {
+    margin: 0;
+    font-size: var(--font-paragraph--size);
+    line-height: var(--font-paragraph--line-height);
+  }
+
+  .fpg-notice--strong,
+  .fpg-notice--alert {
+    font-weight: 700;
+  }
+
+  .fpg-notice--alert {
+    color: var(--fpg-notice-alert);
+  }
+
+  .fpg-notice--link {
+    font-size: var(--font-size--sm);
+  }
+
+  .fpg-notice--link a {
+    color: inherit;
+    text-decoration: underline;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FP&G product notices",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Personal use"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_personal_use",
+      "label": "Show when the variant is not taxable",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "personal_use_text",
+      "label": "Text",
+      "default": "Item assumed for personal use. Please contact us if required for business use."
+    },
+    {
+      "type": "header",
+      "content": "Age restriction"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_age_restricted",
+      "label": "Show when custom.age_restricted_item is ticked",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "age_restricted_text",
+      "label": "Text",
+      "default": "Age Restricted Item - Over 18s Only"
+    },
+    {
+      "type": "header",
+      "content": "Shipping size"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_size",
+      "label": "Show oversized and large notes",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "oversized_tag",
+      "label": "Oversized tag",
+      "default": "Oversized"
+    },
+    {
+      "type": "text",
+      "id": "oversized_text",
+      "label": "Oversized text",
+      "default": "Oversized Shipping Rates Apply"
+    },
+    {
+      "type": "text",
+      "id": "large_tag",
+      "label": "Large tag",
+      "default": "Large"
+    },
+    {
+      "type": "text",
+      "id": "large_text",
+      "label": "Large text",
+      "default": "Large Shipping Rates Apply"
+    },
+    {
+      "type": "header",
+      "content": "Collection only"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_only",
+      "label": "Show collection-only note",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "collection_tag",
+      "label": "Collection-only tag",
+      "default": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "collection_text",
+      "label": "Text",
+      "default": "This item is collection only. Orders with this item must select 'Pickup in store'"
+    },
+    {
+      "type": "header",
+      "content": "Shipping policy link"
+    },
+    {
+      "type": "url",
+      "id": "shipping_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "shipping_link_text",
+      "label": "Link text",
+      "default": "View our shipping policy here"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G product notices",
+      "category": "FP&G"
+    }
+  ]
+}
+{% endschema %}

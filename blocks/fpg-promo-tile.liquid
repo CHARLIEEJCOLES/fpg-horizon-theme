@@ -1,0 +1,157 @@
+{%- doc -%}
+  FP&G promo tile: an offer or message card placed inside the collection
+  product grid, the same size as a product card. Rendered as a static block
+  from sections/main-collection.liquid, which passes the position of the
+  product about to be drawn; the tile appears just before the product at its
+  chosen position (so position 5 makes it the 5th item on page 1).
+  Leave "Collections" empty to show it on every collection.
+
+  @param {number} fpg_position - Position (1-based, across pages) of the next product in the grid
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign show = false
+  if block_settings.enabled and fpg_position == block_settings.position
+    assign show = true
+    if block_settings.collections != blank
+      assign show = false
+      for c in block_settings.collections
+        if c.handle == collection.handle
+          assign show = true
+          break
+        endif
+      endfor
+    endif
+  endif
+
+  assign tile_style = ''
+  if block_settings.background_color != blank
+    assign tile_style = tile_style | append: '--fpg-tile-bg: ' | append: block_settings.background_color | append: ';'
+  endif
+  if block_settings.text_color != blank
+    assign tile_style = tile_style | append: '--fpg-tile-fg: ' | append: block_settings.text_color | append: ';'
+  endif
+-%}
+
+{%- if show -%}
+  <li class="product-grid__item fpg-promo-tile{% if block_settings.image != blank %} fpg-promo-tile--image{% endif %}" style="{{ tile_style }}" {{ block.shopify_attributes }}>
+    {%- if block_settings.link != blank -%}
+      <a class="fpg-promo-tile__link" href="{{ block_settings.link }}">
+    {%- else -%}
+      <div class="fpg-promo-tile__link">
+    {%- endif -%}
+      {%- if block_settings.image != blank -%}
+        <span class="fpg-promo-tile__media">
+          {{
+            block_settings.image
+            | image_url: width: 900
+            | image_tag:
+              loading: 'lazy',
+              widths: '300, 450, 600, 900',
+              sizes: '(min-width: 990px) 25vw, 50vw',
+              alt: ''
+          }}
+        </span>
+      {%- endif -%}
+      <span class="fpg-promo-tile__content">
+        {%- if block_settings.eyebrow != blank -%}
+          <span class="fpg-promo-tile__eyebrow">{{ block_settings.eyebrow | escape }}</span>
+        {%- endif -%}
+        {%- if block_settings.heading != blank -%}
+          <span class="fpg-promo-tile__heading">{{ block_settings.heading | escape }}</span>
+        {%- endif -%}
+        {%- if block_settings.text != blank -%}
+          <span class="fpg-promo-tile__text">{{ block_settings.text | escape }}</span>
+        {%- endif -%}
+        {%- if block_settings.button_label != blank and block_settings.link != blank -%}
+          <span class="fpg-promo-tile__cta">
+            {{ block_settings.button_label | escape }}
+            <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </span>
+    {%- if block_settings.link != blank -%}
+      </a>
+    {%- else -%}
+      </div>
+    {%- endif -%}
+  </li>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FP&G promo tile",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Show this tile",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "position",
+      "label": "Position in the grid",
+      "min": 1,
+      "max": 24,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "collection_list",
+      "id": "collections",
+      "label": "Only on these collections",
+      "info": "Leave empty to show on every collection."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Optional. Text sits on a dark overlay when an image is used."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Link label",
+      "default": "Find out more"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background colour",
+      "default": "#002D37"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text colour",
+      "default": "#FFFFFF"
+    }
+  ]
+}
+{% endschema %}

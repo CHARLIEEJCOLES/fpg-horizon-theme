@@ -1,0 +1,248 @@
+{%- doc -%}
+  FP&G stock status for the selected variant. Use it in place of Horizon's
+  "Product inventory" block on product pages. It shows:
+  - "12 in stock" / "Low stock: 3 left" / "Out of stock" for tracked stock
+  - "Available to order" with a "?" explainer when the item can be ordered at 0 stock
+  - the dropship wording for products with the dropship tag
+  - "In-store stock: 0" under items that are available to order
+  Wording that is shared with product cards lives in the FP&G theme settings.
+  Updates when the shopper changes variant (assets/fpg-variant-block.js).
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign variant = product.selected_or_first_available_variant
+  assign dropship_tag = settings.fpg_dropship_tag | default: 'Dropship'
+  assign quantity = variant.inventory_quantity | default: 0
+
+  assign status = ''
+  if variant.inventory_management == 'shopify'
+    if quantity > 0
+      if quantity <= block_settings.low_stock_threshold
+        assign status = 'low'
+      else
+        assign status = 'in_stock'
+      endif
+    elsif variant.inventory_policy == 'continue'
+      if product.tags contains dropship_tag
+        assign status = 'dropship'
+      else
+        assign status = 'backorder'
+      endif
+    else
+      assign status = 'out_of_stock'
+    endif
+  endif
+
+  assign show_in_store_zero = false
+  if settings.fpg_show_in_store_zero and variant.inventory_policy == 'continue' and quantity <= 0
+    assign show_in_store_zero = true
+    assign excluded_vendor = settings.fpg_in_store_zero_exclude_vendor | strip
+    if excluded_vendor != blank and product.vendor == excluded_vendor
+      assign show_in_store_zero = false
+    endif
+  endif
+-%}
+
+<fpg-variant-block
+  class="fpg-stock spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  data-block-id="{{ block.id }}"
+  data-product-id="{{ product.id }}"
+  {{ block.shopify_attributes }}
+>
+  {%- if status != blank -%}
+    <p class="fpg-stock__row fpg-stock__row--{{ status }}" role="status">
+      <span class="fpg-stock__dot" aria-hidden="true"></span>
+      <span class="fpg-stock__text">
+        {%- case status -%}
+          {%- when 'in_stock' -%}
+            {%- if block_settings.show_quantity -%}
+              {{ block_settings.in_stock_text | replace: '[count]', quantity | escape }}
+            {%- else -%}
+              {{ 'content.inventory_in_stock' | t }}
+            {%- endif -%}
+          {%- when 'low' -%}
+            {%- if block_settings.show_quantity -%}
+              {{ block_settings.low_stock_text | replace: '[count]', quantity | escape }}
+            {%- else -%}
+              {{ 'content.inventory_low_stock' | t }}
+            {%- endif -%}
+          {%- when 'out_of_stock' -%}
+            {{ 'content.inventory_out_of_stock' | t }}
+          {%- when 'dropship' -%}
+            {{ settings.fpg_dropship_label | default: 'Dropship item (fast direct shipping)' | escape }}
+          {%- when 'backorder' -%}
+            {{ settings.fpg_backorder_label | default: 'Available to order' | escape }}
+        {%- endcase -%}
+      </span>
+    </p>
+    {%- if status == 'backorder' and settings.fpg_backorder_explainer != blank -%}
+      <details class="fpg-stock__more">
+        <summary>{{ block_settings.explainer_link_text | escape }}</summary>
+        <p>{{ settings.fpg_backorder_explainer | escape }}</p>
+      </details>
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if show_in_store_zero -%}
+    <p class="fpg-stock__row fpg-stock__row--in-store-zero">
+      <span class="fpg-stock__dot" aria-hidden="true"></span>
+      <span class="fpg-stock__text">
+        {{- settings.fpg_in_store_zero_text | default: 'In-store stock: 0' | escape -}}
+      </span>
+    </p>
+  {%- endif -%}
+</fpg-variant-block>
+
+<script
+  src="{{ 'fpg-variant-block.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% stylesheet %}
+  .fpg-stock {
+    --fpg-stock-backorder: #1e90ff;
+    --fpg-stock-alert: #e40c0c;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-2xs);
+  }
+
+  .fpg-stock:empty {
+    display: none;
+  }
+
+  .fpg-stock__row {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-xs);
+    margin: 0;
+    font-size: var(--font-paragraph--size);
+    line-height: var(--font-paragraph--line-height);
+  }
+
+  .fpg-stock__dot {
+    --fpg-dot: var(--color-outofstock);
+
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--fpg-dot);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--fpg-dot) 30%, transparent);
+  }
+
+  .fpg-stock__row--in_stock .fpg-stock__dot {
+    --fpg-dot: var(--color-instock);
+  }
+
+  .fpg-stock__row--low .fpg-stock__dot {
+    --fpg-dot: var(--color-lowstock);
+  }
+
+  .fpg-stock__row--backorder .fpg-stock__dot,
+  .fpg-stock__row--dropship .fpg-stock__dot {
+    --fpg-dot: var(--fpg-stock-backorder);
+  }
+
+  .fpg-stock__row--in-store-zero .fpg-stock__dot {
+    --fpg-dot: var(--fpg-stock-alert);
+  }
+
+  .fpg-stock__more {
+    font-size: var(--font-size--sm);
+  }
+
+  .fpg-stock__more summary {
+    cursor: pointer;
+    text-decoration: underline;
+    width: fit-content;
+  }
+
+  .fpg-stock__more p {
+    margin: var(--padding-2xs) 0 0;
+    max-width: 48ch;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FP&G stock status",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows stock for the selected variant. Use instead of the Product inventory block. Shared wording is in Theme settings > FP&G."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity",
+      "label": "Show stock count",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "low_stock_threshold",
+      "label": "Low stock below",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "text",
+      "id": "in_stock_text",
+      "label": "In stock wording",
+      "info": "[count] is replaced with the stock level",
+      "default": "[count] in stock"
+    },
+    {
+      "type": "text",
+      "id": "low_stock_text",
+      "label": "Low stock wording",
+      "info": "[count] is replaced with the stock level",
+      "default": "Low stock: [count] left"
+    },
+    {
+      "type": "text",
+      "id": "explainer_link_text",
+      "label": "Explainer link for available to order",
+      "default": "What does this mean?"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G stock status",
+      "category": "FP&G"
+    }
+  ]
+}
+{% endschema %}

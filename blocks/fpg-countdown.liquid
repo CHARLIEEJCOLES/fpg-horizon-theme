@@ -1,0 +1,140 @@
+{%- doc -%}
+  FP&G countdown timer for promotions: "Offer ends in 2 days 04:12:09".
+  The end date and time are UK time. Nothing shows until an end date is set,
+  and the timer hides itself (or shows a closing message) when it runs out.
+  The date setting can be connected to a product or collection metafield in
+  the theme editor for per-product offer end dates.
+  Behaviour lives in assets/fpg-design.js (<fpg-countdown>).
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign end_date = block_settings.end_date | strip
+  assign end_time = block_settings.end_time | strip | default: '23:59'
+  assign valid = false
+  if end_date.size == 10
+    assign valid = true
+  endif
+-%}
+
+{%- if valid -%}
+  {%- capture end_label -%}{{ end_date | date: '%-d %B %Y' }} at {{ end_time }}{%- endcapture -%}
+  <fpg-countdown
+    class="fpg-countdown fpg-countdown--{{ block_settings.style }} fpg-countdown--{{ block_settings.alignment }}"
+    data-date="{{ end_date | escape }}"
+    data-time="{{ end_time | escape }}"
+    data-expired="{{ block_settings.when_finished }}"
+    style="{% if block_settings.background_color != blank %}--fpg-cd-bg: {{ block_settings.background_color }};{% endif %}{% if block_settings.text_color != blank %} --fpg-cd-fg: {{ block_settings.text_color }};{% endif %}"
+    hidden
+    {{ block.shopify_attributes }}
+  >
+    <span class="fpg-countdown__running">
+      {%- if block_settings.label != blank -%}
+        <span class="fpg-countdown__label">{{ block_settings.label | escape }}</span>
+      {%- endif -%}
+      <span class="fpg-countdown__units" role="timer" aria-label="{{ block_settings.label | escape }} {{ end_label | escape }}">
+        <span class="fpg-countdown__unit" data-unit-wrap="d">
+          <span class="fpg-countdown__num" data-unit="d">0</span>
+          <span class="fpg-countdown__name">days</span>
+        </span>
+        <span class="fpg-countdown__unit">
+          <span class="fpg-countdown__num" data-unit="h">00</span>
+          <span class="fpg-countdown__name">hrs</span>
+        </span>
+        <span class="fpg-countdown__unit">
+          <span class="fpg-countdown__num" data-unit="m">00</span>
+          <span class="fpg-countdown__name">mins</span>
+        </span>
+        <span class="fpg-countdown__unit">
+          <span class="fpg-countdown__num" data-unit="s">00</span>
+          <span class="fpg-countdown__name">secs</span>
+        </span>
+      </span>
+    </span>
+    <span class="fpg-countdown__expired">{{ block_settings.finished_text | escape }}</span>
+  </fpg-countdown>
+{%- elsif request.design_mode -%}
+  <p class="fpg-countdown-hint" {{ block.shopify_attributes }}>
+    Countdown: add an end date (YYYY-MM-DD) to show the timer. It stays hidden on the live site until then.
+  </p>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FP&G countdown",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Offer ends in"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "End date",
+      "placeholder": "2026-11-30",
+      "info": "UK date as YYYY-MM-DD. Can be connected to a metafield."
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "End time",
+      "default": "23:59",
+      "info": "UK time, 24-hour clock (HH:MM)."
+    },
+    {
+      "type": "select",
+      "id": "when_finished",
+      "label": "When the time runs out",
+      "options": [
+        { "value": "hide", "label": "Hide the timer" },
+        { "value": "message", "label": "Show the message below" }
+      ],
+      "default": "hide"
+    },
+    {
+      "type": "text",
+      "id": "finished_text",
+      "label": "Message after it ends",
+      "default": "This offer has ended"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Style",
+      "options": [
+        { "value": "boxes", "label": "Boxes" },
+        { "value": "pill", "label": "Compact pill" }
+      ],
+      "default": "boxes"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Centre" }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background colour"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text colour"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G countdown"
+    }
+  ]
+}
+{% endschema %}

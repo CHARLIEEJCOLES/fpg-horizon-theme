@@ -1,0 +1,245 @@
+{%- doc -%}
+  FP&G breadcrumbs: Home › Collection › Product (and Home › Collection,
+  Home › Page, Home › Blog › Article, Home › Search). Adds matching
+  BreadcrumbList structured data for search engines.
+
+  On a product page reached from a collection, that collection is used.
+  Otherwise the block picks the product's most specific collection that
+  appears in the chosen menu (a third-level menu link beats a second-level
+  one, and so on), so "Petrol Chainsaws" wins over "All chainsaws".
+  Collections listed under "Never use" are skipped.
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign separator = '›'
+  assign crumb_collection = nil
+
+  if request.page_type == 'product'
+    if collection != blank and collection.handle != 'all'
+      assign crumb_collection = collection
+    elsif block_settings.fallback_collection
+      assign skip_list = block_settings.skip_handles | downcase | split: ','
+      assign skip_handles = ''
+      for handle in skip_list
+        assign clean = handle | strip
+        if clean != blank
+          assign skip_handles = skip_handles | append: '|' | append: clean | append: '|'
+        endif
+      endfor
+
+      assign level_1 = '|'
+      assign level_2 = '|'
+      assign level_3 = '|'
+      assign menu = block_settings.menu
+      if menu != blank
+        for link_1 in menu.links
+          if link_1.type == 'collection_link'
+            assign level_1 = level_1 | append: link_1.object.handle | append: '|'
+          endif
+          for link_2 in link_1.links
+            if link_2.type == 'collection_link'
+              assign level_2 = level_2 | append: link_2.object.handle | append: '|'
+            endif
+            for link_3 in link_2.links
+              if link_3.type == 'collection_link'
+                assign level_3 = level_3 | append: link_3.object.handle | append: '|'
+              endif
+            endfor
+          endfor
+        endfor
+      endif
+
+      assign best_rank = 0
+      for c in product.collections
+        assign key = '|' | append: c.handle | append: '|'
+        if c.handle == 'all' or skip_handles contains key
+          continue
+        endif
+        assign rank = 1
+        if level_3 contains key
+          assign rank = 4
+        elsif level_2 contains key
+          assign rank = 3
+        elsif level_1 contains key
+          assign rank = 2
+        endif
+        if rank > best_rank
+          assign best_rank = rank
+          assign crumb_collection = c
+        endif
+      endfor
+    endif
+  endif
+
+  assign show = true
+  if request.page_type == 'index'
+    assign show = false
+  endif
+-%}
+
+{%- if show -%}
+  <nav
+    class="fpg-breadcrumbs fpg-breadcrumbs--{{ block_settings.alignment }}"
+    aria-label="Breadcrumb"
+    {{ block.shopify_attributes }}
+  >
+    <ol class="fpg-breadcrumbs__list">
+      <li class="fpg-breadcrumbs__item">
+        <a class="fpg-breadcrumbs__link" href="{{ routes.root_url }}">Home</a>
+      </li>
+      {%- case request.page_type -%}
+        {%- when 'product' -%}
+          {%- if crumb_collection != blank -%}
+            <li class="fpg-breadcrumbs__item">
+              <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+              <a class="fpg-breadcrumbs__link" href="{{ crumb_collection.url }}">{{ crumb_collection.title | escape }}</a>
+            </li>
+          {%- endif -%}
+          <li class="fpg-breadcrumbs__item">
+            <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+            <span class="fpg-breadcrumbs__current" aria-current="page">{{ product.title | escape }}</span>
+          </li>
+        {%- when 'collection' -%}
+          {%- if current_tags -%}
+            <li class="fpg-breadcrumbs__item">
+              <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+              <a class="fpg-breadcrumbs__link" href="{{ collection.url }}">{{ collection.title | escape }}</a>
+            </li>
+            <li class="fpg-breadcrumbs__item">
+              <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+              <span class="fpg-breadcrumbs__current" aria-current="page">{{ current_tags | join: ', ' | escape }}</span>
+            </li>
+          {%- else -%}
+            <li class="fpg-breadcrumbs__item">
+              <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+              <span class="fpg-breadcrumbs__current" aria-current="page">{{ collection.title | escape }}</span>
+            </li>
+          {%- endif -%}
+        {%- when 'list-collections' -%}
+          <li class="fpg-breadcrumbs__item">
+            <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+            <span class="fpg-breadcrumbs__current" aria-current="page">Collections</span>
+          </li>
+        {%- when 'page' -%}
+          <li class="fpg-breadcrumbs__item">
+            <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+            <span class="fpg-breadcrumbs__current" aria-current="page">{{ page.title | escape }}</span>
+          </li>
+        {%- when 'blog' -%}
+          <li class="fpg-breadcrumbs__item">
+            <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+            <span class="fpg-breadcrumbs__current" aria-current="page">{{ blog.title | escape }}</span>
+          </li>
+        {%- when 'article' -%}
+          <li class="fpg-breadcrumbs__item">
+            <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+            <a class="fpg-breadcrumbs__link" href="{{ blog.url }}">{{ blog.title | escape }}</a>
+          </li>
+          <li class="fpg-breadcrumbs__item">
+            <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+            <span class="fpg-breadcrumbs__current" aria-current="page">{{ article.title | escape }}</span>
+          </li>
+        {%- when 'search' -%}
+          <li class="fpg-breadcrumbs__item">
+            <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+            <span class="fpg-breadcrumbs__current" aria-current="page">Search</span>
+          </li>
+        {%- when 'cart' -%}
+          <li class="fpg-breadcrumbs__item">
+            <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+            <span class="fpg-breadcrumbs__current" aria-current="page">Basket</span>
+          </li>
+        {%- else -%}
+          {%- if page_title != blank -%}
+            <li class="fpg-breadcrumbs__item">
+              <span class="fpg-breadcrumbs__sep" aria-hidden="true">{{ separator }}</span>
+              <span class="fpg-breadcrumbs__current" aria-current="page">{{ page_title | escape }}</span>
+            </li>
+          {%- endif -%}
+      {%- endcase -%}
+    </ol>
+  </nav>
+
+  {%- if block_settings.structured_data -%}
+    {%- liquid
+      assign base = request.origin
+      assign position = 1
+    -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "Home", "item": {{ base | append: routes.root_url | json }}}
+          {%- case request.page_type -%}
+            {%- when 'product' -%}
+              {%- if crumb_collection != blank -%}
+                {%- assign position = position | plus: 1 -%}
+                ,{"@type": "ListItem", "position": {{ position }}, "name": {{ crumb_collection.title | json }}, "item": {{ base | append: crumb_collection.url | json }}}
+              {%- endif -%}
+              {%- assign position = position | plus: 1 -%}
+              ,{"@type": "ListItem", "position": {{ position }}, "name": {{ product.title | json }}, "item": {{ base | append: product.url | json }}}
+            {%- when 'collection' -%}
+              ,{"@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ base | append: collection.url | json }}}
+            {%- when 'page' -%}
+              ,{"@type": "ListItem", "position": 2, "name": {{ page.title | json }}, "item": {{ base | append: page.url | json }}}
+            {%- when 'article' -%}
+              ,{"@type": "ListItem", "position": 2, "name": {{ blog.title | json }}, "item": {{ base | append: blog.url | json }}}
+              ,{"@type": "ListItem", "position": 3, "name": {{ article.title | json }}, "item": {{ base | append: article.url | json }}}
+          {%- endcase -%}
+        ]
+      }
+    </script>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FP&G breadcrumbs",
+  "tag": null,
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu used to pick a product's collection",
+      "default": "main-menu",
+      "info": "When a product is opened directly (not from a collection), its most specific collection in this menu is shown."
+    },
+    {
+      "type": "checkbox",
+      "id": "fallback_collection",
+      "label": "Show a collection for products opened directly",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "skip_handles",
+      "label": "Never use these collections",
+      "default": "frontpage, new-products, current-promotions, clearance, aldi-lidl-products, forestry-arboriculture-essentials",
+      "info": "Collection handles, separated by commas."
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Centre" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "structured_data",
+      "label": "Add breadcrumb data for search engines",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G breadcrumbs"
+    }
+  ]
+}
+{% endschema %}

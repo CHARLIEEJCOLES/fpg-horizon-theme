@@ -1,0 +1,122 @@
+{%- doc -%}
+  FP&G search bar: a large product search box with optional "Popular" quick
+  links underneath. Searches match the start of words, so part numbers and
+  model codes can be typed partially. Built for the homepage hero; the
+  "Light" style suits pale backgrounds.
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign input_id = 'FpgSearch-' | append: block.id
+  assign has_chips = false
+  for i in (1..5)
+    assign label_key = 'chip_' | append: i | append: '_label'
+    assign link_key = 'chip_' | append: i | append: '_link'
+    if block_settings[label_key] != blank and block_settings[link_key] != blank
+      assign has_chips = true
+    endif
+  endfor
+-%}
+
+<div class="fpg-search-bar fpg-search-bar--{{ block_settings.style }}" {{ block.shopify_attributes }}>
+  <form class="fpg-search-bar__form" action="{{ routes.search_url }}" method="get" role="search">
+    <svg class="fpg-search-bar__icon" aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    <label class="visually-hidden" for="{{ input_id }}">{{ block_settings.placeholder | escape }}</label>
+    <input
+      class="fpg-search-bar__input"
+      id="{{ input_id }}"
+      type="search"
+      name="q"
+      placeholder="{{ block_settings.placeholder | escape }}"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+      enterkeyhint="search"
+    >
+    <input type="hidden" name="options[prefix]" value="last">
+    <button type="submit" class="fpg-search-bar__button">
+      <span>{{ block_settings.button_label | escape }}</span>
+      <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </form>
+
+  {%- if has_chips -%}
+    <ul class="fpg-search-bar__chips" aria-label="{{ block_settings.chips_label | escape }}">
+      {%- if block_settings.chips_label != blank -%}
+        <li class="fpg-search-bar__chips-label" aria-hidden="true">{{ block_settings.chips_label | escape }}</li>
+      {%- endif -%}
+      {%- for i in (1..5) -%}
+        {%- liquid
+          assign label_key = 'chip_' | append: i | append: '_label'
+          assign link_key = 'chip_' | append: i | append: '_link'
+          assign chip_label = block_settings[label_key]
+          assign chip_link = block_settings[link_key]
+        -%}
+        {%- if chip_label != blank and chip_link != blank -%}
+          <li><a class="fpg-search-bar__chip" href="{{ chip_link }}">{{ chip_label | escape }}</a></li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "FP&G search bar",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder",
+      "default": "Search products, part numbers or models"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Search"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Style",
+      "options": [
+        { "value": "dark", "label": "For photos and dark backgrounds" },
+        { "value": "light", "label": "For light backgrounds" }
+      ],
+      "default": "dark"
+    },
+    {
+      "type": "header",
+      "content": "Popular links"
+    },
+    {
+      "type": "text",
+      "id": "chips_label",
+      "label": "Label",
+      "default": "Popular:"
+    },
+    { "type": "text", "id": "chip_1_label", "label": "Link 1 label" },
+    { "type": "url", "id": "chip_1_link", "label": "Link 1" },
+    { "type": "text", "id": "chip_2_label", "label": "Link 2 label" },
+    { "type": "url", "id": "chip_2_link", "label": "Link 2" },
+    { "type": "text", "id": "chip_3_label", "label": "Link 3 label" },
+    { "type": "url", "id": "chip_3_link", "label": "Link 3" },
+    { "type": "text", "id": "chip_4_label", "label": "Link 4 label" },
+    { "type": "url", "id": "chip_4_link", "label": "Link 4" },
+    { "type": "text", "id": "chip_5_label", "label": "Link 5 label" },
+    { "type": "url", "id": "chip_5_link", "label": "Link 5" }
+  ],
+  "presets": [
+    {
+      "name": "FP&G search bar"
+    }
+  ]
+}
+{% endschema %}

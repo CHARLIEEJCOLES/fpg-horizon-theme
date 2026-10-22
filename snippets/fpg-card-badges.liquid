@@ -1,0 +1,94 @@
+{%- doc -%}
+  FP&G product card badges. Replaces Horizon's single sold-out / sale badge with:
+  - a stock badge: "Sold out", "12 in stock", "Available to order" or "Dropship item"
+  - a sale badge when the card is on sale or carries the clearance tag
+  Turn this off with "Stock badges on product cards" in the FP&G theme settings
+  to go back to Horizon's own badge. Rendered from blocks/_product-card-gallery.liquid.
+
+  @param {product} product - The product shown on the card
+
+  @example
+  {% render 'fpg-card-badges', product: product %}
+{%- enddoc -%}
+
+{%- liquid
+  assign dropship_tag = settings.fpg_dropship_tag | default: 'Dropship'
+  assign clearance_tag = settings.fpg_clearance_tag | default: 'Clearance'
+  assign variant = product.selected_or_first_available_variant
+  assign total_stock = product.variants | sum: 'inventory_quantity'
+
+  assign is_managed = false
+  if variant.inventory_management == 'shopify'
+    assign is_managed = true
+  endif
+
+  assign stock_class = 'fpg-card-badge--stock'
+  assign stock_text = ''
+
+  if is_managed and total_stock <= 0 and variant.inventory_policy == 'deny'
+    assign stock_text = 'content.product_badge_sold_out' | t
+    assign stock_class = 'color-custom-badge-sold-out'
+  elsif is_managed and total_stock > 0
+    assign stock_text = settings.fpg_in_stock_badge | default: '[count] in stock' | replace: '[count]', total_stock
+  elsif product.tags contains dropship_tag
+    assign stock_text = settings.fpg_dropship_badge | default: 'Dropship item'
+  else
+    assign stock_text = settings.fpg_backorder_label | default: 'Available to order'
+  endif
+
+  assign show_sale = false
+  if product.available and product.compare_at_price > product.price
+    assign show_sale = true
+  elsif product.tags contains clearance_tag
+    assign show_sale = true
+  endif
+-%}
+
+<div
+  class="product-badges product-badges--{{ settings.badge_position }} fpg-card-badges"
+  style="
+    --badge-border-radius: {{ settings.badge_corner_radius }}px;
+    --badge-font-family: var(--font-{{ settings.badge_font_family }}--family); --badge-font-weight: var(--font-{{ settings.badge_font_family }}--weight); --badge-text-transform: {{ settings.badge_text_transform }};
+  "
+>
+  {%- if stock_text != blank -%}
+    <div class="product-badges__badge product-badges__badge--rectangle {{ stock_class }}">
+      {{- stock_text | escape -}}
+    </div>
+  {%- endif -%}
+  {%- if show_sale -%}
+    <div class="product-badges__badge product-badges__badge--rectangle color-custom-badge-sale">
+      {{- 'content.product_badge_sale' | t -}}
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .fpg-card-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--gap-2xs);
+  }
+
+  .fpg-card-badges.product-badges--top-right {
+    align-items: flex-end;
+  }
+
+  .fpg-card-badge--stock {
+    border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-20));
+  }
+
+  /* FP&G: the Call for Price app's CSS forces .product-grid-view-zoom-out--details
+     to show (it was written for Dawn), which duplicates every card title in Horizon.
+     Keep it hidden except in Horizon's zoomed-out grid view. */
+  h3.product-grid-view-zoom-out--details {
+    display: none !important;
+  }
+
+  @media screen and (min-width: 750px) {
+    ul[product-grid-view='zoom-out'] h3.product-grid-view-zoom-out--details {
+      display: -webkit-box !important;
+    }
+  }
+{% endstylesheet %}

@@ -1,0 +1,115 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "t:names.header",
+  "sections": {
+    "header_announcements_9jGBFp": {
+      "type": "header-announcements",
+      "blocks": {
+        "announcement_BxgCk9": {
+          "type": "_announcement",
+          "settings": {
+            "text": "<strong>Common Parts Look Up:</strong> find the right chain, bar and filters for your machine",
+            "font_size": "0.75rem",
+            "link": "shopify://pages/bar-and-chain-finder",
+            "text_color": "#FFFFFF"
+          },
+          "blocks": {}
+        },
+        "announcement_dealer": {
+          "type": "_announcement",
+          "settings": {
+            "text": "Approved STIHL dealer · Coed Court, Treforest",
+            "font_size": "0.75rem",
+            "link": "shopify://pages/contact",
+            "text_color": "#FFFFFF"
+          },
+          "blocks": {}
+        },
+        "announcement_services": {
+          "type": "_announcement",
+          "settings": {
+            "text": "Click & collect · Workshop servicing · Machine hire",
+            "font_size": "0.75rem",
+            "link": "shopify://collections/for-hire",
+            "text_color": "#FFFFFF"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "announcement_BxgCk9",
+        "announcement_dealer",
+        "announcement_services"
+      ],
+      "name": "t:names.announcement_bar",
+      "settings": {
+        "speed": 6,
+        "background_color": "#002D37",
+        "divider_color": "{{ settings.color_palette.color2 }}",
+        "padding-block-start": 10,
+        "padding-block-end": 10
+      }
+    },
+    "header_section": {
+      "type": "header",
+      "blocks": {
+        "header-logo": {
+          "type": "_header-logo",
+          "static": true,
+          "settings": {
+            "hide_logo_on_home_page": false
+          },
+          "blocks": {}
+        },
+        "header-menu": {
+          "type": "_header-menu",
+          "static": true,
+          "settings": {
+            "menu": "horizon-main-menu",
+            "type_font_primary_size": "0.875rem",
+            "menu_font_style": "regular",
+            "type_font_primary_link": "subheading",
+            "menu_style": "text",
+            "navigation_bar": false,
+            "drawer_accordion": true,
+            "drawer_dividers": true,
+            "background_color": "#FFFFFF",
+            "text_color": "#12262B"
+          },
+          "blocks": {}
+        }
+      },
+      "settings": {
+        "logo_position": "left",
+        "menu_row": "bottom",
+        "show_country": false,
+        "country_selector_style": false,
+        "show_language": false,
+        "localization_font_size": "0.875rem",
+        "section_width": "page-width",
+        "enable_sticky_header": "scroll-up",
+        "divider_size": "page-width",
+        "background_color_top": "#FFFFFF",
+        "text_color_top": "#12262B",
+        "background_color_bottom": "#002D37",
+        "text_color_bottom": "#FFFFFF",
+        "bubble_style": "custom",
+        "bubble_background_color": "#5F7D6D",
+        "bubble_text_color": "#FFFFFF"
+      }
+    }
+  },
+  "order": [
+    "header_announcements_9jGBFp",
+    "header_section"
+  ]
+}

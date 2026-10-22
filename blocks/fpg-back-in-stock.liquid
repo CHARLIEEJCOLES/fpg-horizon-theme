@@ -1,0 +1,142 @@
+{%- doc -%}
+  FP&G back-in-stock request. Shows a "Notify me" form when the selected
+  variant is sold out (stock tracked, selling stopped at 0). The shopper's
+  email goes to the shop through Shopify's contact form, with the product,
+  variant, SKU and link, so staff can reply when stock arrives. Items that can
+  still be ordered ("Available to order") don't show it.
+  Updates when the shopper changes variant (assets/fpg-variant-block.js).
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign variant = product.selected_or_first_available_variant
+  assign show_form = false
+  if product != blank and variant.available == false
+    assign show_form = true
+  endif
+  if request.design_mode and block_settings.preview_in_editor
+    assign show_form = true
+  endif
+  assign form_id = 'FpgBackInStock-' | append: block.id
+  assign posted = false
+-%}
+
+{%- capture form_markup -%}
+  {%- form 'contact', id: form_id, class: 'fpg-notify__form' -%}
+    {%- if form.posted_successfully? -%}
+      {%- assign posted = true -%}
+      <div class="fpg-notify__done" role="status">
+        <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M4.5 10.5L8.2 14L15.5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <p>{{ block_settings.success_text | escape }}</p>
+      </div>
+    {%- elsif show_form -%}
+      <p class="fpg-notify__heading">{{ block_settings.heading | escape }}</p>
+      {%- if block_settings.text != blank -%}
+        <p class="fpg-notify__text">{{ block_settings.text | escape }}</p>
+      {%- endif -%}
+      <input type="hidden" name="contact[Request]" value="Back in stock alert">
+      <input type="hidden" name="contact[Product]" value="{{ product.title | escape }}">
+      {%- unless product.has_only_default_variant -%}
+        <input type="hidden" name="contact[Variant]" value="{{ variant.title | escape }}">
+      {%- endunless -%}
+      {%- if variant.sku != blank -%}
+        <input type="hidden" name="contact[SKU]" value="{{ variant.sku | escape }}">
+      {%- endif -%}
+      <input type="hidden" name="contact[Link]" value="{{ shop.url }}{{ variant.url }}">
+      <div class="fpg-notify__row">
+        <label class="visually-hidden" for="{{ form_id }}-email">Email address</label>
+        <input
+          class="fpg-notify__input"
+          id="{{ form_id }}-email"
+          type="email"
+          name="contact[email]"
+          autocomplete="email"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          required
+          placeholder="Your email address"
+          {% if form.errors contains 'email' %}
+            aria-invalid="true"
+            aria-describedby="{{ form_id }}-error"
+          {% endif %}
+        >
+        <button type="submit" class="button fpg-notify__button">{{ block_settings.button_label | escape }}</button>
+      </div>
+      {%- if form.errors -%}
+        <p class="fpg-notify__error" id="{{ form_id }}-error" role="alert">
+          {{ form.errors.translated_fields.email | capitalize }}
+          {{ form.errors.messages.email }}
+        </p>
+      {%- endif -%}
+      <p class="fpg-notify__small">We'll only use your email to tell you about this item.</p>
+    {%- endif -%}
+  {%- endform -%}
+{%- endcapture -%}
+
+<fpg-variant-block
+  class="fpg-notify-block"
+  data-block-id="{{ block.id }}"
+  data-product-id="{{ product.id }}"
+  {{ block.shopify_attributes }}
+>
+  {%- if show_form or posted -%}
+    <div class="fpg-notify" id="{{ form_id }}-wrap">
+      {{ form_markup }}
+    </div>
+  {%- endif -%}
+</fpg-variant-block>
+
+<script
+  src="{{ 'fpg-variant-block.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% schema %}
+{
+  "name": "FP&G back in stock",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Sold out – get an email when it's back"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "Leave your email and we'll let you know as soon as this item is back in stock."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Notify me"
+    },
+    {
+      "type": "text",
+      "id": "success_text",
+      "label": "Thank-you message",
+      "default": "Thanks, we'll email you when it's back in stock."
+    },
+    {
+      "type": "checkbox",
+      "id": "preview_in_editor",
+      "label": "Always show in the theme editor",
+      "info": "So you can style it on a product that's in stock.",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G back in stock"
+    }
+  ]
+}
+{% endschema %}

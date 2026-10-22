@@ -1,0 +1,175 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "section": {
+      "type": "section",
+      "blocks": {
+        "text_tqQTNE": {
+          "type": "text",
+          "name": "t:names.title",
+          "settings": {
+            "text": "<h1>{{ closest.collection.title }}</h1>",
+            "width": "100%",
+            "type_preset": "h2",
+            "font_size": "",
+            "wrap": "pretty"
+          },
+          "blocks": {}
+        },
+        "text_twGGkJ": {
+          "type": "text",
+          "name": "t:names.description",
+          "settings": {
+            "text": "{{ closest.collection.description }}",
+            "width": "100%",
+            "font_size": "",
+            "wrap": "pretty"
+          },
+          "blocks": {}
+        },
+        "fpg_crumbs": {
+          "type": "fpg-breadcrumbs",
+          "settings": {
+            "menu": "horizon-main-menu"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "fpg_crumbs",
+        "text_tqQTNE",
+        "text_twGGkJ"
+      ],
+      "name": "t:names.heading",
+      "settings": {
+        "gap": 8,
+        "toggle_overlay": false,
+        "padding-block-start": 24,
+        "padding-block-end": 32,
+        "background_color": "#E2E9E5"
+      }
+    },
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "filters": {
+          "type": "filters",
+          "static": true,
+          "settings": {
+            "enable_filtering": true,
+            "filter_style": "vertical",
+            "padding-block-start": 8,
+            "padding-block-end": 8
+          },
+          "blocks": {}
+        },
+        "product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 8
+          },
+          "blocks": {
+            "card-gallery": {
+              "type": "_product-card-gallery",
+              "settings": {
+                "image_ratio": "square",
+                "border_radius": 8
+              },
+              "blocks": {}
+            },
+            "product_title_4nY4eT": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "type_preset": "custom",
+                "font": "var(--font-subheading--family)",
+                "font_size": "0.875rem",
+                "wrap": "pretty",
+                "padding-block-start": 4
+              },
+              "blocks": {}
+            },
+            "price_EzJzMm": {
+              "type": "price",
+              "settings": {
+                "type_preset": "paragraph"
+              },
+              "blocks": {}
+            },
+            "swatches": {
+              "type": "swatches",
+              "name": "t:names.swatches",
+              "settings": {}
+            },
+            "card_vendor": {
+              "type": "text",
+              "settings": {
+                "text": "<p>{{ closest.product.vendor }}</p>",
+                "width": "100%",
+                "type_preset": "h6",
+                "wrap": "pretty",
+                "text_color": "#5F7D6D"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "card-gallery",
+            "card_vendor",
+            "product_title_4nY4eT",
+            "price_EzJzMm",
+            "swatches"
+          ]
+        },
+        "fpg-promo-tile-1": {
+          "type": "fpg-promo-tile",
+          "static": true,
+          "settings": {
+            "enabled": true,
+            "position": 6,
+            "eyebrow": "Need a hand?",
+            "heading": "Talk to our team",
+            "text": "Not sure which model or part you need? Call 01443 230000 or visit us at Coed Court, Treforest.",
+            "button_label": "Contact us",
+            "link": "shopify://pages/contact"
+          },
+          "blocks": {}
+        },
+        "fpg-promo-tile-2": {
+          "type": "fpg-promo-tile",
+          "static": true,
+          "settings": {
+            "enabled": true,
+            "position": 15,
+            "image": "shopify://shop_images/img_065124c2-16c4-4599-9cd7-98f3c2b57e5c.jpg",
+            "eyebrow": "Workshop",
+            "heading": "Servicing and repairs",
+            "text": "Keep your kit running with a service in our Treforest workshop.",
+            "button_label": "Book a service",
+            "link": "shopify://collections/servicing-repair"
+          },
+          "blocks": {}
+        }
+      },
+      "settings": {
+        "columns_gap_vertical": 24,
+        "padding-block-start": 24,
+        "padding-block-end": 56
+      }
+    }
+  },
+  "order": [
+    "section",
+    "main"
+  ]
+}

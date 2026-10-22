@@ -1,0 +1,277 @@
+{%- doc -%}
+  FP&G store information for the footer: phone, email, address, a Google map
+  and opening hours with today's row highlighted (worked out in the shopper's
+  browser in UK time, so page caching can't show the wrong day).
+  Add it inside a Group block in the footer.
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign phone_link = block_settings.phone_link | default: block_settings.phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-'
+  assign days = 'mon,tue,wed,thu,fri,sat,sun' | split: ','
+-%}
+
+<div
+  class="fpg-store-info spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  {{ block.shopify_attributes }}
+>
+  <div class="fpg-store-info__contact">
+    {%- if block_settings.phone != blank -%}
+      <div class="fpg-store-info__item">
+        <p class="fpg-store-info__label">{{ block_settings.phone_heading | escape }}</p>
+        <p><a href="tel:{{ phone_link }}">{{ block_settings.phone | escape }}</a></p>
+      </div>
+    {%- endif -%}
+    {%- if block_settings.email != blank -%}
+      <div class="fpg-store-info__item">
+        <p class="fpg-store-info__label">{{ block_settings.email_heading | escape }}</p>
+        <p><a href="mailto:{{ block_settings.email | escape }}">{{ block_settings.email | escape }}</a></p>
+      </div>
+    {%- endif -%}
+    {%- if block_settings.address != blank -%}
+      <div class="fpg-store-info__item">
+        <p class="fpg-store-info__label">{{ block_settings.address_heading | escape }}</p>
+        <address class="fpg-store-info__address">{{ block_settings.address | escape | newline_to_br }}</address>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if block_settings.map_embed_url != blank -%}
+    <div class="fpg-store-info__map">
+      <iframe
+        src="{{ block_settings.map_embed_url | escape }}"
+        title="{{ block_settings.map_title | escape }}"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+    </div>
+  {%- endif -%}
+
+  {%- if block_settings.show_hours -%}
+    <div class="fpg-store-info__hours">
+      <p class="fpg-store-info__label">{{ block_settings.hours_heading | escape }}</p>
+      <dl class="fpg-store-info__hours-list" data-fpg-hours>
+        {%- for day in days -%}
+          {%- assign name_key = 'name_' | append: day -%}
+          {%- assign hours_key = 'hours_' | append: day -%}
+          <div class="fpg-store-info__day" data-day="{{ forloop.index }}">
+            <dt>{{ block_settings[name_key] | escape }}</dt>
+            <dd>{{ block_settings[hours_key] | escape }}</dd>
+          </div>
+        {%- endfor -%}
+      </dl>
+    </div>
+    <script type="module">
+      const lists = document.querySelectorAll('[data-fpg-hours]');
+      const weekday = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'short' }).format(new Date());
+      const index = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(weekday) + 1;
+      for (const list of lists) {
+        list.querySelector(`[data-day="${index}"]`)?.classList.add('fpg-store-info__day--today');
+      }
+    </script>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .fpg-store-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: var(--gap-xl);
+    width: 100%;
+    min-width: 0;
+  }
+
+  .fpg-store-info p {
+    margin: 0;
+  }
+
+  .fpg-store-info a {
+    color: inherit;
+  }
+
+  .fpg-store-info__contact {
+    display: grid;
+    gap: var(--gap-md);
+    align-content: start;
+  }
+
+  .fpg-store-info__label {
+    font-weight: 700;
+    margin-block-end: var(--padding-2xs);
+  }
+
+  .fpg-store-info__address {
+    font-style: normal;
+  }
+
+  .fpg-store-info__map {
+    min-height: 220px;
+  }
+
+  .fpg-store-info__map iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 220px;
+    border: 0;
+    border-radius: var(--style-border-radius-sm);
+  }
+
+  .fpg-store-info__hours-list {
+    display: grid;
+    gap: var(--gap-3xs);
+    margin: 0;
+  }
+
+  .fpg-store-info__day {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--gap-md);
+    padding: var(--padding-2xs) var(--padding-xs);
+    border-radius: var(--style-border-radius-xs);
+  }
+
+  .fpg-store-info__day dd {
+    margin: 0;
+  }
+
+  .fpg-store-info__day--today {
+    font-weight: 700;
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-10));
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FP&G store info",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+    {
+      "type": "text",
+      "id": "phone_heading",
+      "label": "Phone heading",
+      "default": "Phone"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone",
+      "default": "(+44) 01443 230000"
+    },
+    {
+      "type": "text",
+      "id": "phone_link",
+      "label": "Number to dial",
+      "info": "International format without the leading 0, used for tap-to-call",
+      "default": "+441443230000"
+    },
+    {
+      "type": "text",
+      "id": "email_heading",
+      "label": "Email heading",
+      "default": "Email"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email",
+      "default": "sales@fpandg.com"
+    },
+    {
+      "type": "text",
+      "id": "address_heading",
+      "label": "Address heading",
+      "default": "Address"
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "Address",
+      "default": "Coed Court\nTreforest Ind. Est.\nPontypridd\nSouth Wales\nCF37 5SW"
+    },
+    {
+      "type": "header",
+      "content": "Map"
+    },
+    {
+      "type": "text",
+      "id": "map_embed_url",
+      "label": "Google Maps embed link",
+      "info": "In Google Maps: Share > Embed a map, then copy only the src address",
+      "default": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d94400.05118065252!2d-3.4155275338305655!3d51.556394176134454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x486e16c7e7873d49%3A0x29cefd45e97587c1!2sForest%20Park%20%26%20Garden!5e0!3m2!1sen!2suk!4v1647867930892!5m2!1sen!2suk"
+    },
+    {
+      "type": "text",
+      "id": "map_title",
+      "label": "Map description for screen readers",
+      "default": "Map showing Forest Park & Garden, Coed Court, Treforest"
+    },
+    {
+      "type": "header",
+      "content": "Opening hours"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hours",
+      "label": "Show opening hours",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "hours_heading",
+      "label": "Heading",
+      "default": "Opening Hours"
+    },
+    { "type": "text", "id": "name_mon", "label": "Monday label", "default": "Mon" },
+    { "type": "text", "id": "hours_mon", "label": "Monday hours", "default": "8:00AM - 5:00PM" },
+    { "type": "text", "id": "name_tue", "label": "Tuesday label", "default": "Tue" },
+    { "type": "text", "id": "hours_tue", "label": "Tuesday hours", "default": "8:00AM - 5:00PM" },
+    { "type": "text", "id": "name_wed", "label": "Wednesday label", "default": "Wed" },
+    { "type": "text", "id": "hours_wed", "label": "Wednesday hours", "default": "8:00AM - 5:00PM" },
+    { "type": "text", "id": "name_thu", "label": "Thursday label", "default": "Thu" },
+    { "type": "text", "id": "hours_thu", "label": "Thursday hours", "default": "8:00AM - 5:00PM" },
+    { "type": "text", "id": "name_fri", "label": "Friday label", "default": "Fri" },
+    { "type": "text", "id": "hours_fri", "label": "Friday hours", "default": "8:00AM - 5:00PM" },
+    { "type": "text", "id": "name_sat", "label": "Saturday label", "default": "Sat" },
+    { "type": "text", "id": "hours_sat", "label": "Saturday hours", "default": "Closed" },
+    { "type": "text", "id": "name_sun", "label": "Sunday label", "default": "Sun" },
+    { "type": "text", "id": "hours_sun", "label": "Sunday hours", "default": "Closed" },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G store info",
+      "category": "FP&G"
+    }
+  ]
+}
+{% endschema %}

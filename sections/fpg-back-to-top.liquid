@@ -1,0 +1,63 @@
+{%- comment -%}
+  FP&G back-to-top button. A round button fixed to the corner of the screen
+  that appears once the shopper has scrolled down, and smoothly returns them
+  to the top. Sits in the footer group so it is on every page.
+  Behaviour lives in assets/fpg-design.js (<fpg-back-to-top>).
+{%- endcomment -%}
+
+<fpg-back-to-top
+  class="fpg-back-to-top fpg-back-to-top--{{ section.settings.position }}"
+  data-threshold="{{ section.settings.threshold }}"
+  style="--fpg-btt-offset: {{ section.settings.bottom_offset }}px;"
+>
+  <button type="button" class="fpg-back-to-top__button" aria-label="Back to top">
+    <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M10 15.5V4.5M10 4.5L5 9.5M10 4.5L15 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</fpg-back-to-top>
+
+{% schema %}
+{
+  "name": "FP&G back to top",
+  "class": "fpg-back-to-top-section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "position",
+      "label": "Position",
+      "options": [
+        { "value": "right", "label": "Bottom right" },
+        { "value": "left", "label": "Bottom left" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "range",
+      "id": "bottom_offset",
+      "label": "Distance from the bottom",
+      "info": "Leaves room for the live chat button.",
+      "min": 16,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "threshold",
+      "label": "Show after scrolling",
+      "min": 200,
+      "max": 2000,
+      "step": 100,
+      "unit": "px",
+      "default": 700
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G back to top"
+    }
+  ]
+}
+{% endschema %}

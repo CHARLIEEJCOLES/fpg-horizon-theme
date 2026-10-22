@@ -1,0 +1,239 @@
+{%- doc -%}
+  FP&G Cormorant integration for the product page:
+  - "Check manufacturer availability" button for vendors listed in the FP&G
+    theme settings (STIHL, Husqvarna). It asks the Cormorant server for the
+    supplier's live availability of the selected SKU. Nothing is added to any cart.
+  - Manufacturer delay notices that staff set in Cormorant. They come from the
+    shop metafield cormorant.delay_notices and show when the vendor matches,
+    the selected variant has 0 or less in stock, and today (UK) is on or before
+    the notice's end date.
+  Renders nothing for other vendors. Updates when the shopper changes variant
+  (assets/fpg-variant-block.js).
+{%- enddoc -%}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+  assign variant = product.selected_or_first_available_variant
+  assign vendor = product.vendor | downcase | strip
+
+  assign supplier = ''
+  assign supplier_list = settings.fpg_cormorant_vendors | default: 'STIHL, Husqvarna' | downcase | split: ','
+  for name in supplier_list
+    assign clean_name = name | strip
+    if clean_name != blank and vendor contains clean_name
+      assign supplier = clean_name | replace: ' ', '-'
+      break
+    endif
+  endfor
+
+  assign notices = shop.metafields.cormorant.delay_notices.value
+  assign variant_out_of_stock = false
+  if variant.inventory_management == 'shopify' and variant.inventory_quantity <= 0
+    assign variant_out_of_stock = true
+  endif
+
+  assign matching_notices = 0
+  if block_settings.show_delay_notices and variant_out_of_stock and notices != blank
+    for notice in notices
+      if notice.vendor == vendor and notice.message != blank and notice.until != blank
+        assign matching_notices = matching_notices | plus: 1
+      endif
+    endfor
+  endif
+-%}
+
+<fpg-variant-block
+  class="fpg-cormorant spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  data-block-id="{{ block.id }}"
+  data-product-id="{{ product.id }}"
+  {{ block.shopify_attributes }}
+>
+  {%- if matching_notices > 0 -%}
+    <div class="fpg-delay-notice" data-fpg-dated-group hidden>
+      {%- for notice in notices -%}
+        {%- if notice.vendor == vendor and notice.message != blank and notice.until != blank -%}
+          <p class="fpg-delay-notice__text" data-fpg-until="{{ notice.until | escape }}" hidden>
+            {{- notice.message | escape | newline_to_br -}}
+          </p>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- if block_settings.show_availability_button and supplier != blank -%}
+    <div
+      class="fpg-availability"
+      data-fpg-availability
+      data-supplier="{{ supplier | escape }}"
+      data-sku="{{ variant.sku | escape }}"
+      data-endpoint="{{ settings.fpg_cormorant_url | escape }}"
+      data-text-checking="Checking…"
+      data-text-in-stock="{{ block_settings.in_stock_text | escape }}"
+      data-text-to-order="{{ block_settings.to_order_text | escape }}"
+      data-text-expected="expected"
+      data-text-unavailable="{{ block_settings.unavailable_text | escape }}"
+      data-text-error="Couldn't check availability right now"
+      data-text-not-configured="Availability check not configured."
+    >
+      <button type="button" class="button button-secondary fpg-availability__button" data-fpg-availability-button>
+        {{- block_settings.button_label | escape -}}
+      </button>
+      <p class="fpg-availability__result" data-fpg-availability-result role="status" aria-live="polite"></p>
+    </div>
+  {%- endif -%}
+</fpg-variant-block>
+
+<script
+  src="{{ 'fpg-variant-block.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% stylesheet %}
+  .fpg-cormorant {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-sm);
+  }
+
+  .fpg-delay-notice {
+    padding: var(--padding-sm) var(--padding-md);
+    border: 1px solid #e0a83c;
+    border-inline-start-width: 4px;
+    border-radius: var(--style-border-radius-sm);
+    background: #fff8e8;
+    color: #6b4a00;
+    font-size: var(--font-size--sm);
+    line-height: 1.45;
+  }
+
+  .fpg-delay-notice[hidden],
+  .fpg-delay-notice__text[hidden],
+  .fpg-availability__result:empty {
+    display: none;
+  }
+
+  .fpg-delay-notice__text {
+    margin: 0;
+  }
+
+  .fpg-delay-notice__text + .fpg-delay-notice__text {
+    margin-block-start: var(--padding-xs);
+  }
+
+  .fpg-availability {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--gap-sm);
+  }
+
+  .fpg-availability__button {
+    width: fit-content;
+  }
+
+  .fpg-availability__result {
+    margin: 0;
+    padding: var(--padding-xs) var(--padding-sm);
+    border-radius: var(--style-border-radius-sm);
+    font-weight: 600;
+    background: #f1f1f1;
+    color: #666;
+  }
+
+  .fpg-availability__result[data-state='loading'] {
+    background: #f2f2ef;
+    color: #555;
+  }
+
+  .fpg-availability__result[data-state='in'] {
+    background: #e6f4ea;
+    color: #1c6b34;
+  }
+
+  .fpg-availability__result[data-state='order'] {
+    background: #fbf1de;
+    color: #8a5a00;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FP&G Cormorant",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Manufacturer availability check and delay notices. Server address and vendors are in Theme settings > FP&G."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_availability_button",
+      "label": "Show availability button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Check manufacturer availability"
+    },
+    {
+      "type": "text",
+      "id": "in_stock_text",
+      "label": "In stock result",
+      "default": "In stock"
+    },
+    {
+      "type": "text",
+      "id": "to_order_text",
+      "label": "Available to order result",
+      "default": "Available to order"
+    },
+    {
+      "type": "text",
+      "id": "unavailable_text",
+      "label": "Unavailable result",
+      "default": "Currently unavailable"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_delay_notices",
+      "label": "Show delay notices",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G Cormorant",
+      "category": "FP&G"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,234 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "t:names.footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "group_wErUQf": {
+          "type": "group",
+          "settings": {
+            "toggle_overlay": false,
+            "link": "",
+            "placeholder": ""
+          },
+          "blocks": {
+            "text_pF6rVi": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<h2>Join our email list</h2>",
+                "width": "100%",
+                "type_preset": "h3",
+                "font_size": "",
+                "wrap": "pretty"
+              },
+              "blocks": {}
+            },
+            "text_HafH7P": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p>Get exclusive deals and early access to new products.</p>",
+                "width": "100%",
+                "font_size": "",
+                "wrap": "pretty"
+              },
+              "blocks": {}
+            },
+            "email-signup_HafH7P": {
+              "type": "email-signup",
+              "name": "t:names.email_signup",
+              "settings": {
+                "heading": "",
+                "input_style": "custom",
+                "input_background_color": "{{ settings.color_palette.color1 }}",
+                "input_border_color": "",
+                "style_class": "button-secondary",
+                "label": "Sign up"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_pF6rVi",
+            "text_HafH7P",
+            "email-signup_HafH7P"
+          ]
+        },
+        "menu_footer": {
+          "type": "menu",
+          "settings": {
+            "menu": "footer",
+            "heading": "",
+            "accordion_icon": "plus",
+            "heading_preset": "paragraph"
+          }
+        },
+        "menu_main": {
+          "type": "menu",
+          "settings": {
+            "menu": "footer-2",
+            "heading": "",
+            "accordion_icon": "plus",
+            "heading_preset": "paragraph"
+          }
+        },
+        "menu_footer_3": {
+          "type": "menu",
+          "settings": {
+            "menu": "footer-3",
+            "heading": "",
+            "accordion_icon": "plus",
+            "heading_preset": "paragraph"
+          }
+        }
+      },
+      "block_order": [
+        "group_wErUQf",
+        "menu_footer",
+        "menu_main",
+        "menu_footer_3"
+      ],
+      "name": "t:names.footer",
+      "settings": {
+        "gap": 40,
+        "background_color": "{{ settings.color_palette.color1 }}",
+        "padding-block-start": 36,
+        "padding-block-end": 36
+      }
+    },
+    "utilities": {
+      "type": "footer-utilities",
+      "blocks": {
+        "copyright": {
+          "type": "footer-copyright",
+          "settings": {}
+        },
+        "policy_list": {
+          "type": "footer-policy-list",
+          "settings": {}
+        },
+        "social_icons": {
+          "type": "social-links",
+          "settings": {
+            "facebook_url": "https://www.facebook.com/forestparkandgarden",
+            "instagram_url": "https://www.instagram.com/forestparkgarden",
+            "youtube_url": "https://www.youtube.com/channel/UCr5dTuiDN2TnXuPl0UGb2iA",
+            "twitter_url": "https://twitter.com/forestparkgarde"
+          }
+        }
+      },
+      "block_order": [
+        "copyright",
+        "policy_list",
+        "social_icons"
+      ],
+      "settings": {
+        "background_color": "{{ settings.color_palette.color1 }}",
+        "padding-block-start": 12,
+        "padding-block-end": 16
+      }
+    },
+    "fpg_store": {
+      "type": "footer",
+      "blocks": {
+        "fpg_store_group": {
+          "type": "group",
+          "settings": {
+            "toggle_overlay": false,
+            "link": "",
+            "placeholder": ""
+          },
+          "blocks": {
+            "fpg_store_info": {
+              "type": "fpg-store-info",
+              "settings": {},
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "fpg_store_info"
+          ]
+        }
+      },
+      "block_order": [
+        "fpg_store_group"
+      ],
+      "name": "t:names.footer",
+      "settings": {
+        "gap": 40,
+        "background_color": "{{ settings.color_palette.color1 }}",
+        "padding-block-start": 36,
+        "padding-block-end": 0
+      }
+    },
+    "fpg_back_to_top": {
+      "type": "fpg-back-to-top",
+      "settings": {}
+    },
+    "fpg_menu_promos": {
+      "type": "fpg-menu-promos",
+      "blocks": {
+        "promo_1": {
+          "type": "promo",
+          "settings": {
+            "menu_title": "Parts & Servicing",
+            "image": "shopify://shop_images/img_065124c2-16c4-4599-9cd7-98f3c2b57e5c.jpg",
+            "eyebrow": "Workshop",
+            "heading": "Book a service",
+            "text": "Servicing and repairs in our Treforest workshop, using genuine parts.",
+            "label": "Book now",
+            "link": "shopify://collections/servicing-repair"
+          }
+        },
+        "promo_2": {
+          "type": "promo",
+          "settings": {
+            "menu_title": "Garden & Tree Machinery",
+            "image": "shopify://shop_images/img_f544e3ea-5ad0-4650-b4a8-1b68c6f1fe14.jpg",
+            "eyebrow": "Machine hire",
+            "heading": "Hire professional machinery",
+            "text": "Chippers, stump grinders, tracked carriers and more, by the day or week.",
+            "label": "View hire range",
+            "link": "shopify://collections/for-hire"
+          }
+        },
+        "promo_3": {
+          "type": "promo",
+          "settings": {
+            "menu_title": "Clothing & PPE",
+            "image": "shopify://shop_images/img_3ecf4803-96fe-4485-965a-74b9142bc686.jpg",
+            "eyebrow": "Stay safe",
+            "heading": "Chainsaw PPE and workwear",
+            "text": "Helmets, gloves, chainsaw trousers and boots for every job.",
+            "label": "Shop PPE",
+            "link": "shopify://collections/all-clothing-and-ppe"
+          }
+        }
+      },
+      "block_order": [
+        "promo_1",
+        "promo_2",
+        "promo_3"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "fpg_store",
+    "footer",
+    "utilities",
+    "fpg_back_to_top",
+    "fpg_menu_promos"
+  ]
+}
