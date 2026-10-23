@@ -15,9 +15,12 @@ import { StandardEvents, ProductSelectEvent } from '@shopify/events';
  * It also owns two behaviours inside FP&G blocks:
  * - Delay notices: elements with [data-fpg-until="YYYY-MM-DD"] are shown only
  *   while today's UK date is on or before that date.
- * - Cormorant availability check: a click on [data-fpg-availability-button]
- *   asks the Cormorant server for the supplier's live availability for the SKU
- *   held on the surrounding [data-fpg-availability] element.
+ * - Cormorant availability check: asks the Cormorant server for the supplier's
+ *   live availability for the SKU held on [data-fpg-availability]. With
+ *   [data-auto] it asks as soon as the block appears and again after each
+ *   variant change (answers are kept for 5 minutes per SKU, and errors stay
+ *   quiet); otherwise it asks when [data-fpg-availability-button] is pressed.
+ *   The button always asks the server afresh.
  *
  * Markup contract:
  *   <fpg-variant-block data-block-id="{{ block.id }}" data-product-id="{{ product.id }}">…</fpg-variant-block>
@@ -39,6 +42,7 @@ class FpgVariantBlock extends Component {
     this.addEventListener('click', this.#handleClick, { signal });
 
     this.#applyDateRules();
+    this.#autoCheck();
   }
 
   disconnectedCallback() {
@@ -78,6 +82,7 @@ class FpgVariantBlock extends Component {
         this.#request?.abort();
         morph(this, fresh, { childrenOnly: true });
         this.#applyDateRules();
+        this.#autoCheck();
       })
       .catch((error) => {
         if (error?.name !== 'AbortError') console.warn('[fpg-variant-block] Event promise rejected:', error);
@@ -115,15 +120,28 @@ class FpgVariantBlock extends Component {
     const root = button.closest('[data-fpg-availability]');
     if (!(root instanceof HTMLElement)) return;
 
-    this.#checkAvailability(root, button);
+    this.#checkAvailability(root, button, { fresh: true });
   };
+
+  /**
+   * Runs the availability check straight away when the block asks for live mode.
+   */
+  #autoCheck() {
+    const root = this.querySelector('[data-fpg-availability][data-auto]');
+    if (!(root instanceof HTMLElement)) return;
+    const button = root.querySelector('[data-fpg-availability-button]');
+    if (!(button instanceof HTMLButtonElement)) return;
+    this.#checkAvailability(root, button, { quiet: true });
+  }
 
   /**
    * Asks the Cormorant server for live manufacturer availability.
    * @param {HTMLElement} root - The availability wrapper holding the data attributes.
    * @param {HTMLButtonElement} button - The button that was pressed.
+   * @param {{ fresh?: boolean, quiet?: boolean }} [options] - fresh skips the 5 minute memory;
+   *   quiet shows nothing when the check can't be made (used for the automatic check).
    */
-  async #checkAvailability(root, button) {
+  async #checkAvailability(root, button, { fresh = false, quiet = false } = {}) {
     const output = root.querySelector('[data-fpg-availability-result]');
     if (!(output instanceof HTMLElement)) return;
 
@@ -133,11 +151,18 @@ class FpgVariantBlock extends Component {
     if (base && !/^https?:\/\//i.test(base)) base = `https://${base}`;
 
     if (!base) {
-      showResult(output, 'no', root.dataset.textNotConfigured || 'Availability check not configured.');
+      if (!quiet) showResult(output, 'no', root.dataset.textNotConfigured || 'Availability check not configured.');
       return;
     }
     if (!sku) {
-      showResult(output, 'no', root.dataset.textUnavailable || 'Currently unavailable');
+      if (!quiet) showResult(output, 'no', root.dataset.textUnavailable || 'Currently unavailable');
+      return;
+    }
+
+    const key = `${supplier}|${sku}`;
+    const remembered = answers.get(key);
+    if (!fresh && remembered && Date.now() - remembered.at < ANSWER_LIFETIME) {
+      renderStatus(output, root, remembered.status, remembered.etaDate);
       return;
     }
 
@@ -154,15 +179,27 @@ class FpgVariantBlock extends Component {
 
       const response = await fetch(url, { mode: 'cors', signal: this.#request.signal });
       const data = await response.json();
+      if (KNOWN_STATUSES.includes(data?.status)) {
+        answers.set(key, { status: data.status, etaDate: data.etaDate, at: Date.now() });
+      } else if (quiet) {
+        showResult(output, 'none', '');
+        return;
+      }
       renderStatus(output, root, data?.status, data?.etaDate);
     } catch (error) {
       if (error?.name === 'AbortError') return;
-      showResult(output, 'no', root.dataset.textError || "Couldn't check availability right now");
+      if (quiet) showResult(output, 'none', '');
+      else showResult(output, 'no', root.dataset.textError || "Couldn't check availability right now");
     } finally {
       button.disabled = false;
     }
   }
 }
+
+/** Answers from the Cormorant server this page has already had, by "supplier|sku". */
+const answers = new Map();
+const ANSWER_LIFETIME = 5 * 60 * 1000;
+const KNOWN_STATUSES = ['in-stock', 'available-to-order', 'unavailable'];
 
 /**
  * Today's date in Britain as YYYY-MM-DD, wherever the shopper is.
@@ -204,8 +241,9 @@ function showResult(output, state, text) {
  * @param {string | undefined} etaDate - Expected date, when the item is available to order.
  */
 function renderStatus(output, root, status, etaDate) {
+  const prefix = root.dataset.textPrefix ? `${root.dataset.textPrefix} ` : '';
   if (status === 'in-stock') {
-    showResult(output, 'in', root.dataset.textInStock || 'In stock');
+    showResult(output, 'in', prefix + (root.dataset.textInStock || 'In stock'));
     return;
   }
 
@@ -218,12 +256,12 @@ function renderStatus(output, root, status, etaDate) {
         text += ` — ${root.dataset.textExpected || 'expected'} ${expected}`;
       }
     }
-    showResult(output, 'order', text);
+    showResult(output, 'order', prefix + text);
     return;
   }
 
   if (status === 'unavailable') {
-    showResult(output, 'no', root.dataset.textUnavailable || 'Currently unavailable');
+    showResult(output, 'no', prefix + (root.dataset.textUnavailable || 'Currently unavailable'));
     return;
   }
 

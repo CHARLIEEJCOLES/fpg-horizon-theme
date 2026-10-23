@@ -97,3 +97,9 @@ The pictures on the kit creator, servicing, hire and home pages were made for FP
 - Run Theme Check with `shopify theme check`. The only expected errors are missing app blocks.
 - Preview a branch by connecting it as its own theme in Shopify (Online Store › Themes › Add theme › Connect from GitHub).
 - `fpg-tools/` holds the scripts that generated the original templates. Shopify ignores that folder. **Don't re-run them over this repository**, because they rebuild the templates from scratch and would wipe changes made in the theme editor. They're kept for reference.
+
+### Live manufacturer stock (23 Oct 2026)
+- The Cormorant availability check now runs by itself as the product page opens and again when the shopper picks another option. It shows "Manufacturer stock: In stock / Available to order — expected <date> / Currently unavailable", with a small "Check again" link. Errors stay quiet.
+- Each answer is kept for 5 minutes per SKU on the page. "Check again" always asks the server afresh.
+- Moved to sit under the stock status, above Add to cart.
+- Block settings: "Check live as the page opens" (on; switch off to get the old button back), "Words before the result", "Check again link".

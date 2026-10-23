@@ -69,6 +69,8 @@
       data-supplier="{{ supplier | escape }}"
       data-sku="{{ variant.sku | escape }}"
       data-endpoint="{{ settings.fpg_cormorant_url | escape }}"
+      {% if block_settings.check_on_load %}data-auto{% endif %}
+      data-text-prefix="{{ block_settings.result_prefix | escape }}"
       data-text-checking="Checking…"
       data-text-in-stock="{{ block_settings.in_stock_text | escape }}"
       data-text-to-order="{{ block_settings.to_order_text | escape }}"
@@ -77,10 +79,17 @@
       data-text-error="Couldn't check availability right now"
       data-text-not-configured="Availability check not configured."
     >
-      <button type="button" class="button button-secondary fpg-availability__button" data-fpg-availability-button>
-        {{- block_settings.button_label | escape -}}
-      </button>
-      <p class="fpg-availability__result" data-fpg-availability-result role="status" aria-live="polite"></p>
+      {%- if block_settings.check_on_load -%}
+        <p class="fpg-availability__result" data-fpg-availability-result role="status" aria-live="polite"></p>
+        <button type="button" class="fpg-availability__again" data-fpg-availability-button>
+          {{- block_settings.again_label | escape -}}
+        </button>
+      {%- else -%}
+        <button type="button" class="button button-secondary fpg-availability__button" data-fpg-availability-button>
+          {{- block_settings.button_label | escape -}}
+        </button>
+        <p class="fpg-availability__result" data-fpg-availability-result role="status" aria-live="polite"></p>
+      {%- endif -%}
     </div>
   {%- endif -%}
 </fpg-variant-block>
@@ -134,6 +143,28 @@
     width: fit-content;
   }
 
+  .fpg-availability__again {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: var(--font-size--sm);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+    opacity: 0.8;
+  }
+
+  .fpg-availability__again:hover {
+    opacity: 1;
+  }
+
+  .fpg-availability__again:disabled,
+  .fpg-availability__result:empty + .fpg-availability__again {
+    display: none;
+  }
+
   .fpg-availability__result {
     margin: 0;
     padding: var(--padding-xs) var(--padding-sm);
@@ -175,9 +206,29 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "check_on_load",
+      "label": "Check live as the page opens",
+      "info": "Asks the Cormorant server as soon as the page loads and again when the shopper picks another option. Off = shopper presses a button.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "result_prefix",
+      "label": "Words before the result",
+      "info": "e.g. \"Manufacturer stock:\" so it isn't confused with our own stock. Leave blank for none.",
+      "default": "Manufacturer stock:"
+    },
+    {
+      "type": "text",
+      "id": "again_label",
+      "label": "Check again link (live mode)",
+      "default": "Check again"
+    },
+    {
       "type": "text",
       "id": "button_label",
-      "label": "Button label",
+      "label": "Button label (button mode)",
       "default": "Check manufacturer availability"
     },
     {
