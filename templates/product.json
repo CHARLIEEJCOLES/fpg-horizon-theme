@@ -348,10 +348,20 @@
               "type": "fpg-back-in-stock",
               "settings": {},
               "blocks": {}
+            },
+            "fpg_hire_calc": {
+              "type": "fpg-hire-calculator",
+              "settings": {
+                "heading": "Plan your hire",
+                "replace_buy_buttons": true,
+                "show_request": true
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "group_icgrde",
+            "fpg_hire_calc",
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "fpg_notices",

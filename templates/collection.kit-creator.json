@@ -64,7 +64,8 @@
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/123456789.png",
-            "border_radius": 12
+            "border_radius": 12,
+            "image_ratio": "landscape"
           },
           "blocks": {}
         }
@@ -228,147 +229,174 @@
         "padding-block-end": 32
       }
     },
-    "fpg_04": {
-      "type": "product-list",
+    "fpg_kit": {
+      "type": "fpg-kit-builder",
       "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
+        "step_1": {
+          "type": "step",
           "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_04_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_04_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Harnesses</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_04_head_title"
-              ]
-            },
-            "fpg_04_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_04_head_left",
-            "fpg_04_head_link"
-          ]
+            "title": "Harness",
+            "help": "A sit harness or saddle that fits you.",
+            "collection": "climbing-harnesess",
+            "min_kit_1": 1,
+            "min_kit_2": 1
+          }
         },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
+        "step_2": {
+          "type": "step",
           "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
+            "title": "Climbing rope",
+            "help": "One long enough to reach the ground, plus a second that can be shorter.",
+            "collection": "rope",
+            "min_kit_1": 2,
+            "min_kit_2": 2
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "Lanyard",
+            "help": "Steel core or soft, up to 5 m.",
+            "collection": "steel-core-lanyards",
+            "min_kit_1": 1,
+            "min_kit_2": 1,
+            "collection_2": "soft-lanyards"
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "title": "Friction devices",
+            "help": "Any mix of mechanical devices and friction cord.",
+            "collection": "mechanical-devices",
+            "min_kit_1": 3,
+            "min_kit_2": 4,
+            "collection_2": "hitch-cord"
+          }
+        },
+        "step_5": {
+          "type": "step",
+          "settings": {
+            "title": "Karabiners",
+            "help": "Triple-locking. Three to six for a climbing kit.",
+            "collection": "karabiners",
+            "min_kit_1": 3,
+            "min_kit_2": 6
+          }
+        },
+        "step_6": {
+          "type": "step",
+          "settings": {
+            "title": "Throwline",
+            "help": "A throwline weight. A bag and line are optional.",
+            "collection": "throwline-bags-cubes",
+            "min_kit_1": 1,
+            "min_kit_2": 1
+          }
+        },
+        "step_7": {
+          "type": "step",
+          "settings": {
+            "title": "Rescue connector",
+            "help": "A bridge-to-bridge connector: prusik loop or webbing sling.",
+            "collection": "rescue-accessories",
+            "min_kit_1": 0,
+            "min_kit_2": 1,
+            "collection_2": "accessories-for-lanyards-1"
+          }
+        },
+        "step_8": {
+          "type": "step",
+          "settings": {
+            "title": "Climbing spikes",
+            "help": "A set of climbing irons or spikes.",
+            "collection": "spikes",
+            "min_kit_1": 0,
+            "min_kit_2": 1
+          }
+        },
+        "step_9": {
+          "type": "step",
+          "settings": {
+            "title": "Helmet",
+            "help": "Not part of the minimum list, but strongly recommended.",
+            "collection": "helmets",
+            "min_kit_1": 0,
+            "min_kit_2": 0
+          }
+        },
+        "step_10": {
+          "type": "step",
+          "settings": {
+            "title": "Pulleys and cambium savers",
+            "help": "Optional extras for rigging and protecting the tree.",
+            "collection": "pulleys-1",
+            "min_kit_1": 0,
+            "min_kit_2": 0,
+            "collection_2": "cambium-savers"
+          }
+        },
+        "step_11": {
+          "type": "step",
+          "settings": {
+            "title": "Storage and tool strops",
+            "help": "Bags to carry it all and strops for your saw.",
+            "collection": "climbing-bags-storage",
+            "min_kit_1": 0,
+            "min_kit_2": 0,
+            "collection_2": "tool-strops-lanyards"
+          }
         }
       },
-      "name": "Products: Harnesses",
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4",
+        "step_5",
+        "step_6",
+        "step_7",
+        "step_8",
+        "step_9",
+        "step_10",
+        "step_11"
+      ],
       "settings": {
-        "collection": "climbing-harnesess",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "eyebrow": "Kit creator",
+        "heading": "Build your climbing kit",
+        "intro": "<p>Work through each step, pick the kit you want and add it to your list. The checklist shows what the minimum kit still needs, and you can add everything to your basket in one go.</p>",
+        "kit_1_name": "Climbing kit",
+        "kit_2_name": "Climbing and rescue kit",
+        "products_per_step": 24,
+        "padding-block-start": 32,
+        "padding-block-end": 48
       }
     },
-    "fpg_05": {
-      "type": "product-list",
+    "fpg_ranges": {
+      "type": "collection-list",
       "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
+        "cat_head": {
+          "type": "group",
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
             "horizontal_alignment": "space-between",
             "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
             "gap": 16
           },
           "blocks": {
-            "fpg_05_head_left": {
+            "cat_head_left": {
               "type": "group",
               "settings": {
-                "vertical_alignment": "flex-start",
                 "vertical_alignment_flex_direction_column": "flex-start",
                 "gap": 4,
                 "width": "fit-content"
               },
               "blocks": {
-                "fpg_05_head_title": {
+                "cat_head_title": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>Rope</h2>",
+                    "text": "<h2>Browse every range</h2>",
                     "width": "100%",
                     "type_preset": "h3",
                     "wrap": "pretty"
@@ -377,1466 +405,86 @@
                 }
               },
               "block_order": [
-                "fpg_05_head_title"
+                "cat_head_title"
               ]
-            },
-            "fpg_05_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
             }
           },
           "block_order": [
-            "fpg_05_head_left",
-            "fpg_05_head_link"
+            "cat_head_left"
           ]
         },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
+        "static-collection-card": {
+          "type": "_collection-card",
           "static": true,
           "settings": {
-            "product_card_gap": 8
+            "placement": "below_image",
+            "vertical_alignment": "flex-start",
+            "collection_card_gap": 12,
+            "border_radius": 12
           },
           "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
+            "collection-card-image": {
+              "type": "_collection-card-image",
+              "static": true,
               "settings": {
                 "image_ratio": "square",
-                "border_radius": 8
+                "border_radius": 12
               },
               "blocks": {}
             },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
+            "collection-title": {
+              "type": "collection-title",
               "settings": {
                 "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
+                "type_preset": "h4"
               },
               "blocks": {}
             }
           },
           "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
+            "collection-title"
           ]
         }
       },
-      "name": "Products: Rope",
+      "block_order": [
+        "cat_head"
+      ],
       "settings": {
-        "collection": "rope",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
+        "collection_list": [
+          "climbing-harnesess",
+          "rope",
+          "karabiners",
+          "tool-clips-snap-links",
+          "steel-core-lanyards",
+          "soft-lanyards",
+          "accessories-for-lanyards-1",
+          "tool-strops-lanyards",
+          "spikes",
+          "hitch-cord",
+          "pulleys-1",
+          "climbing-bags-storage",
+          "cambium-savers",
+          "throwline-bags-cubes"
+        ],
         "columns_gap": 16,
         "rows_gap": 24,
-        "icons_shape": "circle",
+        "max_collections": 14,
         "gap": 24,
-        "background_color": "#F3F6F4",
         "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_06": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_06_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_06_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Karabiners - Climbing</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_06_head_title"
-              ]
-            },
-            "fpg_06_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_06_head_left",
-            "fpg_06_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
+        "padding-block-end": 56,
+        "columns": 5,
+        "background_color": "#F3F6F4"
       },
-      "name": "Products: Karabiners - Climbing",
-      "settings": {
-        "collection": "karabiners",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_07": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_07_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_07_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Tool Clips &amp; Snaps</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_07_head_title"
-              ]
-            },
-            "fpg_07_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_07_head_left",
-            "fpg_07_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Tool Clips & Snaps",
-      "settings": {
-        "collection": "tool-clips-snap-links",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "background_color": "#F3F6F4",
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_08": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_08_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_08_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Steel Wire Core Lanyards / Flip lines</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_08_head_title"
-              ]
-            },
-            "fpg_08_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_08_head_left",
-            "fpg_08_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Steel Wire Core Lanyards / Flip lines",
-      "settings": {
-        "collection": "steel-core-lanyards",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_09": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_09_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_09_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Soft Lanyards</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_09_head_title"
-              ]
-            },
-            "fpg_09_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_09_head_left",
-            "fpg_09_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Soft Lanyards",
-      "settings": {
-        "collection": "soft-lanyards",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "background_color": "#F3F6F4",
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_10": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_10_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_10_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Accessories for Lanyards</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_10_head_title"
-              ]
-            },
-            "fpg_10_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_10_head_left",
-            "fpg_10_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Accessories for Lanyards",
-      "settings": {
-        "collection": "accessories-for-lanyards-1",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_11": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_11_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_11_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Tool Strops / Lanyards</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_11_head_title"
-              ]
-            },
-            "fpg_11_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_11_head_left",
-            "fpg_11_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Tool Strops / Lanyards",
-      "settings": {
-        "collection": "tool-strops-lanyards",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "background_color": "#F3F6F4",
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_12": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_12_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_12_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Climbing Spikes</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_12_head_title"
-              ]
-            },
-            "fpg_12_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_12_head_left",
-            "fpg_12_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Climbing Spikes",
-      "settings": {
-        "collection": "spikes",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_13": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_13_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_13_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Friction Cord</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_13_head_title"
-              ]
-            },
-            "fpg_13_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_13_head_left",
-            "fpg_13_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Friction Cord",
-      "settings": {
-        "collection": "hitch-cord",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "background_color": "#F3F6F4",
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_14": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_14_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_14_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Pulleys</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_14_head_title"
-              ]
-            },
-            "fpg_14_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_14_head_left",
-            "fpg_14_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Pulleys",
-      "settings": {
-        "collection": "pulleys-1",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_15": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_15_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_15_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Climbing Bags</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_15_head_title"
-              ]
-            },
-            "fpg_15_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_15_head_left",
-            "fpg_15_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Climbing Bags",
-      "settings": {
-        "collection": "climbing-bags-storage",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "background_color": "#F3F6F4",
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_16": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_16_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_16_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Cambium Savers</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_16_head_title"
-              ]
-            },
-            "fpg_16_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_16_head_left",
-            "fpg_16_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Cambium Savers",
-      "settings": {
-        "collection": "cambium-savers",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
-    },
-    "fpg_17": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "fpg_17_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "fpg_17_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Throwline Bags &amp; Cubes</h2>",
-                    "width": "100%",
-                    "type_preset": "h3",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_17_head_title"
-              ]
-            },
-            "fpg_17_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_17_head_left",
-            "fpg_17_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "name": "Products: Throwline Bags & Cubes",
-      "settings": {
-        "collection": "throwline-bags-cubes",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 16,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "background_color": "#F3F6F4",
-        "padding-block-start": 40,
-        "padding-block-end": 40
-      }
+      "name": "Browse every range"
     }
   },
   "order": [
     "section",
     "fpg_00",
     "fpg_01",
+    "fpg_kit",
     "fpg_02",
     "fpg_03",
-    "fpg_04",
-    "fpg_05",
-    "fpg_06",
-    "fpg_07",
-    "fpg_08",
-    "fpg_09",
-    "fpg_10",
-    "fpg_11",
-    "fpg_12",
-    "fpg_13",
-    "fpg_14",
-    "fpg_15",
-    "fpg_16",
-    "fpg_17"
+    "fpg_ranges"
   ]
 }

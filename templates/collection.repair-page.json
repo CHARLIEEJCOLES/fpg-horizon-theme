@@ -79,96 +79,6 @@
         "padding-block-end": 8
       }
     },
-    "fpg_01": {
-      "type": "section",
-      "blocks": {
-        "fpg_01_col": {
-          "type": "group",
-          "settings": {
-            "vertical_alignment": "flex-start",
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 16,
-            "width": "custom",
-            "custom_width": 75
-          },
-          "blocks": {
-            "fpg_01_title": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>How It Works</h2>",
-                "width": "100%",
-                "type_preset": "h3",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            },
-            "fpg_01_accordion": {
-              "type": "accordion",
-              "settings": {
-                "icon": "plus",
-                "divider_color": "#D6DED9",
-                "type_preset": "h5"
-              },
-              "blocks": {
-                "fpg_01_row0": {
-                  "type": "_accordion-row",
-                  "settings": {
-                    "heading": "The Collection Process"
-                  },
-                  "blocks": {
-                    "fpg_01_row0_text": {
-                      "type": "text",
-                      "settings": {
-                        "text": "<p>We will send you an Evri delivery label in pdf format. Print this out and package the saw, drop the saw of at any of the thousands of Evri delivery locations in the UK then it will be on the way to us for service.</p>",
-                        "width": "100%",
-                        "wrap": "pretty"
-                      },
-                      "blocks": {}
-                    }
-                  },
-                  "block_order": [
-                    "fpg_01_row0_text"
-                  ]
-                },
-                "fpg_01_row1": {
-                  "type": "_accordion-row",
-                  "settings": {
-                    "heading": "The Service"
-                  },
-                  "blocks": {}
-                },
-                "fpg_01_row2": {
-                  "type": "_accordion-row",
-                  "settings": {
-                    "heading": "Returning To You"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "fpg_01_row0",
-                "fpg_01_row1",
-                "fpg_01_row2"
-              ]
-            }
-          },
-          "block_order": [
-            "fpg_01_title",
-            "fpg_01_accordion"
-          ]
-        }
-      },
-      "block_order": [
-        "fpg_01_col"
-      ],
-      "name": "Questions",
-      "settings": {
-        "gap": 20,
-        "background_color": "#F3F6F4",
-        "padding-block-start": 48,
-        "padding-block-end": 48
-      }
-    },
     "main": {
       "type": "main-collection",
       "blocks": {
@@ -277,12 +187,113 @@
         "padding-block-start": 24,
         "padding-block-end": 56
       }
+    },
+    "fpg_finder": {
+      "type": "fpg-service-finder",
+      "blocks": {
+        "service_1": {
+          "type": "service",
+          "settings": {
+            "product": "stihl-chainsaw-service",
+            "machine": "Chainsaw",
+            "brand": "STIHL"
+          }
+        },
+        "service_2": {
+          "type": "service",
+          "settings": {
+            "product": "husqvarna-chainsaw-service",
+            "machine": "Chainsaw",
+            "brand": "Husqvarna"
+          }
+        },
+        "service_3": {
+          "type": "service",
+          "settings": {
+            "product": "echo-chainsaw-service-copy",
+            "machine": "Chainsaw",
+            "brand": "Mitox"
+          }
+        },
+        "service_4": {
+          "type": "service",
+          "settings": {
+            "product": "scheppach-chainsaw-service",
+            "machine": "Chainsaw",
+            "brand": "Scheppach"
+          }
+        },
+        "service_5": {
+          "type": "service",
+          "settings": {
+            "product": "stihl-hedge-trimmer-service",
+            "machine": "Hedge trimmer",
+            "brand": "STIHL"
+          }
+        },
+        "service_6": {
+          "type": "service",
+          "settings": {
+            "product": "husqvarna-hedge-trimmer-service",
+            "machine": "Hedge trimmer",
+            "brand": "Husqvarna"
+          }
+        },
+        "service_7": {
+          "type": "service",
+          "settings": {
+            "product": "stihl-blower-service",
+            "machine": "Blower",
+            "brand": "STIHL"
+          }
+        },
+        "service_8": {
+          "type": "service",
+          "settings": {
+            "product": "husqvarna-blower-service",
+            "machine": "Blower",
+            "brand": "Husqvarna"
+          }
+        },
+        "service_9": {
+          "type": "service",
+          "settings": {
+            "product": "stihl-kombi-engine-service",
+            "machine": "KombiEngine",
+            "brand": "STIHL"
+          }
+        },
+        "service_10": {
+          "type": "service",
+          "settings": {
+            "product": "stihl-kombi-engine-service-copy",
+            "machine": "KombiEngine",
+            "brand": "Husqvarna"
+          }
+        }
+      },
+      "block_order": [
+        "service_1",
+        "service_2",
+        "service_3",
+        "service_4",
+        "service_5",
+        "service_6",
+        "service_7",
+        "service_8",
+        "service_9",
+        "service_10"
+      ],
+      "settings": {
+        "padding-block-start": 40,
+        "padding-block-end": 48
+      }
     }
   },
   "order": [
     "section",
     "fpg_00",
-    "fpg_01",
+    "fpg_finder",
     "main"
   ]
 }

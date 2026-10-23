@@ -1,0 +1,318 @@
+{%- comment -%}
+  FP&G climbing kit builder. Shoppers work through the steps (harness, rope,
+  lanyard...), pick products, sizes and quantities, and see a checklist against
+  the minimum kit plus a running total. "Add kit to basket" adds everything at
+  once. Each "Step" block lists the products of one or two collections and says
+  how many items each kit type needs from it. Behaviour: assets/fpg-kit-builder.js.
+{%- endcomment -%}
+
+{{ 'fpg-kit-builder.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
+<script src="{{ 'fpg-kit-builder.js' | asset_url }}" type="module"></script>
+
+{%- liquid
+  assign vat_rate = settings.fpg_vat_rate | default: 20
+  assign per_step = section.settings.products_per_step
+  assign kit_1 = section.settings.kit_1_name | default: 'Climbing kit'
+  assign kit_2 = section.settings.kit_2_name
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<fpg-kit-builder
+  class="section section--page-width spacing-style fpg-kit{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+  data-vat-rate="{{ vat_rate }}"
+  data-storage-key="fpg:kit:{{ section.id }}"
+  data-kit-label-1="{{ kit_1 | escape }}"
+  data-kit-label-2="{{ kit_2 | escape }}"
+>
+  <div class="fpg-kit__inner">
+    <header class="fpg-kit__head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="fpg-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h2 class="fpg-kit__title h2">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.intro != blank -%}
+        <div class="fpg-kit__intro">{{ section.settings.intro }}</div>
+      {%- endif -%}
+      {%- if kit_2 != blank -%}
+        <div class="fpg-kit__modes" role="group" aria-label="Kit type">
+          <button type="button" class="fpg-kit__mode" data-mode="1" aria-pressed="true">{{ kit_1 | escape }}</button>
+          <button type="button" class="fpg-kit__mode" data-mode="2" aria-pressed="false">{{ kit_2 | escape }}</button>
+        </div>
+      {%- endif -%}
+    </header>
+
+    <div class="fpg-kit__layout">
+      <nav class="fpg-kit__steps" aria-label="Kit steps">
+        <ol class="fpg-kit__step-list">
+          {%- for block in section.blocks -%}
+            <li>
+              <button
+                type="button"
+                class="fpg-kit__step-tab"
+                data-step-tab="{{ forloop.index0 }}"
+                aria-controls="FpgKitStep-{{ block.id }}"
+                aria-current="{% if forloop.first %}step{% else %}false{% endif %}"
+                {{ block.shopify_attributes }}
+              >
+                <span class="fpg-kit__step-num" aria-hidden="true">{{ forloop.index }}</span>
+                <span class="fpg-kit__step-name">{{ block.settings.title | escape }}</span>
+                <span class="fpg-kit__step-state" data-step-state="{{ forloop.index0 }}"></span>
+              </button>
+            </li>
+          {%- endfor -%}
+        </ol>
+      </nav>
+
+      <div class="fpg-kit__panels">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign step = forloop.index0
+            assign shown = 0
+          -%}
+          <section
+            class="fpg-kit__panel"
+            id="FpgKitStep-{{ block.id }}"
+            data-step="{{ step }}"
+            data-title="{{ block.settings.title | escape }}"
+            data-min-1="{{ block.settings.min_kit_1 }}"
+            data-min-2="{{ block.settings.min_kit_2 }}"
+            {% unless forloop.first %}
+              hidden
+            {% endunless %}
+          >
+            <header class="fpg-kit__panel-head">
+              <p class="fpg-kit__panel-count">Step {{ forloop.index }} of {{ forloop.length }}</p>
+              <h3 class="fpg-kit__panel-title h3">{{ block.settings.title | escape }}</h3>
+              {%- if block.settings.help != blank -%}
+                <p class="fpg-kit__panel-help">{{ block.settings.help | escape }}</p>
+              {%- endif -%}
+              <p class="fpg-kit__panel-need" data-need></p>
+            </header>
+            <ul class="fpg-kit__grid" role="list">
+              {%- for pass in (1..2) -%}
+                {%- if pass == 1 -%}
+                  {%- assign source = block.settings.collection -%}
+                {%- else -%}
+                  {%- assign source = block.settings.collection_2 -%}
+                {%- endif -%}
+                {%- if source == blank or shown >= per_step -%}
+                  {%- continue -%}
+                {%- endif -%}
+                {%- assign room = per_step | minus: shown -%}
+                {%- for product in source.products limit: room -%}
+                {%- assign variant = product.selected_or_first_available_variant -%}
+                <li
+                  class="fpg-kit__item"
+                  data-product-id="{{ product.id }}"
+                  data-title="{{ product.title | escape }}"
+                  data-url="{{ product.url }}"
+                  data-image="{% if product.featured_image %}{{ product.featured_image | image_url: width: 160 }}{% endif %}"
+                >
+                  <script type="application/json" data-variants>
+                    [{%- for v in product.variants -%}{"id":{{ v.id }},"title":{{ v.title | json }},"price":{{ v.price }},"available":{{ v.available }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]
+                  </script>
+                  <a class="fpg-kit__item-media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+                    {%- if product.featured_image -%}
+                      {{
+                        product.featured_image
+                        | image_url: width: 480
+                        | image_tag: loading: 'lazy', widths: '240, 360, 480', sizes: '(min-width: 1200px) 220px, (min-width: 750px) 30vw, 45vw', alt: ''
+                      }}
+                    {%- else -%}
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    {%- endif -%}
+                  </a>
+                  <div class="fpg-kit__item-body">
+                    {%- if product.vendor != blank -%}
+                      <p class="fpg-kit__item-vendor">{{ product.vendor | escape }}</p>
+                    {%- endif -%}
+                    <a class="fpg-kit__item-title" href="{{ product.url }}">{{ product.title | escape }}</a>
+                    <p class="fpg-kit__item-price" data-price>
+                      {% render 'fpg-vat-price', amount: variant.price, taxable: variant.taxable %}
+                    </p>
+                    <div class="fpg-kit__item-controls" data-controls>
+                      {%- unless product.has_only_default_variant -%}
+                        <label class="visually-hidden" for="FpgKitV-{{ block.id }}-{{ product.id }}">
+                          {{- product.options.first | escape -}}
+                        </label>
+                        <select class="fpg-kit__select" id="FpgKitV-{{ block.id }}-{{ product.id }}" data-variant>
+                          {%- for v in product.variants -%}
+                            <option
+                              value="{{ v.id }}"
+                              {% if v.id == variant.id %}
+                                selected
+                              {% endif %}
+                              {% unless v.available %}
+                                disabled
+                              {% endunless %}
+                            >
+                              {{ v.title | escape }}{% unless v.available %} (sold out){% endunless %}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                      {%- endunless -%}
+                      <div class="fpg-kit__row">
+                        <div class="fpg-kit__qty">
+                          <button type="button" data-qty-step="-1" aria-label="Fewer">&minus;</button>
+                          <input type="number" value="1" min="1" max="99" inputmode="numeric" aria-label="Quantity" data-qty>
+                          <button type="button" data-qty-step="1" aria-label="More">+</button>
+                        </div>
+                        <button type="button" class="fpg-kit__add" data-add{% unless product.available %} disabled{% endunless %}>
+                          {%- if product.available -%}Add to kit{%- else -%}Sold out{%- endif -%}
+                        </button>
+                      </div>
+                    </div>
+                    <p class="fpg-kit__item-inkit" data-in-kit hidden></p>
+                  </div>
+                </li>
+                {%- assign shown = shown | plus: 1 -%}
+                {%- endfor -%}
+              {%- endfor -%}
+            </ul>
+            {%- if shown == 0 -%}
+              <p class="fpg-kit__empty">Choose a collection for this step in the theme editor.</p>
+            {%- endif -%}
+            <div class="fpg-kit__panel-foot">
+              {%- if block.settings.collection != blank -%}
+                <a class="fpg-kit__more" href="{{ block.settings.collection.url }}">
+                  See the full {{ block.settings.collection.title | escape }} range
+                </a>
+              {%- endif -%}
+              <div class="fpg-kit__panel-nav">
+                {%- unless forloop.first -%}
+                  <button type="button" class="button button-secondary" data-go="{{ step | minus: 1 }}">Back</button>
+                {%- endunless -%}
+                {%- unless forloop.last -%}
+                  {%- assign next_block = section.blocks[forloop.index] -%}
+                  <button type="button" class="button" data-go="{{ forloop.index }}">
+                    Next: {{ next_block.settings.title | escape }}
+                  </button>
+                {%- endunless -%}
+              </div>
+            </div>
+          </section>
+        {%- endfor -%}
+      </div>
+
+      <aside class="fpg-kit__summary" id="FpgKitSummary-{{ section.id }}" aria-labelledby="FpgKitSummaryTitle-{{ section.id }}">
+        <div class="fpg-kit__summary-inner">
+          <h3 class="fpg-kit__summary-title h4" id="FpgKitSummaryTitle-{{ section.id }}">Your kit</h3>
+          <div class="fpg-kit__progress">
+            <p class="fpg-kit__progress-text" data-progress-text></p>
+            <div class="fpg-kit__progress-bar"><span data-progress-bar></span></div>
+          </div>
+          <ul class="fpg-kit__checklist" data-checklist role="list"></ul>
+          <ul class="fpg-kit__lines" data-lines role="list"></ul>
+          <p class="fpg-kit__lines-empty" data-empty>Nothing in your kit yet. Pick products from each step and add them here.</p>
+          <dl class="fpg-kit__totals">
+            <div><dt>Subtotal (Ex. VAT)</dt><dd data-total-ex>£0.00</dd></div>
+            <div><dt>VAT ({{ vat_rate }}%)</dt><dd data-total-vat>£0.00</dd></div>
+            <div class="fpg-kit__grand"><dt>Total</dt><dd data-total-inc>£0.00</dd></div>
+          </dl>
+          <button type="button" class="button fpg-kit__checkout" data-add-kit disabled>Add kit to basket</button>
+          <p class="fpg-kit__message" data-message role="status"></p>
+          <button type="button" class="fpg-kit__clear" data-clear hidden>Clear kit</button>
+          {%- if section.settings.help != blank -%}
+            <div class="fpg-kit__help">{{ section.settings.help }}</div>
+          {%- endif -%}
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="fpg-kit__bar" data-bar hidden>
+    <span class="fpg-kit__bar-text"><span data-bar-count>0 items</span> &middot; <strong data-bar-total>£0.00</strong></span>
+    <a class="button" href="#FpgKitSummary-{{ section.id }}">View kit</a>
+  </div>
+</fpg-kit-builder>
+
+{% schema %}
+{
+  "name": "FP&G kit builder",
+  "tag": "section",
+  "class": "fpg-kit-section",
+  "max_blocks": 16,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Kit creator" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Build your climbing kit" },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Introduction",
+      "default": "<p>Work through each step, pick the kit you want and add it to your list. The checklist shows what the minimum kit still needs, and you can add everything to your basket in one go.</p>"
+    },
+    { "type": "text", "id": "kit_1_name", "label": "First kit type", "default": "Climbing kit" },
+    {
+      "type": "text",
+      "id": "kit_2_name",
+      "label": "Second kit type",
+      "info": "Leave blank to offer one kit type only.",
+      "default": "Climbing and rescue kit"
+    },
+    {
+      "type": "range",
+      "id": "products_per_step",
+      "label": "Products per step",
+      "min": 4,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "richtext",
+      "id": "help",
+      "label": "Help text under the kit",
+      "default": "<p>Not sure what you need? Call our arb team on <a href=\"tel:01443230000\">01443 230000</a>.</p>"
+    },
+    { "type": "color", "id": "background_color", "label": "Background colour" },
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Step name", "default": "Harness" },
+        { "type": "text", "id": "help", "label": "Short guidance" },
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "collection", "id": "collection_2", "label": "Second collection (optional)" },
+        {
+          "type": "range",
+          "id": "min_kit_1",
+          "label": "Items needed for the first kit type",
+          "info": "0 makes the step optional.",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "default": 1
+        },
+        {
+          "type": "range",
+          "id": "min_kit_2",
+          "label": "Items needed for the second kit type",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "default": 1
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FP&G kit builder",
+      "blocks": [
+        { "type": "step", "settings": { "title": "Harness" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

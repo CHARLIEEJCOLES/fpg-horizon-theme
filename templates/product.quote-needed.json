@@ -263,11 +263,21 @@
                 "trust_advice",
                 "trust_payments"
               ]
+            },
+            "fpg_hire_calc": {
+              "type": "fpg-hire-calculator",
+              "settings": {
+                "heading": "Plan your hire",
+                "replace_buy_buttons": true,
+                "show_request": true
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "group_icgrde",
             "fpg_hire_rates",
+            "fpg_hire_calc",
             "divider_VJhene",
             "fpg_hulk_offers",
             "fpg_notices",
