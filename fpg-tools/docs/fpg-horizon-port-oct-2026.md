@@ -176,6 +176,28 @@ Charlie asked to "redo the menu structure and style adding more layers", then fo
 
 **Tested on the preview:** all dropdowns on desktop (including the More overflow at narrow widths), the phone drawer through three levels, and the pill text. A dropdown taller than the window scrolls inside the panel.
 
+## Round 3 look (23 Oct)
+
+Charlie approved a list of 10 look improvements and asked for picture prompts. Commit b2b0871 (local repo).
+
+**Done and checked on the preview:**
+- **Help cards:** new section; five across on wide screens, icon-left rows on tablets and phones.
+- **Parts finder:** numbered steps, proper dropdowns, teal Search. The app's "Please Select" field (it holds the part category) now reads "Part type".
+- **Product cards:** stock as a pill with a coloured dot; sale badge shows "Save N%" (from the card's own variant, rounded down) or "Clearance"; bolder teal price, the was-price trimmed to the struck ex-VAT figure.
+- **Brand strip:** teal band, one-tone logos on white tiles, real colours on hover, slow scroll (still for reduced-motion), each linking to its brand collection.
+- **Page rhythm:** even 64px spacing; white, pale sage, mist and teal bands alternate down the home page.
+- **Footer:** new dark teal footer (newsletter, logo, phone and email, social, Shop / Help / More / Visit us columns, policies, payment icons). Replaces Horizon's footer, the map and the utilities bar.
+- **Product page:** bigger price, "Part no." label, key spec chips from the product's fields (power, type, cutting width, drive, area, slope, battery). Weight and bar length aren't stored as fields, so they can't show yet. Horizon's sticky Add to basket bar was already on; it's now hidden on Call for Price products.
+- **Category chips:** every collection title band shows "Shop by type" chips from the menu, current one highlighted (also on the buying-guide templates).
+- **Bottom-right buttons:** they only overlapped in the preview (the preview bar lifts the chat button). The back-to-top arrow is now smaller on phones and appears later there.
+
+**Menu links switched to real collection/page/product links** (IDs in fpg-tools/menu/ids.json). The plain web links used earlier broke the breadcrumbs' "deepest collection" pick for products opened directly; fixed, and "All …" links count as their group, so MS 162 shows Home › Chainsaws - Petrol.
+
+**Waiting on Charlie's pictures** (prompts given in chat, file names fpg-cat-*.png and fpg-hero-*.png):
+- 12 category tiles → sections/fpg-category-tiles is built and will replace the mixed collection-list on the home page.
+- 4 category heroes (chainsaws, lawn mowers, ride-on mowers, clothing & PPE) → teal hero tops on those collections.
+- Contour texture → set as --fpg-texture in fpg-head-scripts; header top row, brand band, page heroes and footer pick it up.
+
 ## FP&G files (all prefixed fpg-)
 
 - **snippets/fpg-vat-price:** prices shown as "£X + VAT (£Y)".
@@ -202,6 +224,7 @@ These need re-applying after Horizon updates; each edit is marked "FP&G".
 - locales/en.default.json
 - sections/main-collection.liquid (promo tiles)
 - blocks/_header-logo.liquid (white logo and contact strip on a dark top row)
+- blocks/fpg-breadcrumbs.liquid is FP&G's own, but note it now also renders the sub-category chips
 
 ## Theme settings
 
