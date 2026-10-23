@@ -56,19 +56,7 @@
       "disabled": true
     },
     "fpg_part_finder": {
-      "type": "section",
-      "blocks": {
-        "fpg_part_finder_app": {
-          "type": "shopify://apps/part-finder/blocks/display/d5714e12-8620-41c6-84b3-8d4fd1667e0a",
-          "settings": {
-            "proxy_subpath": "parts-finder",
-            "proxy_prefix": "apps"
-          }
-        }
-      },
-      "block_order": [
-        "fpg_part_finder_app"
-      ],
+      "type": "fpg-part-finder",
       "settings": {}
     }
   },

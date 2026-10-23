@@ -426,6 +426,10 @@
             "fpg_fits": {
               "type": "fpg-fits",
               "settings": {}
+            },
+            "fpg_parts_link": {
+              "type": "fpg-parts-link",
+              "settings": {}
             }
           },
           "block_order": [
@@ -443,6 +447,7 @@
             "fpg_complete_job",
             "fpg_pairs",
             "fpg_fits",
+            "fpg_parts_link",
             "fpg_complementary",
             "text_aEtTtq",
             "fpg_spec_tabs"

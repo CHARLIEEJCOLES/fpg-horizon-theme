@@ -299,12 +299,17 @@
   }
 }
 
+/* Flex, not grid: the logo's 100% height then means the tile's inner height,
+   so square and wide logos both sit dead centre instead of spilling out. */
 .fpg-brands__tile {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   width: 168px;
   height: 84px;
   padding: 12px 18px;
+  overflow: hidden;
   border-radius: 12px;
   background: #fff;
   transition: transform 0.2s var(--fpg-ease), box-shadow 0.2s;
@@ -314,7 +319,10 @@
   display: block;
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
   object-fit: contain;
+  object-position: center;
   filter: grayscale(1) contrast(1.1);
   opacity: 0.75;
   transition: filter 0.25s, opacity 0.25s;

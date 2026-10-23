@@ -104,3 +104,12 @@ The pictures on the kit creator, servicing, hire and home pages were made for FP
 - Moved to sit under the stock status, above Add to cart.
 - Block settings: "Check live as the page opens" (on; switch off to get the old button back), "Words before the result", "Check again link".
 - When we have none of the selected option and the manufacturer says In stock, a note appears under the result: "We don't have this one on the shelf right now, but [brand] does. We'll order it in for you, which only adds 24–48 hours to your delivery." Editable in the block ("No stock here, manufacturer has it"); blank hides it.
+
+### Parts finder rebuilt in the theme (23 Oct 2026)
+- `sections/fpg-part-finder.liquid` + `assets/fpg-parts.js` + `assets/fpg-parts.css` replace the FPG Part Finder app's block on /pages/fpg-part-finder (template `page.product-parts-page`). The app stays installed: its proxy `/apps/parts-finder` (getModels, getProducts) still supplies the parts lists.
+- Brands, types and models come from `assets/fpg-parts-index.json` (32 brands, 563 models). Rebuild with `fpg-tools/parts/build-parts-index.js` (paste into the browser console on the finder page) after adding models in the app; model lists also pick up new models live.
+- Flow: search box (model or part number) → brand (STIHL and Husqvarna featured; dealer badge only on brands in the "dealer brands" setting, default STIHL) → machine type (new drawn icons) → model (grouped by series, filter) → parts by section with sticky section links, part search, "in stock with us" toggle, our stock, live STIHL/Husqvarna stock from Cormorant on parts we're out of, prices ex/inc VAT, Add to basket via the cart drawer, "My machines".
+- Old app links (?step=...&id=...) still work. Brands with no models listed are named in a "we can still order parts for…" line.
+- `blocks/fpg-parts-link.liquid` on product pages: "Spare parts for the STIHL MS 261" when the title names a listed model.
+- Home page brand strip: logos now centred in their tiles (fpg-look.css).
+- Waiting on: Polly parts data (which machine and section each part belongs to; names, photos, descriptions) to fill gaps.

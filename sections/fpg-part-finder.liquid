@@ -1,0 +1,130 @@
+{%- comment -%}
+  FP&G spare parts finder: brand -> kind of machine -> model -> every part for
+  that model, in sections (Carburettor, Engine, ...), with our stock, live
+  manufacturer stock for STIHL and Husqvarna, prices with and without VAT,
+  and Add to basket. A search box at the top jumps straight to a model.
+
+  Replaces the FPG Part Finder app's block. The app stays installed: its proxy
+  (Store URL /apps/parts-finder) is where the parts lists come from.
+  Behaviour: assets/fpg-parts.js. Styles: assets/fpg-parts.css.
+  Brands, types and models snapshot: assets/fpg-parts-index.json
+  (rebuild with fpg-tools/parts/build-parts-index.js).
+{%- endcomment -%}
+
+{{ 'fpg-parts.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
+<script src="{{ 'fpg-parts.js' | asset_url }}" type="module"></script>
+
+{%- liquid
+  assign proxy = '/' | append: section.settings.proxy_prefix | append: '/' | append: section.settings.proxy_subpath
+  assign phone_digits = section.settings.phone | remove: ' '
+-%}
+
+<div class="section-background"></div>
+<div
+  class="section section--page-width spacing-style fpg-pf-section"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+>
+  <fpg-parts-finder
+    class="fpg-pf"
+    data-index="{{ 'fpg-parts-index.json' | asset_url }}"
+    data-proxy="{{ proxy | escape }}"
+    data-vat="{{ settings.fpg_vat_rate | default: 20 }}"
+    {% if section.settings.maker_stock %}
+      data-polly="{{ settings.fpg_cormorant_url | escape }}"
+      data-polly-vendors="{{ settings.fpg_cormorant_vendors | default: 'STIHL, Husqvarna' | escape }}"
+    {% endif %}
+    data-dealer-label="{{ section.settings.dealer_label | escape }}"
+    data-dealer-brands="{{ section.settings.dealer_brands | escape }}"
+    data-contact-url="{{ section.settings.contact_url | default: '/pages/contact' }}"
+    data-search-url="{{ routes.search_url }}"
+  >
+    <header class="fpg-pf-hero">
+      <div class="fpg-pf-hero__text">
+        {%- if section.settings.kicker != blank -%}
+          <p class="fpg-pf-hero__kicker">{{ section.settings.kicker | escape }}</p>
+        {%- endif -%}
+        <h1 class="fpg-pf-hero__h">{{ section.settings.heading | escape }}</h1>
+        {%- if section.settings.text != blank -%}
+          <p class="fpg-pf-hero__p">{{ section.settings.text | escape }}</p>
+        {%- endif -%}
+      </div>
+      <div class="fpg-pf-search" data-searchbox>
+        <label class="visually-hidden" for="FpgPfSearch-{{ section.id }}">Find your machine or a part number</label>
+        <svg class="fpg-pf-search__icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input
+          id="FpgPfSearch-{{ section.id }}"
+          type="search"
+          data-search
+          placeholder="{{ section.settings.placeholder | escape }}"
+          autocomplete="off"
+          spellcheck="false"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-controls="FpgPfSuggest-{{ section.id }}"
+        >
+        <ul class="fpg-pf-suggest" id="FpgPfSuggest-{{ section.id }}" role="listbox" data-suggest hidden></ul>
+      </div>
+      <ul class="fpg-pf-hero__points" role="list">
+        <li>Parts listed by machine and section</li>
+        <li>Live stock, ours and the maker's</li>
+        <li>Click &amp; collect in Treforest</li>
+      </ul>
+      <div class="fpg-pf-mine" data-mine hidden></div>
+    </header>
+
+    <nav class="fpg-pf-crumbs" data-crumbs aria-label="Where you are in the parts finder" hidden></nav>
+
+    <div class="fpg-pf-view" data-view>
+      <p class="fpg-pf-lead">Loading the parts finder…</p>
+    </div>
+
+    <aside class="fpg-pf-help">
+      <div class="fpg-pf-help__text">
+        <h2>{{ section.settings.help_heading | escape }}</h2>
+        <p>{{ section.settings.help_text | escape }}</p>
+      </div>
+      <div class="fpg-pf-help__actions">
+        {%- if section.settings.phone != blank -%}
+          <a class="fpg-pf-btn" href="tel:{{ phone_digits }}">Call {{ section.settings.phone | escape }}</a>
+        {%- endif -%}
+        <a class="fpg-pf-btn fpg-pf-btn--ghost" href="{{ section.settings.contact_url | default: '/pages/contact' }}">Send us the details</a>
+        {%- if section.settings.diagrams_url != blank -%}
+          <a class="fpg-pf-link" href="{{ section.settings.diagrams_url }}">Or browse the makers' parts diagrams</a>
+        {%- endif -%}
+      </div>
+    </aside>
+  </fpg-parts-finder>
+</div>
+
+{% schema %}
+{
+  "name": "FP&G parts finder",
+  "tag": "section",
+  "class": "fpg-pf-wrap",
+  "enabled_on": { "templates": ["page", "index"] },
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Small line above the heading", "default": "Spare parts" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Find the right part for your machine" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Search your model, or pick the brand and machine below. Every part is listed in the section of the machine it belongs to, with live stock." },
+    { "type": "text", "id": "placeholder", "label": "Search box hint", "default": "Model or part number, e.g. MS 261" },
+    { "type": "text", "id": "dealer_label", "label": "Dealer badge", "default": "Approved dealer" },
+    { "type": "text", "id": "dealer_brands", "label": "Brands that get the dealer badge", "info": "Comma separated. Only list brands FP&G is an approved dealer for.", "default": "STIHL" },
+    { "type": "checkbox", "id": "maker_stock", "label": "Show live manufacturer stock", "info": "Uses the Cormorant server in Theme settings > FP&G, for parts we have none of.", "default": true },
+    { "type": "header", "content": "Help panel" },
+    { "type": "text", "id": "help_heading", "label": "Heading", "default": "Can't find your part?" },
+    { "type": "textarea", "id": "help_text", "label": "Text", "default": "Send us the model and serial number from the machine's label, or the part number from your manual, and our parts team will find it." },
+    { "type": "text", "id": "phone", "label": "Phone number", "default": "01443 230000" },
+    { "type": "text", "id": "contact_url", "label": "Contact page", "default": "/pages/contact" },
+    { "type": "text", "id": "diagrams_url", "label": "Parts diagrams page", "default": "/pages/parts-finder" },
+    { "type": "header", "content": "Part Finder app" },
+    { "type": "paragraph", "content": "The parts lists come from the FPG Part Finder app's proxy. Only change these if the app's proxy address changes." },
+    { "type": "text", "id": "proxy_prefix", "label": "Proxy prefix", "default": "apps" },
+    { "type": "text", "id": "proxy_subpath", "label": "Proxy subpath", "default": "parts-finder" },
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "presets": [{ "name": "FP&G parts finder" }]
+}
+{% endschema %}

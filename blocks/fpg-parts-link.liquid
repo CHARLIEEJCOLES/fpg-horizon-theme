@@ -1,0 +1,42 @@
+{%- doc -%}
+  FP&G "Spare parts for this machine" link on product pages. Finds the machine
+  from the product's brand and title (the longest model name in the parts
+  finder that appears in the title, e.g. "MS 261") and links to every part
+  listed for it in the parts finder. Shows nothing when no machine matches.
+  Behaviour: assets/fpg-parts.js (fpg-parts-link). Styles: assets/fpg-parts.css.
+{%- enddoc -%}
+
+{%- assign product = closest.product -%}
+{{ 'fpg-parts.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'fpg-parts.js' | asset_url }}" type="module" fetchpriority="low"></script>
+<fpg-parts-link
+  class="fpg-parts-link"
+  data-index="{{ 'fpg-parts-index.json' | asset_url }}"
+  data-finder="{{ block.settings.finder_url | default: '/pages/fpg-part-finder' }}"
+  data-vendor="{{ product.vendor | escape }}"
+  data-title="{{ product.title | escape }}"
+  hidden
+  {{ block.shopify_attributes }}
+>
+  <a href="{{ block.settings.finder_url | default: '/pages/fpg-part-finder' }}">
+    <span class="fpg-parts-link__icon" data-icon aria-hidden="true"></span>
+    <span class="fpg-parts-link__text">
+      <strong>{{ block.settings.label | escape }} <span data-name></span></strong>
+      <small>{{ block.settings.text | escape }}</small>
+    </span>
+    <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M7 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</fpg-parts-link>
+
+{% schema %}
+{
+  "name": "FP&G machine parts link",
+  "tag": null,
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Spare parts for the" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Every part listed for this machine, with live stock" },
+    { "type": "text", "id": "finder_url", "label": "Parts finder page", "default": "/pages/fpg-part-finder" }
+  ],
+  "presets": [{ "name": "FP&G machine parts link" }]
+}
+{% endschema %}
