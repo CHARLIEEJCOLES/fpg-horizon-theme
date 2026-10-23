@@ -1,0 +1,25 @@
+{%- doc -%}
+  FP&G: the URL a menu link should open. Normally the link's own URL. When the
+  link points at a collection with no products on sale (and no page layout of
+  its own, like the climbing kit builder) but has sub-links, it
+  opens the first sub-link that isn't an empty collection instead, so a
+  top-level menu item never lands on an empty page.
+  Empty collection links without sub-links are skipped by the callers.
+
+  @param {object} link - A menu link (linklist link drop)
+
+  @example
+  {%- capture href -%}{% render 'fpg-menu-href', link: link %}{%- endcapture -%}
+{%- enddoc -%}
+{%- liquid
+  assign href = link.url
+  if link.type == 'collection_link' and link.object.products_count == 0 and link.object.template_suffix == blank
+    for child in link.links
+      if child.type != 'collection_link' or child.object.products_count > 0 or child.object.template_suffix != blank
+        assign href = child.url
+        break
+      endif
+    endfor
+  endif
+  echo href
+-%}

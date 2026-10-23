@@ -48,7 +48,7 @@
             {% for link in block_settings.menu.links %}
               <li>
                 <a
-                  href="{{ link.url }}"
+                  href="{% render 'fpg-menu-href', link: link %}"
                   id="MenuItem-{{ link.handle }}"
                   class="menu-list__item"
                   {% if link.current %}
@@ -104,7 +104,7 @@
             <span class="menu-list__trigger">
           {%- endif -%}
           <a
-            href="{{ link.url }}"
+            href="{% render 'fpg-menu-href', link: link %}"
             data-skip-node-update="true"
             class="menu-list__link{% if link.active %} menu-list__link--active{% endif %}"
             {% if link.current %}
@@ -1033,8 +1033,8 @@
       "type": "color",
       "id": "background_color_navigation_bar",
       "label": "t:settings.navigation_bar_background_color",
-      "default": "{{ settings.color_palette.background }}",
-      "visible_if": "{{ block.settings.navigation_bar }}"
+      "default": "{{ settings.color_palette.background }}"
+      ,"visible_if": "{{ block.settings.navigation_bar }}"
     },
     {
       "type": "color",

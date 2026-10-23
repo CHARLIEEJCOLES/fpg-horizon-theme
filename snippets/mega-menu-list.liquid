@@ -76,7 +76,18 @@
   class="mega-menu__list list-unstyled"
   style="--menu-image-border-radius: {{ image_border_radius }}px;"
 >
-  {% for link in parent_link.links %}
+{%- liquid
+  # FP&G: leave out links to collections with no products on sale (and no sub-links)
+  assign fpg_links = parent_link.links | where: 'handle', '__fpg_none__'
+  for l in parent_link.links
+    if l.type == 'collection_link' and l.links == blank and l.object.products_count == 0 and l.object.template_suffix == blank
+      continue
+    endif
+    assign one = parent_link.links | where: 'handle', l.handle
+    assign fpg_links = fpg_links | concat: one
+  endfor
+-%}
+  {% for link in fpg_links %}
     {% liquid
       # Decide whether to open a column span, and how many columns of the grid to span
       if forloop.first or open_column_span == false
@@ -96,7 +107,7 @@
         if menu_content_type == 'collection_images'
           assign should_break_columns = false
           # For collection image mode, we have an 8-column grid when 4 or fewer parent links are used. Set column span to 2 in that case, otherwise use 1 column
-          if parent_link.links.size <= 4
+          if fpg_links.size <= 4
             assign span_class = 'mega-menu__column--wide-collection-image'
           endif
         else
@@ -108,12 +119,12 @@
     %}
     <div>
       <a
-        href="{{ link.url }}"
+        href="{% render 'fpg-menu-href', link: link %}"
         class="mega-menu__link {% if link.links != blank %}mega-menu__link--parent{% endif %}"
       >
         {% if menu_content_type == 'collection_images' %}
           {%- capture collection_image_sizes -%}
-            {%- if parent_link.links.size <= 4 -%}
+            {%- if fpg_links.size <= 4 -%}
               {%- assign columns_per_item = 2 -%}
             {%- else -%}
               {%- assign columns_per_item = 1 -%}
@@ -124,7 +135,7 @@
               grid_columns: grid_columns_count,
               grid_columns_tablet: grid_columns_count_tablet,
               grid_columns_collection_images: grid_columns_count_collection_images,
-              parent_links_size: parent_link.links.size,
+              parent_links_size: fpg_links.size,
               columns_per_item: columns_per_item
             -%}
           {%- endcapture -%}
@@ -143,6 +154,7 @@
           {% endif %}
         >
           {% for childLink in link.links %}
+            {%- if childLink.type == 'collection_link' and childLink.links == blank and childLink.object.products_count == 0 and childLink.object.template_suffix == blank -%}{%- continue -%}{%- endif -%}
             {% assign break_after_modulo = forloop.index | modulo: links_before_wrap %}
             <li
               {% if break_after_modulo == 0 and should_break_columns %}
@@ -163,7 +175,7 @@
 
     {% liquid
       # Check conditions for closing the span at the end of each iteration, then close the span if needed
-      assign next_linklist = parent_link.links[forloop.index]
+      assign next_linklist = fpg_links[forloop.index]
 
       if forloop.last
         assign open_column_span = false
@@ -248,7 +260,7 @@
 
 {% style %}
   [data-menu-grid-id="{{ id }}"] {
-    {% if menu_content_type == 'collection_images' and parent_link.links.size < 5 %}
+    {% if menu_content_type == 'collection_images' and fpg_links.size < 5 %}
       --menu-columns-desktop: {{ grid_columns_count_collection_images }};
       --menu-columns-tablet: {{ grid_columns_count_tablet }};
     {% else %}
@@ -258,7 +270,7 @@
   }
 
   [data-menu-list-id="{{ id }}"] {
-    {% if menu_content_type == 'collection_images' and parent_link.links.size < 5 %}
+    {% if menu_content_type == 'collection_images' and fpg_links.size < 5 %}
       --menu-columns-desktop: {{ grid_columns_count_collection_images }};
       --menu-columns-tablet: {{ max_menu_columns_tablet }};
     {% else %}

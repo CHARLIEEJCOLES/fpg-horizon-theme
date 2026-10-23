@@ -156,6 +156,7 @@
                         tabindex="-1"
                       >
                         {%- for childlink in link.links -%}
+{%- if childlink.type == 'collection_link' and childlink.links == blank and childlink.object.products_count == 0 and childlink.object.template_suffix == blank -%}{%- continue -%}{%- endif -%}
                           <li
                             class="menu-drawer__list-item"
                             style="--menu-drawer-animation-index: {{ forloop.index }};"
@@ -192,7 +193,7 @@
                   {%- endcomment -%}
                   <a
                     id="HeaderDrawer-{{ link.handle }}"
-                    href="{{ link.url }}"
+                    href="{% render 'fpg-menu-href', link: link %}"
                     class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element"
                     {% if link.current %}
                       aria-current="page"
@@ -217,6 +218,7 @@
                     tabindex="-1"
                   >
                     {%- for childlink in link.links -%}
+{%- if childlink.type == 'collection_link' and childlink.links == blank and childlink.object.products_count == 0 and childlink.object.template_suffix == blank -%}{%- continue -%}{%- endif -%}
                       <li
                         class="menu-drawer__list-item"
                         style="--menu-drawer-animation-index: {{ animation_index }};"
@@ -246,7 +248,7 @@
                   {%- endcomment -%}
                   <a
                     id="HeaderDrawer-{{ link.handle }}"
-                    href="{{ link.url }}"
+                    href="{% render 'fpg-menu-href', link: link %}"
                     class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element"
                     {% if link.current %}
                       aria-current="page"
@@ -304,7 +306,7 @@
                             </span>
                           </button>
                           <a
-                            href="{{ link.url }}"
+                            href="{% render 'fpg-menu-href', link: link %}"
                             class="menu-drawer__title focus-inset"
                             {% if link.current %}
                               aria-current="page"
@@ -341,6 +343,7 @@
                         >
                           {% assign first_accordion_open = false -%}
                           {%- for childlink in link.links -%}
+{%- if childlink.type == 'collection_link' and childlink.links == blank and childlink.object.products_count == 0 and childlink.object.template_suffix == blank -%}{%- continue -%}{%- endif -%}
                             <li
                               class="
                                 menu-drawer__list-item
@@ -418,6 +421,7 @@
                                         tabindex="-1"
                                       >
                                         {%- for grandchildlink in childlink.links -%}
+{%- if grandchildlink.type == 'collection_link' and grandchildlink.links == blank and grandchildlink.object.products_count == 0 and grandchildlink.object.template_suffix == blank -%}{%- continue -%}{%- endif -%}
                                           <li
                                             class="menu-drawer__list-item"
                                             style="--menu-drawer-animation-index: {{ forloop.index }};"
@@ -483,6 +487,7 @@
                                     tabindex="-1"
                                   >
                                     {%- for grandchildlink in childlink.links -%}
+{%- if grandchildlink.type == 'collection_link' and grandchildlink.links == blank and grandchildlink.object.products_count == 0 and grandchildlink.object.template_suffix == blank -%}{%- continue -%}{%- endif -%}
                                       <li
                                         class="menu-drawer__list-item"
                                         style="--menu-drawer-animation-index: {{ forloop.index }};"
@@ -575,7 +580,7 @@
                   {%- endcomment -%}
                   <a
                     id="HeaderDrawer-{{ link.handle }}"
-                    href="{{ link.url }}"
+                    href="{% render 'fpg-menu-href', link: link %}"
                     class="menu-drawer__menu-item menu-drawer__menu-item--mainlist menu-drawer__animated-element"
                     {% if link.current %}
                       aria-current="page"
