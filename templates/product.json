@@ -251,7 +251,8 @@
               },
               "block_order": [
                 "heading"
-              ]
+              ],
+              "disabled": true
             },
             "fpg_trust": {
               "type": "group",
@@ -362,6 +363,69 @@
                 "show_request": true
               },
               "blocks": {}
+            },
+            "fpg_complete_job": {
+              "type": "fpg-complete-job",
+              "settings": {
+                "rule_1_types": "Chainsaw",
+                "rule_1_vendor": "STIHL",
+                "rule_1_title_not": "MSA,MSE,GTA,GS 4",
+                "rule_1_products": [
+                  "109833",
+                  "98027",
+                  "stihl-function-basic-helmet-set",
+                  "stihl-work-gloves-dynamic-protect-ms",
+                  "100591"
+                ],
+                "rule_2_types": "Chainsaw,Power Pruner,Pole Saw",
+                "rule_2_vendor": "STIHL",
+                "rule_2_title_has": "MSA,GTA,HTA",
+                "rule_2_products": [
+                  "98027",
+                  "stihl-function-basic-helmet-set",
+                  "stihl-work-gloves-dynamic-protect-ms"
+                ],
+                "rule_3_types": "Chainsaw",
+                "rule_3_vendor": "Husqvarna",
+                "rule_3_title_not": "0i ,1i ,2i ,5i ,aspire,battery",
+                "rule_3_products": [
+                  "74706",
+                  "74175",
+                  "husqvarna-classic-forest-helmet",
+                  "husqvarna-functional-gloves-with-saw-protection",
+                  "husqvarna-combi-can-5l-2-5l"
+                ],
+                "rule_4_types": "Hedge Trimmer,Long Reach Hedge Trimmer",
+                "rule_4_vendor": "STIHL",
+                "rule_4_title_not": "HSA,HLA,HSE",
+                "rule_4_products": [
+                  "110293",
+                  "stihl-superclean",
+                  "109833",
+                  "103101"
+                ],
+                "rule_5_types": "Brushcutter",
+                "rule_5_vendor": "STIHL",
+                "rule_5_title_not": "FSA,FSE",
+                "rule_5_products": [
+                  "109833",
+                  "103624",
+                  "103101",
+                  "97027"
+                ],
+                "rule_6_types": "Blower",
+                "rule_6_vendor": "STIHL",
+                "rule_6_title_not": "BGA,BGE,SHA,SHE",
+                "rule_6_products": [
+                  "109833",
+                  "107853",
+                  "103101"
+                ]
+              }
+            },
+            "fpg_fits": {
+              "type": "fpg-fits",
+              "settings": {}
             }
           },
           "block_order": [
@@ -375,8 +439,10 @@
             "fpg_hulk_offers",
             "buy_buttons_eYQEYi",
             "fpg_trust",
+            "fpg_complete_job",
             "fpg_cormorant",
             "fpg_pairs",
+            "fpg_fits",
             "fpg_complementary",
             "text_aEtTtq",
             "fpg_spec_tabs"

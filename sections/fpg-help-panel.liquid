@@ -1,6 +1,8 @@
 {%- comment -%}
   FP&G help panel for the search results and page-not-found templates.
   - Search with results: a slim tip about searching by part number or model.
+  - A search that names a machine model: a shortcut to the chains and bars
+    that fit it (assets/fpg-fit.js).
   - Search with no results (or no search yet) and the 404 page: a search box,
     tips, popular category chips and ways to get help (call, parts finder,
     parts ID request).
@@ -20,6 +22,16 @@
 
 <div class="section-background"></div>
 <div class="section section--page-width spacing-style fpg-helpp" style="{% render 'spacing-padding', settings: section.settings %}">
+  {%- if is_search and search.performed -%}
+    {%- comment -%} A machine model in the search ("MS 261 chain") gets a shortcut to the chains and bars that fit it (assets/fpg-fit.js). {%- endcomment -%}
+    <script src="{{ 'fpg-fit.js' | asset_url }}" type="module"></script>
+    <fpg-fit-search
+      hidden
+      data-terms="{{ search.terms | escape }}"
+      data-url="{{ 'fpg-fit-data.json' | asset_url }}"
+      data-finder-url="{{ routes.collections_url }}/chainsaw-chains"
+    ></fpg-fit-search>
+  {%- endif -%}
   {%- if no_results == false -%}
     <p class="fpg-helpp__tip">
       <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>

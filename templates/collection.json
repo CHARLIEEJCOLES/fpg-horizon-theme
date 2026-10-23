@@ -166,10 +166,18 @@
         "padding-block-start": 24,
         "padding-block-end": 56
       }
+    },
+    "fpg_fit": {
+      "type": "fpg-fit-finder",
+      "settings": {
+        "padding-block-start": 8,
+        "padding-block-end": 8
+      }
     }
   },
   "order": [
     "section",
+    "fpg_fit",
     "main"
   ]
 }

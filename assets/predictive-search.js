@@ -317,7 +317,8 @@ class PredictiveSearchComponent extends Component {
     if (!this.dataset.sectionId) return;
 
     const url = new URL(Theme.routes.predictive_search_url, location.origin);
-    url.searchParams.set('q', searchTerm);
+    // FP&G: join up part numbers and space out model names (assets/fpg-look.js)
+    url.searchParams.set('q', /** @type {any} */ (window).fpgNormaliseSearch?.(searchTerm) || searchTerm);
     url.searchParams.set('resources[limit_scope]', 'each');
 
     const { predictiveSearchResults } = this.refs;

@@ -1,0 +1,133 @@
+{%- comment -%}
+  FP&G chain and bar finder: by machine (brand + model) or by the numbers
+  stamped on the bar (pitch, gauge, drive links). Results are live product
+  cards with prices and Add to basket.
+  - On collection pages it only shows on the collections listed in "Show on
+    collections" (chains, bars, kits by default), folded up until opened or
+    until a link with ?fit=… or ?pitch=… brings the shopper here.
+  - On a page it always shows, open.
+  Data and behaviour: assets/fpg-fit-data.json and assets/fpg-fit.js.
+  Styles: assets/fpg-fit.css.
+{%- endcomment -%}
+
+{%- liquid
+  assign show = true
+  assign folded = false
+  if request.page_type == 'collection'
+    assign handles = section.settings.collections | split: ','
+    assign show = false
+    for h in handles
+      if collection.handle == h
+        assign show = true
+      endif
+    endfor
+    assign folded = section.settings.folded
+  endif
+-%}
+
+{%- if show -%}
+  <script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
+  <script src="{{ 'fpg-fit.js' | asset_url }}" type="module"></script>
+  <div class="section-background"></div>
+  <div
+    class="section section--page-width spacing-style fpg-fit"
+    id="fpg-fit"
+    style="{% render 'spacing-padding', settings: section.settings %}"
+  >
+    <fpg-fit-finder data-url="{{ 'fpg-fit-data.json' | asset_url }}" data-vat="{{ settings.fpg_vat_rate | default: 20 }}">
+      <details class="fpg-fit__box"{% unless folded %} open{% endunless %}>
+        <summary class="fpg-fit__summary">
+          <span class="fpg-fit__summary-icon" aria-hidden="true">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h12.5a3 3 0 0 0 0-6H3z"/><path d="M3 9v6"/><circle cx="15.5" cy="12" r="1.2"/><path d="M7 9v6M11 9v6"/></svg>
+          </span>
+          <span class="fpg-fit__summary-text">
+            <strong>{{ section.settings.heading | escape }}</strong>
+            <small>{{ section.settings.subheading | escape }}</small>
+          </span>
+          <span class="fpg-fit__summary-cta" aria-hidden="true">Find what fits</span>
+        </summary>
+
+        <div class="fpg-fit__inner">
+          <div class="fpg-fit__tabs" role="tablist" aria-label="How to find your chain or bar">
+            <button type="button" role="tab" data-mode="machine" aria-selected="true">By machine</button>
+            <button type="button" role="tab" data-mode="numbers" aria-selected="false" tabindex="-1">By the numbers on your bar</button>
+          </div>
+
+          <div class="fpg-fit__panel" data-panel="machine" role="tabpanel">
+            <div class="fpg-fit__fields">
+              <label class="fpg-fit__field">
+                <span>Brand</span>
+                <select data-brand><option value="">Loading…</option></select>
+              </label>
+              <label class="fpg-fit__field fpg-fit__field--wide">
+                <span>Model</span>
+                <input type="text" list="FpgFitModels-{{ section.id }}" data-model disabled autocomplete="off" placeholder="Choose a brand first" enterkeyhint="search">
+                <datalist id="FpgFitModels-{{ section.id }}" data-model-list></datalist>
+              </label>
+            </div>
+            <p class="fpg-fit__hint">The model is on the machine's rating plate or starter cover, for example “MS 261” or “450”.</p>
+          </div>
+
+          <div class="fpg-fit__panel" data-panel="numbers" role="tabpanel" hidden>
+            <div class="fpg-fit__numbers">
+              <div class="fpg-fit__fields">
+                <label class="fpg-fit__field"><span>Pitch</span><select data-pitch></select></label>
+                <label class="fpg-fit__field"><span>Gauge</span><select data-gauge></select></label>
+                <label class="fpg-fit__field"><span>Drive links</span><select data-links></select></label>
+              </div>
+              <figure class="fpg-fit__diagram">
+                <svg viewBox="0 0 320 96" role="img" aria-labelledby="FpgFitDiagram-{{ section.id }}">
+                  <title id="FpgFitDiagram-{{ section.id }}">The tail end of a guide bar, stamped with the pitch, gauge and drive link count</title>
+                  <rect x="8" y="30" width="270" height="36" rx="18" fill="var(--fpg-pale, #e2e9e5)" stroke="var(--fpg-teal, #002d37)" stroke-width="2"/>
+                  <circle cx="262" cy="48" r="8" fill="none" stroke="var(--fpg-teal, #002d37)" stroke-width="2"/>
+                  <rect x="28" y="44" width="34" height="8" rx="4" fill="var(--fpg-teal, #002d37)" opacity=".25"/>
+                  <text x="96" y="53" font-size="14" font-weight="700" fill="var(--fpg-teal, #002d37)">3/8"</text>
+                  <text x="146" y="53" font-size="14" font-weight="700" fill="var(--fpg-teal, #002d37)">1.3</text>
+                  <text x="186" y="53" font-size="14" font-weight="700" fill="var(--fpg-teal, #002d37)">55</text>
+                  <path d="M110 28V14M158 28V14M195 28V14" stroke="var(--fpg-sage, #5f7d6d)" stroke-width="1.5"/>
+                  <text x="110" y="10" font-size="11" text-anchor="middle" fill="var(--fpg-sage, #5f7d6d)">Pitch</text>
+                  <text x="158" y="10" font-size="11" text-anchor="middle" fill="var(--fpg-sage, #5f7d6d)">Gauge (mm)</text>
+                  <text x="205" y="10" font-size="11" text-anchor="start" fill="var(--fpg-sage, #5f7d6d)">Drive links</text>
+                  <text x="12" y="88" font-size="10.5" fill="var(--fpg-ink, #12262b)" opacity=".7">Stamped near the tail of the bar. Drive links: count the teeth on the inside of the chain.</text>
+                </svg>
+              </figure>
+            </div>
+          </div>
+
+          <p class="fpg-fit__status" data-status role="status" aria-live="polite"></p>
+          <div class="fpg-fit__kinds" data-kinds hidden>
+            <button type="button" data-kind="all" aria-pressed="true">All</button>
+            <button type="button" data-kind="c" aria-pressed="false">Chains</button>
+            <button type="button" data-kind="b" aria-pressed="false">Bars</button>
+            <button type="button" data-kind="k" aria-pressed="false">Kits</button>
+          </div>
+          <ul class="fpg-fit-results" role="list" data-results></ul>
+          <button type="button" class="fpg-fit__more" data-more hidden>Show more</button>
+
+          <p class="fpg-fit__note">
+            Fit details come from the manufacturers' fit guides. Always check the numbers stamped on your bar before ordering.
+            Not sure? Call <a href="tel:+441443230000">01443 230000</a> or use the <a href="/pages/bar-and-chain-finder">Common Parts Look Up</a>.
+          </p>
+        </div>
+      </details>
+    </fpg-fit-finder>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FP&G chain & bar finder",
+  "tag": "section",
+  "class": "fpg-fit-section",
+  "enabled_on": { "templates": ["collection", "page", "index", "search"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Which chain or bar fits my saw?" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Search by machine, or by the numbers stamped on your bar" },
+    { "type": "text", "id": "collections", "label": "Show on collections (handles, comma separated)", "default": "chainsaw-chains,chainsaw-bars,bar-chain-kits" },
+    { "type": "checkbox", "id": "folded", "label": "Folded up on collection pages", "default": true },
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 16 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 16 }
+  ],
+  "presets": [{ "name": "FP&G chain & bar finder" }]
+}
+{% endschema %}

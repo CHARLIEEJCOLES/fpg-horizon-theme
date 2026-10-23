@@ -1,8 +1,7 @@
 
 
-<script type="application/ld+json">
-  {{ closest.product | structured_data }}
-</script>
+{%- comment -%} FP&G: structured data with VAT-inclusive prices, part number and barcode (snippets/fpg-product-jsonld.liquid) {%- endcomment -%}
+{% render 'fpg-product-jsonld', product: closest.product %}
 
 {% capture media_gallery %}
   {%- content_for 'block',

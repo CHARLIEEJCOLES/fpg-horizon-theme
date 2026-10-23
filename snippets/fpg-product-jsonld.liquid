@@ -1,0 +1,111 @@
+{%- doc -%}
+  FP&G product structured data for Google, replacing Shopify's
+  `structured_data` output in sections/product-information.liquid.
+
+  Why: the shop's prices are stored without VAT, so Shopify's output gave
+  Google the ex-VAT price (for example £19.88 for a chain that costs £23.86).
+  Google expects UK consumer prices to include VAT, and a price that doesn't
+  match what shoppers pay can get listings warned or disapproved.
+
+  What it outputs, all from the product's own data:
+  - name, description, images, URL, brand (vendor), category (product type)
+  - sku and mpn (the part number held in the SKU), gtin from the barcode when
+    it is a valid 8, 12, 13 or 14 digit number
+  - one offer per variant with the price including VAT (only on taxable
+    variants), currency, stock status and condition "new"
+  Products priced at £0 get no offers, so Google is never sent a free price.
+
+  @param {object} product - The product
+{%- enddoc -%}
+
+{%- liquid
+  assign vat_rate = settings.fpg_vat_rate | default: 20
+  assign quote_tag = false
+  if product.price == 0
+    assign quote_tag = true
+  endif
+  assign description = product.description | newline_to_br | replace: '<br />', ' ' | strip_html | strip_newlines | split: ' ' | join: ' ' | truncate: 4900
+-%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": {{ request.origin | append: product.url | append: '#product' | json }},
+  "name": {{ product.title | json }},
+  "url": {{ request.origin | append: product.url | json }},
+  {%- if description != blank %}
+  "description": {{ description | json }},
+  {%- endif %}
+  {%- if product.media.size > 0 %}
+  "image": [
+    {%- for media in product.media limit: 5 -%}
+      {%- if media.preview_image -%}
+        {{ media.preview_image | image_url: width: 1200 | prepend: 'https:' | json }}{% unless forloop.last %},{% endunless %}
+      {%- endif -%}
+    {%- endfor -%}
+  ],
+  {%- endif %}
+  {%- if product.vendor != blank %}
+  "brand": { "@type": "Brand", "name": {{ product.vendor | json }} },
+  {%- endif %}
+  {%- if product.type != blank %}
+  "category": {{ product.type | json }},
+  {%- endif %}
+  {%- assign first = product.selected_or_first_available_variant %}
+  {%- if first.sku != blank %}
+  "sku": {{ first.sku | json }},
+  "mpn": {{ first.sku | json }},
+  {%- endif %}
+  {%- liquid
+    assign barcode = first.barcode | strip
+    assign digits = barcode | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9'
+    assign gtin_key = ''
+    if barcode != blank and digits == blank
+      case barcode.size
+        when 8
+          assign gtin_key = 'gtin8'
+        when 12
+          assign gtin_key = 'gtin12'
+        when 13
+          assign gtin_key = 'gtin13'
+        when 14
+          assign gtin_key = 'gtin14'
+      endcase
+    endif
+  -%}
+  {%- if gtin_key != '' %}
+  {{ gtin_key | json }}: {{ barcode | json }},
+  {%- endif %}
+  "offers": [
+    {%- unless quote_tag -%}
+      {%- for variant in product.variants -%}
+        {%- liquid
+          assign ex = variant.price
+          assign inc = ex
+          if variant.taxable
+            assign vat = ex | times: vat_rate | divided_by: 100.0 | round
+            assign inc = ex | plus: vat
+          endif
+          assign price = inc | divided_by: 100.0 | round: 2
+        -%}
+        {
+          "@type": "Offer",
+          "url": {{ request.origin | append: variant.url | json }},
+          {%- if variant.sku != blank %}"sku": {{ variant.sku | json }},{% endif %}
+          "price": {{ price | json }},
+          "priceCurrency": {{ cart.currency.iso_code | json }},
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "price": {{ price | json }},
+            "priceCurrency": {{ cart.currency.iso_code | json }},
+            "valueAddedTaxIncluded": {{ variant.taxable | json }}
+          },
+          "itemCondition": "https://schema.org/NewCondition",
+          "availability": {% if variant.available %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},
+          "seller": { "@type": "Organization", "name": {{ shop.name | replace: '&amp;', '&' | json }} }
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    {%- endunless -%}
+  ]
+}
+</script>

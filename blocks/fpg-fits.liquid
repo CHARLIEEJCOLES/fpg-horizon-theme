@@ -1,0 +1,62 @@
+{%- doc -%}
+  FP&G "what fits" on the product page (assets/fpg-fit.js):
+  - On a chain, guide bar or bar-and-chain kit: its pitch, gauge and drive
+    links, the machines it is listed for (from the product's Fit Guide), and a
+    "check your machine" box.
+  - On a chainsaw, pole saw or pruner: spare chains and bars listed as fitting
+    it, matching the bar length of the chosen option when it has one.
+  Nothing shows for other products, or when no fit details are found.
+  Updates when the shopper changes variant (assets/fpg-variant-block.js).
+{%- enddoc -%}
+
+{%- liquid
+  assign product = closest.product
+  assign machine_types = block.settings.machine_types | split: ','
+  assign is_machine = false
+  for t in machine_types
+    assign t_clean = t | strip
+    if product.type == t_clean
+      assign is_machine = true
+    endif
+  endfor
+  assign variant = product.selected_or_first_available_variant
+  assign finder_url = routes.collections_url | append: '/' | append: block.settings.finder_collection
+-%}
+
+<script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
+<script src="{{ 'fpg-fit.js' | asset_url }}" type="module"></script>
+<fpg-variant-block data-block-id="{{ block.id }}" data-product-id="{{ product.id }}" {{ block.shopify_attributes }}>
+  <fpg-fit-product
+    class="fpg-fits"
+    hidden
+    data-url="{{ 'fpg-fit-data.json' | asset_url }}"
+    data-handle="{{ product.handle }}"
+    data-title="{{ product.title | escape }}"
+    data-brand="{{ product.vendor | escape }}"
+    data-machine="{{ is_machine }}"
+    data-variant-title="{{ variant.title | escape }}"
+    data-finder-url="{{ finder_url }}"
+    data-block-id="{{ block.id }}"
+    data-vat="{{ settings.fpg_vat_rate | default: 20 }}"
+  >
+    <h2 class="fpg-fits__heading">
+      {%- if is_machine -%}{{ block.settings.machine_heading | escape }}{%- else -%}{{ block.settings.heading | escape }}{%- endif -%}
+    </h2>
+    <div data-body></div>
+  </fpg-fit-product>
+</fpg-variant-block>
+<script src="{{ 'fpg-variant-block.js' | asset_url }}" type="module"></script>
+
+{% schema %}
+{
+  "name": "FP&G what fits",
+  "tag": null,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading on chains and bars", "default": "What it fits" },
+    { "type": "text", "id": "machine_heading", "label": "Heading on machines", "default": "Spare chains & bars for this saw" },
+    { "type": "text", "id": "machine_types", "label": "Machine product types (comma separated)", "default": "Chainsaw,Pole Saw,Power Pruner" },
+    { "type": "text", "id": "finder_collection", "label": "Collection with the chain & bar finder (handle)", "default": "chainsaw-chains" }
+  ],
+  "presets": [{ "name": "FP&G what fits" }]
+}
+{% endschema %}

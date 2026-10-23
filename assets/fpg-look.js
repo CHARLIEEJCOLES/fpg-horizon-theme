@@ -113,3 +113,46 @@ document.addEventListener('click', (event) => {
   }
 });
 document.addEventListener('shopify:section:load', addDrawerHelp);
+
+// ---------------------------------------------------------------------------
+// Smarter search (round 5). Shopify's search treats "3695 000 0060" as three
+// separate words and "ms261" as one unknown word, so both find the wrong
+// things. Before any search is sent:
+// - part numbers typed with spaces, dashes, dots or slashes are joined up
+//   ("3695 000 0060" -> "36950000060", "585 94 30-01" -> "585943001"),
+//   which matches the SKU exactly;
+// - machine models typed without a space get one ("ms261" -> "MS 261",
+//   "fs94rc" -> "FS 94 RC"), which is how the product titles write them.
+// Used by every search form on submit and by the predictive search
+// (assets/predictive-search.js, marked FP&G).
+const MODEL_PREFIXES =
+  'MSA|MSE|MS|FSA|FSE|FS|HSA|HSE|HS|HLA|HL|HTA|HTE|HT|KMA|KM|BGA|BGE|BG|BR|SHA|SHE|SH|GTA|RMA|RME|RM|REA|RE|SEA|SE|TSA|TS|BT|MB|SG|SR|SP|GH|ASA|MH|RLA|RLE|IMOW';
+
+/** @param {string} query */
+export function fpgNormaliseSearch(query) {
+  let q = String(query || '').trim();
+  q = q.replace(/\b\d{3,4}(?:[\s.\-\/]+\d{2,4}){2,3}\b/g, (match) => {
+    const digits = match.replace(/\D/g, '');
+    return digits.length >= 8 && digits.length <= 13 ? digits : match;
+  });
+  q = q.replace(
+    new RegExp(`\\b(${MODEL_PREFIXES})-?(\\d{2,3})([a-z]{1,3})?\\b`, 'gi'),
+    (_m, prefix, num, suffix) => `${prefix.toUpperCase()} ${num}${suffix ? ` ${suffix.toUpperCase()}` : ''}`
+  );
+  return q;
+}
+/** @type {any} */ (window).fpgNormaliseSearch = fpgNormaliseSearch;
+
+document.addEventListener(
+  'submit',
+  (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+    const action = form.getAttribute('action') || '';
+    const input = form.querySelector('input[name="q"]');
+    if (!/\/search\b/.test(action) || !(input instanceof HTMLInputElement)) return;
+    const cleaned = fpgNormaliseSearch(input.value);
+    if (cleaned && cleaned !== input.value) input.value = cleaned;
+  },
+  true
+);

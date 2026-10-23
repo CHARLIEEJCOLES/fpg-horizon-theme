@@ -1,0 +1,264 @@
+{%- doc -%}
+  FP&G "Complete the job": the things a machine needs on day one (fuel, oil,
+  safety kit, a spare chain), each with a tick box, and one button that adds
+  the ticked items to the basket. Nothing is ticked until the shopper ticks it.
+
+  Where the items come from, in order (duplicates and sold-out items dropped):
+  1. The product's own "Complementary products" from Shopify's Search &
+     Discovery app, when "Use Search & Discovery picks" is on.
+  2. The first rule below that matches the product. A rule matches on product
+     type (comma separated), brand (vendor) and words in the title, so petrol
+     and battery machines can get different lists.
+  3. On chainsaws, a spare chain listed as fitting the chosen bar length
+     (assets/fpg-fit-data.json), when "Add a spare chain that fits" is on.
+
+  Behaviour: assets/fpg-complete-job.js. Styles: assets/fpg-fit.css.
+{%- enddoc -%}
+
+{%- liquid
+  assign product = closest.product
+  assign max = block.settings.max_items
+  assign type_d = product.type | downcase
+  assign vendor_d = product.vendor | downcase
+  assign title_d = product.title | downcase
+
+  assign picks = ','
+  assign count = 0
+
+  if block.settings.use_recommendations
+    assign recs = product.metafields['shopify--discovery--product_recommendation'].complementary_products.value
+    for rec in recs
+      if count >= max
+        break
+      endif
+      if rec.id != product.id and rec.available
+        assign key = ',' | append: rec.id | append: ','
+        unless picks contains key
+          assign picks = picks | append: key
+          assign count = count | plus: 1
+        endunless
+      endif
+    endfor
+  endif
+
+  assign rule_found = false
+  for n in (1..6)
+    if rule_found
+      break
+    endif
+    assign types_key = 'rule_' | append: n | append: '_types'
+    assign vendor_key = 'rule_' | append: n | append: '_vendor'
+    assign has_key = 'rule_' | append: n | append: '_title_has'
+    assign not_key = 'rule_' | append: n | append: '_title_not'
+    assign products_key = 'rule_' | append: n | append: '_products'
+    assign rule_products = block.settings[products_key]
+    if rule_products == blank
+      continue
+    endif
+
+    assign ok = false
+    assign types = block.settings[types_key] | downcase | split: ','
+    for t in types
+      assign t_clean = t | strip
+      if t_clean == type_d
+        assign ok = true
+      endif
+    endfor
+
+    assign rule_vendor = block.settings[vendor_key] | downcase | strip
+    if ok and rule_vendor != blank and rule_vendor != vendor_d
+      assign ok = false
+    endif
+
+    assign has_words = block.settings[has_key] | downcase | split: ','
+    if ok and has_words.size > 0
+      assign any_has = false
+      for w in has_words
+        assign w_clean = w | strip
+        if w_clean != blank and title_d contains w_clean
+          assign any_has = true
+        endif
+      endfor
+      unless any_has
+        assign ok = false
+      endunless
+    endif
+
+    assign not_words = block.settings[not_key] | downcase | split: ','
+    if ok
+      for w in not_words
+        assign w_clean = w | lstrip
+        if w_clean != blank and title_d contains w_clean
+          assign ok = false
+        endif
+      endfor
+    endif
+
+    if ok
+      assign rule_found = true
+      for rp in rule_products
+        if count >= max
+          break
+        endif
+        if rp.id != product.id and rp.available
+          assign key = ',' | append: rp.id | append: ','
+          unless picks contains key
+            assign picks = picks | append: key
+            assign count = count | plus: 1
+          endunless
+        endif
+      endfor
+    endif
+  endfor
+
+  assign machine_types = block.settings.chain_types | downcase | split: ','
+  assign wants_chain = false
+  if block.settings.spare_chain
+    for t in machine_types
+      assign t_clean = t | strip
+      if t_clean == type_d
+        assign wants_chain = true
+      endif
+    endfor
+  endif
+  assign vat_rate = settings.fpg_vat_rate | default: 20
+-%}
+
+{%- if count > 0 or wants_chain -%}
+  <script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
+  <script src="{{ 'fpg-complete-job.js' | asset_url }}" type="module"></script>
+  <fpg-complete-job
+    class="fpg-ctj"
+    data-vat="{{ vat_rate }}"
+    data-fit-script="{{ 'fpg-fit.js' | asset_url }}"
+    data-fit-url="{{ 'fpg-fit-data.json' | asset_url }}"
+    data-title="{{ product.title | escape }}"
+    data-brand="{{ product.vendor | escape }}"
+    data-variant-title="{{ product.selected_or_first_available_variant.title | escape }}"
+    data-chain="{{ wants_chain }}"
+    {% if count == 0 %}hidden{% endif %}
+    {{ block.shopify_attributes }}
+  >
+    <h2 class="fpg-ctj__heading">{{ block.settings.heading | escape }}</h2>
+    {%- if block.settings.text != blank -%}
+      <p class="fpg-ctj__text">{{ block.settings.text | escape }}</p>
+    {%- endif -%}
+    <ul class="fpg-ctj__list" role="list" data-list>
+      <li class="fpg-ctj__item" data-chain-row hidden></li>
+      {%- assign ids = picks | split: ',' -%}
+      {%- for id in ids -%}
+        {%- if id == blank -%}{%- continue -%}{%- endif -%}
+        {%- assign item = null -%}
+        {%- for p in recs -%}
+          {%- assign pid = p.id | append: '' -%}
+          {%- if pid == id -%}{%- assign item = p -%}{%- endif -%}
+        {%- endfor -%}
+        {%- if item == null -%}
+          {%- for n in (1..6) -%}
+            {%- assign products_key = 'rule_' | append: n | append: '_products' -%}
+            {%- for p in block.settings[products_key] -%}
+              {%- assign pid = p.id | append: '' -%}
+              {%- if pid == id -%}{%- assign item = p -%}{%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        {%- endif -%}
+        {%- if item -%}
+          {%- assign v = item.selected_or_first_available_variant -%}
+          <li class="fpg-ctj__item" data-product-id="{{ item.id }}">
+            <input
+              type="checkbox"
+              class="fpg-ctj__tick"
+              id="Ctj-{{ block.id }}-{{ item.id }}"
+              value="{{ v.id }}"
+              data-price="{{ v.price }}"
+              data-taxable="{{ v.taxable }}"
+            >
+            <label class="fpg-ctj__img" for="Ctj-{{ block.id }}-{{ item.id }}">
+              {%- if item.featured_image -%}
+                {{ item.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: '', width: 60, height: 60 }}
+              {%- endif -%}
+            </label>
+            <div class="fpg-ctj__info">
+              <label for="Ctj-{{ block.id }}-{{ item.id }}" class="fpg-ctj__title">{{ item.title | escape }}</label>
+              {%- if item.variants.size > 1 -%}
+                <select class="fpg-ctj__variant" aria-label="Option for {{ item.title | escape }}" data-variant>
+                  {%- for opt in item.variants -%}
+                    {%- if opt.available -%}
+                      <option value="{{ opt.id }}" data-price="{{ opt.price }}" data-taxable="{{ opt.taxable }}"{% if opt.id == v.id %} selected{% endif %}>{{ opt.title | escape }}</option>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </select>
+              {%- endif -%}
+              <a class="fpg-ctj__link" href="{{ item.url }}">Details</a>
+            </div>
+            <span class="fpg-ctj__price" data-price-out>
+              {%- if v.taxable -%}
+                {%- assign vat = v.price | times: vat_rate | divided_by: 100.0 | round -%}
+                {{ v.price | money }} <span class="fpg-vat">+ VAT</span>
+                <span class="fpg-vat fpg-vat--inc">({{ v.price | plus: vat | money }})</span>
+              {%- else -%}
+                {{ v.price | money }} <span class="fpg-vat">no VAT</span>
+              {%- endif -%}
+            </span>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+    <div class="fpg-ctj__foot">
+      <p class="fpg-ctj__total" data-total aria-live="polite">Tick the items you need</p>
+      <button type="button" class="fpg-ctj__add button" data-add disabled>Add selected to basket</button>
+    </div>
+  </fpg-complete-job>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FP&G complete the job",
+  "tag": null,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Complete the job" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Everything it needs on day one. Tick what you need and add it in one go." },
+    { "type": "range", "id": "max_items", "label": "Most items to show", "min": 2, "max": 6, "step": 1, "default": 5 },
+    { "type": "checkbox", "id": "use_recommendations", "label": "Use Search & Discovery picks first", "default": true },
+    { "type": "checkbox", "id": "spare_chain", "label": "Add a spare chain that fits", "default": true },
+    { "type": "text", "id": "chain_types", "label": "Product types that get a spare chain", "default": "Chainsaw" },
+    { "type": "header", "content": "Rule 1" },
+    { "type": "text", "id": "rule_1_types", "label": "Product types (comma separated)" },
+    { "type": "text", "id": "rule_1_vendor", "label": "Brand (blank = any)" },
+    { "type": "text", "id": "rule_1_title_has", "label": "Title contains one of (blank = any)" },
+    { "type": "text", "id": "rule_1_title_not", "label": "Title contains none of" },
+    { "type": "product_list", "id": "rule_1_products", "label": "Suggest", "limit": 6 },
+    { "type": "header", "content": "Rule 2" },
+    { "type": "text", "id": "rule_2_types", "label": "Product types (comma separated)" },
+    { "type": "text", "id": "rule_2_vendor", "label": "Brand (blank = any)" },
+    { "type": "text", "id": "rule_2_title_has", "label": "Title contains one of (blank = any)" },
+    { "type": "text", "id": "rule_2_title_not", "label": "Title contains none of" },
+    { "type": "product_list", "id": "rule_2_products", "label": "Suggest", "limit": 6 },
+    { "type": "header", "content": "Rule 3" },
+    { "type": "text", "id": "rule_3_types", "label": "Product types (comma separated)" },
+    { "type": "text", "id": "rule_3_vendor", "label": "Brand (blank = any)" },
+    { "type": "text", "id": "rule_3_title_has", "label": "Title contains one of (blank = any)" },
+    { "type": "text", "id": "rule_3_title_not", "label": "Title contains none of" },
+    { "type": "product_list", "id": "rule_3_products", "label": "Suggest", "limit": 6 },
+    { "type": "header", "content": "Rule 4" },
+    { "type": "text", "id": "rule_4_types", "label": "Product types (comma separated)" },
+    { "type": "text", "id": "rule_4_vendor", "label": "Brand (blank = any)" },
+    { "type": "text", "id": "rule_4_title_has", "label": "Title contains one of (blank = any)" },
+    { "type": "text", "id": "rule_4_title_not", "label": "Title contains none of" },
+    { "type": "product_list", "id": "rule_4_products", "label": "Suggest", "limit": 6 },
+    { "type": "header", "content": "Rule 5" },
+    { "type": "text", "id": "rule_5_types", "label": "Product types (comma separated)" },
+    { "type": "text", "id": "rule_5_vendor", "label": "Brand (blank = any)" },
+    { "type": "text", "id": "rule_5_title_has", "label": "Title contains one of (blank = any)" },
+    { "type": "text", "id": "rule_5_title_not", "label": "Title contains none of" },
+    { "type": "product_list", "id": "rule_5_products", "label": "Suggest", "limit": 6 },
+    { "type": "header", "content": "Rule 6" },
+    { "type": "text", "id": "rule_6_types", "label": "Product types (comma separated)" },
+    { "type": "text", "id": "rule_6_vendor", "label": "Brand (blank = any)" },
+    { "type": "text", "id": "rule_6_title_has", "label": "Title contains one of (blank = any)" },
+    { "type": "text", "id": "rule_6_title_not", "label": "Title contains none of" },
+    { "type": "product_list", "id": "rule_6_products", "label": "Suggest", "limit": 6 }
+  ],
+  "presets": [{ "name": "FP&G complete the job" }]
+}
+{% endschema %}

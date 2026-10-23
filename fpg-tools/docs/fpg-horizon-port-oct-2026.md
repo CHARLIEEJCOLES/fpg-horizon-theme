@@ -216,6 +216,23 @@ Charlie asked for "next 10 fixes and boosts". All uploaded to the unpublished th
 **Not checked at full width:** sticky filters and three-column menus need a screen wider than the preview window (990px+).
 **Awaiting Charlie's OK:** fixing collection-name typos on the live store.
 
+## Round 5: fit finder, Complete the job, Google data, search (23 Oct)
+
+Charlie asked for ~2 hours of "complex, useful, best in industry" work; approved 1–4 and 6, live data only as a 20-product sample first, no bulk access yet.
+
+**What the data showed (12 months, 3,220 orders):** 82% of chainsaw orders were the saw alone (76 of 93); hedge trimmers 83%, blowers 74%, pressure washers 90%. Searching "3695 000 0060" found the wrong chains; "ms261 chain" found sprockets. 97,574 of 132,117 active products have no product type. Google was being sent ex-VAT prices (£19.88 for a £23.86 chain).
+
+**Done (draft theme, tested on the preview):**
+- **Smarter search:** part numbers with spaces/dashes/dots are joined ("3695 000 0060" → exact chain), model names spaced ("ms261" → "MS 261", "fs94rc" → "FS 94 RC"); every search form and the live suggestions.
+- **Chain & bar finder** on the chain, bar and kit collections (folded until opened): by machine (435 models, STIHL, Husqvarna, Jonsered, Makita, ECHO, Scheppach, Toro) or by pitch/gauge/drive links with a bar diagram. Data from the products' own Fit Guide text and titles (248 chains, bars and kits); live prices and Add to basket. MS 261: 13 chains, 10 bars, 1 kit.
+- **Product pages:** chains/bars show their size, the machines they're listed for and a "check your machine" box; chainsaws show spare chains and bars for the chosen bar length.
+- **Search shortcut:** a search naming a model ("MS 261 chain") shows a card to the chains and bars that fit it.
+- **Complete the job** under the buy buttons: tick boxes (none pre-ticked) and one Add selected button. Search & Discovery picks first, then rules (editable in the theme editor): STIHL petrol saws, STIHL battery saws/pruners, Husqvarna petrol saws, STIHL petrol hedge trimmers, brushcutters, blowers; plus a spare chain that fits on chainsaws. Replaces the "Pairs well with" carousel (switched off, not deleted).
+- **Google product data:** VAT-inclusive offer prices, part number (mpn), barcode (gtin), brand, condition.
+- **Speed check:** phone product page LCP 1.4s, CLS 0.005; collection LCP 1.8s, CLS 0. No changes needed; 16 third-party app hosts load on product pages (Charlie's call whether any apps are unused).
+
+**Live data sample (approved):** product types set on 20 products (all were blank): fpg-tools/product-types/sample-2026-10-23.csv. New types used: Chainsaw Sharpening, Chainsaw Boots, Gloves, Climbing Equipment, Axes & Splitting Tools, Hand Saws, Workwear. Rules for the rest in fpg-tools/product-types/rules.py; waiting on Charlie's sign-off and storage.googleapis.com access for the bulk run.
+
 ## FP&G files (all prefixed fpg-)
 
 - **snippets/fpg-vat-price:** prices shown as "£X + VAT (£Y)".
@@ -223,6 +240,7 @@ Charlie asked for "next 10 fixes and boosts". All uploaded to the unpublished th
 - **Product blocks:** fpg-stock-status, fpg-product-notices, fpg-cormorant, fpg-variant-pairs, fpg-spec-tabs, fpg-hire-rates, fpg-store-info.
 - **assets/fpg-variant-block.js:** refreshes the FP&G blocks when the variant changes.
 - **snippets/fpg-head-scripts:** loads the design CSS/JS; jQuery on the Part Finder page only; GA4; Store structured data.
+- **Round 5:** sections/fpg-fit-finder, blocks/fpg-fits, blocks/fpg-complete-job, assets/fpg-fit.js/.css/-data.json, assets/fpg-complete-job.js, snippets/fpg-product-jsonld.
 - **Round 4:** sections/fpg-phone-bar, sections/fpg-help-panel, snippets/fpg-cart-extras, assets/fpg-boost.css.
 - **Templates:**
   - Core: index, collection, product, product.quote-needed (hire), product.ticket-number.
@@ -239,6 +257,8 @@ These need re-applying after Horizon updates; each edit is marked "FP&G".
 - blocks/buy-buttons.liquid
 - snippets/cart-summary.liquid (note limit; total inc. VAT)
 - snippets/cart-drawer.liquid (FP&G basket extras)
+- sections/product-information.liquid (FP&G structured data)
+- assets/predictive-search.js (search clean-up, one line)
 - layout/theme.liquid (render line)
 - config/settings_schema.json (FP&G group)
 - locales/en.default.json
