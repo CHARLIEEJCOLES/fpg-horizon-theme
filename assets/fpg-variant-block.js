@@ -230,6 +230,8 @@ function todayInLondon() {
  * @param {string} text - The message to show.
  */
 function showResult(output, state, text) {
+  const note = output.closest('[data-fpg-availability]')?.querySelector('[data-fpg-availability-note]');
+  if (note instanceof HTMLElement && state !== 'in') note.hidden = true;
   output.dataset.state = state;
   output.textContent = text;
 }
@@ -241,6 +243,8 @@ function showResult(output, state, text) {
  * @param {string | undefined} etaDate - Expected date, when the item is available to order.
  */
 function renderStatus(output, root, status, etaDate) {
+  const note = root.querySelector('[data-fpg-availability-note]');
+  if (note instanceof HTMLElement) note.hidden = status !== 'in-stock';
   const prefix = root.dataset.textPrefix ? `${root.dataset.textPrefix} ` : '';
   if (status === 'in-stock') {
     showResult(output, 'in', prefix + (root.dataset.textInStock || 'In stock'));

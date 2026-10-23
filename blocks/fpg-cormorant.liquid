@@ -7,6 +7,9 @@
     shop metafield cormorant.delay_notices and show when the vendor matches,
     the selected variant has 0 or less in stock, and today (UK) is on or before
     the notice's end date.
+  - When we have none of the selected variant and the manufacturer says it is
+    in stock, a short note under the result explains what that means for
+    delivery (setting "No stock here, manufacturer has it").
   Renders nothing for other vendors. Updates when the shopper changes variant
   (assets/fpg-variant-block.js).
 {%- enddoc -%}
@@ -90,6 +93,11 @@
         </button>
         <p class="fpg-availability__result" data-fpg-availability-result role="status" aria-live="polite"></p>
       {%- endif -%}
+      {%- if variant_out_of_stock and block_settings.supplier_stock_note != blank -%}
+        <p class="fpg-availability__note" data-fpg-availability-note hidden>
+          {{- block_settings.supplier_stock_note | replace: '[brand]', product.vendor | escape -}}
+        </p>
+      {%- endif -%}
     </div>
   {%- endif -%}
 </fpg-variant-block>
@@ -162,6 +170,17 @@
 
   .fpg-availability__again:disabled,
   .fpg-availability__result:empty + .fpg-availability__again {
+    display: none;
+  }
+
+  .fpg-availability__note {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: var(--font-size--sm);
+    line-height: 1.45;
+  }
+
+  .fpg-availability__note[hidden] {
     display: none;
   }
 
@@ -248,6 +267,13 @@
       "id": "unavailable_text",
       "label": "Unavailable result",
       "default": "Currently unavailable"
+    },
+    {
+      "type": "textarea",
+      "id": "supplier_stock_note",
+      "label": "No stock here, manufacturer has it",
+      "info": "Shown under the result when we have none of the selected option and the manufacturer says In stock. [brand] becomes the product's brand. Leave blank to hide.",
+      "default": "We don't have this one on the shelf right now, but [brand] does. We'll order it in for you, which only adds 24–48 hours to your delivery."
     },
     {
       "type": "checkbox",

@@ -103,3 +103,4 @@ The pictures on the kit creator, servicing, hire and home pages were made for FP
 - Each answer is kept for 5 minutes per SKU on the page. "Check again" always asks the server afresh.
 - Moved to sit under the stock status, above Add to cart.
 - Block settings: "Check live as the page opens" (on; switch off to get the old button back), "Words before the result", "Check again link".
+- When we have none of the selected option and the manufacturer says In stock, a note appears under the result: "We don't have this one on the shelf right now, but [brand] does. We'll order it in for you, which only adds 24–48 hours to your delivery." Editable in the block ("No stock here, manufacturer has it"); blank hides it.
