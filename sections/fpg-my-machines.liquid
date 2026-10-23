@@ -1,0 +1,413 @@
+{%- comment -%}
+  FP&G "My machines": the customer's machines with quick links to order parts
+  and book a service. Signed in, the list is the customer metafield
+  fpg.machines (saved through the FPG Part Finder app's proxy) plus machines
+  bought from FP&G (from Polly, through the same app). Signed out, it's kept
+  in the browser. Behaviour: assets/fpg-my-machines.js.
+  Back-end set-up: fpg-tools/my-machines/APP-AND-POLLY.md.
+{%- endcomment -%}
+
+<script src="{{ 'fpg-parts.js' | asset_url }}" type="module"></script>
+<script src="{{ 'fpg-my-machines.js' | asset_url }}" type="module"></script>
+
+{%- liquid
+  assign proxy = '/' | append: section.settings.proxy_prefix | append: '/' | append: section.settings.proxy_subpath
+  assign login_url = routes.account_login_url | append: '?return_url=' | append: request.path
+-%}
+
+<div class="section-background"></div>
+<div
+  class="section section--page-width spacing-style fpg-mm-section"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+>
+  <fpg-my-machines
+    class="fpg-mm"
+    data-signed-in="{% if customer %}true{% else %}false{% endif %}"
+    data-proxy="{{ proxy | escape }}"
+    data-index="{{ 'fpg-parts-index.json' | asset_url }}"
+    data-parts-script="{{ 'fpg-parts.js' | asset_url }}"
+    data-finder-url="{{ section.settings.finder_url | default: '/pages/fpg-part-finder' }}"
+    data-service-url="{{ section.settings.service_url | default: '/collections/servicing-repair' }}"
+    data-contact-url="{{ section.settings.contact_url | default: '/pages/contact' }}"
+    data-search-url="{{ routes.search_url }}"
+  >
+    {%- if customer -%}
+      <script type="application/json" data-account-machines>
+        {%- if customer.metafields.fpg.machines.value != blank -%}
+          {{ customer.metafields.fpg.machines.value | json }}
+        {%- else -%}
+          []
+        {%- endif -%}
+      </script>
+    {%- endif -%}
+
+    <header class="fpg-mm__head">
+      <div>
+        <p class="fpg-mm__kicker">{{ section.settings.kicker | escape }}</p>
+        <h1 class="fpg-mm__title">
+          {%- if customer and customer.first_name != blank -%}
+            {{ customer.first_name | escape }}'s machines
+          {%- else -%}
+            {{ section.settings.heading | escape }}
+          {%- endif -%}
+        </h1>
+        <p class="fpg-mm__intro">{{ section.settings.text | escape }}</p>
+      </div>
+      {%- unless customer -%}
+        <div class="fpg-mm__signin">
+          <p><strong>Sign in to keep them on your account.</strong> You'll see them on any device, along with the machines you've bought from us.</p>
+          <a class="fpg-mm__btn" href="{{ login_url }}">Sign in or create an account</a>
+        </div>
+      {%- endunless -%}
+    </header>
+
+    <div class="fpg-mm__add">
+      <label class="fpg-mm__add-label" for="FpgMmAdd-{{ section.id }}">Add a machine</label>
+      <div class="fpg-mm__add-box">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="FpgMmAdd-{{ section.id }}" type="search" placeholder="Type your model, e.g. MS 261 or 135 Mark II" autocomplete="off" spellcheck="false" data-add-search>
+        <ul class="fpg-mm__suggest" role="list" data-add-suggest hidden></ul>
+      </div>
+      <p class="fpg-mm__hint">The model is on the machine's label, usually near the handle or on the engine cover.</p>
+    </div>
+
+    <p class="fpg-mm__note" role="status" aria-live="polite" data-note hidden></p>
+
+    <ul class="fpg-mm__list" role="list" data-list>
+      <li class="fpg-mm__empty"><span>Loading your machines…</span></li>
+    </ul>
+  </fpg-my-machines>
+</div>
+
+{% stylesheet %}
+  .fpg-mm {
+    display: grid;
+    gap: 24px;
+    color: var(--fpg-ink, #12262b);
+  }
+
+  .fpg-mm [hidden] {
+    display: none !important;
+  }
+
+  .fpg-mm__head {
+    display: grid;
+    gap: 20px;
+    padding: clamp(22px, 4vw, 40px);
+    border-radius: 20px;
+    background: var(--fpg-teal, #002d37);
+    color: #fff;
+  }
+
+  @media (min-width: 900px) {
+    .fpg-mm__head {
+      grid-template-columns: 1fr minmax(260px, 380px);
+      align-items: center;
+    }
+  }
+
+  .fpg-mm__kicker {
+    margin: 0 0 6px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #b9d3c4;
+  }
+
+  .fpg-mm__title {
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+    line-height: 1.1;
+    color: #fff;
+  }
+
+  .fpg-mm__intro {
+    margin: 10px 0 0;
+    max-width: 40rem;
+    line-height: 1.5;
+    color: rgb(255 255 255 / 0.82);
+  }
+
+  .fpg-mm__signin {
+    display: grid;
+    gap: 12px;
+    padding: 18px;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.08);
+    border: 1px solid rgb(255 255 255 / 0.18);
+  }
+
+  .fpg-mm__signin p {
+    margin: 0;
+    line-height: 1.45;
+    color: rgb(255 255 255 / 0.9);
+  }
+
+  .fpg-mm__signin .fpg-mm__btn {
+    background: #fff;
+    border-color: #fff;
+    color: var(--fpg-teal, #002d37) !important;
+  }
+
+  .fpg-mm__add {
+    display: grid;
+    gap: 8px;
+    max-width: 640px;
+  }
+
+  .fpg-mm__add-label {
+    font-weight: 700;
+    color: var(--fpg-teal, #002d37);
+  }
+
+  .fpg-mm__add-box {
+    position: relative;
+  }
+
+  .fpg-mm__add-box > svg {
+    position: absolute;
+    inset-inline-start: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--fpg-sage, #5f7d6d);
+    pointer-events: none;
+  }
+
+  .fpg-mm__add-box input {
+    width: 100%;
+    min-height: 54px;
+    padding: 0 16px 0 46px;
+    border: 1px solid var(--fpg-line, #d6ded9);
+    border-radius: 12px;
+    background: #fff;
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  .fpg-mm__add-box input:focus {
+    outline: 2px solid var(--fpg-sage, #5f7d6d);
+    outline-offset: 1px;
+  }
+
+  .fpg-mm__suggest {
+    position: absolute;
+    inset-inline: 0;
+    top: calc(100% + 6px);
+    z-index: 5;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: var(--fpg-shadow-md, 0 16px 40px rgb(0 45 55 / 0.16));
+  }
+
+  .fpg-mm__suggest button {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 9px;
+    background: none;
+    font: inherit;
+    text-align: start;
+    color: var(--fpg-teal, #002d37);
+    cursor: pointer;
+  }
+
+  .fpg-mm__suggest button:hover,
+  .fpg-mm__suggest button:focus-visible {
+    background: var(--fpg-mist, #f3f6f4);
+  }
+
+  .fpg-mm__suggest span {
+    display: grid;
+    flex: 1 1 auto;
+  }
+
+  .fpg-mm__suggest small {
+    font-size: 0.8125rem;
+    color: rgb(18 38 43 / 0.62);
+  }
+
+  .fpg-mm__suggest em {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--fpg-sage, #5f7d6d);
+  }
+
+  .fpg-mm__none {
+    padding: 12px;
+    font-size: 0.9375rem;
+  }
+
+  .fpg-mm__hint {
+    margin: 0;
+    font-size: 0.875rem;
+    color: rgb(18 38 43 / 0.65);
+  }
+
+  .fpg-mm__note {
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #e6f4ea;
+    color: #1c6b34;
+    font-weight: 600;
+    width: fit-content;
+  }
+
+  .fpg-mm__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fpg-mm__card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px 16px;
+    align-items: center;
+    padding: 18px;
+    border: 1px solid var(--fpg-line, #d6ded9);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: var(--fpg-shadow-sm);
+  }
+
+  .fpg-mm__icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--fpg-mist, #f3f6f4);
+    color: var(--fpg-teal, #002d37);
+  }
+
+  .fpg-mm__text {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .fpg-mm__type {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fpg-sage, #5f7d6d);
+  }
+
+  .fpg-mm__name {
+    font-family: var(--font-heading--family);
+    font-size: 1.375rem;
+    line-height: 1.15;
+    color: var(--fpg-teal, #002d37);
+  }
+
+  .fpg-mm__meta {
+    font-size: 0.8125rem;
+    color: rgb(18 38 43 / 0.7);
+  }
+
+  .fpg-mm__badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #e6f0ea;
+    color: #2f5c45;
+    font-weight: 700;
+  }
+
+  .fpg-mm__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    grid-column: 1 / -1;
+  }
+
+  .fpg-mm__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 16px;
+    border: 1px solid var(--fpg-teal, #002d37);
+    border-radius: 10px;
+    background: var(--fpg-teal, #002d37);
+    color: #fff !important;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .fpg-mm__btn--ghost {
+    background: #fff;
+    color: var(--fpg-teal, #002d37) !important;
+  }
+
+  .fpg-mm__btn--ghost:hover {
+    background: var(--fpg-mist, #f3f6f4);
+  }
+
+  .fpg-mm__remove {
+    margin-inline-start: auto;
+    padding: 6px 4px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 0.875rem;
+    color: rgb(18 38 43 / 0.6);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .fpg-mm__empty {
+    display: grid;
+    gap: 6px;
+    grid-column: 1 / -1;
+    padding: 28px;
+    border: 1px dashed var(--fpg-line, #d6ded9);
+    border-radius: 16px;
+    background: var(--fpg-mist, #f3f6f4);
+    text-align: center;
+  }
+
+  .fpg-mm__empty strong {
+    font-size: 1.125rem;
+    color: var(--fpg-teal, #002d37);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FP&G my machines",
+  "tag": "section",
+  "class": "fpg-mm-wrap",
+  "enabled_on": { "templates": ["page"] },
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Small line above the heading", "default": "Your account" },
+    { "type": "text", "id": "heading", "label": "Heading (signed out)", "default": "My machines" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Save your machines to order the right parts and book a service in a couple of clicks." },
+    { "type": "text", "id": "finder_url", "label": "Parts finder page", "default": "/pages/fpg-part-finder" },
+    { "type": "text", "id": "service_url", "label": "Book a service page", "info": "The page with the FP&G service finder.", "default": "/collections/servicing-repair" },
+    { "type": "text", "id": "contact_url", "label": "Contact page", "default": "/pages/contact" },
+    { "type": "header", "content": "Part Finder app" },
+    { "type": "paragraph", "content": "Saving to customers' accounts and their bought machines go through the FPG Part Finder app's proxy." },
+    { "type": "text", "id": "proxy_prefix", "label": "Proxy prefix", "default": "apps" },
+    { "type": "text", "id": "proxy_subpath", "label": "Proxy subpath", "default": "parts-finder" },
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 24 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "presets": [{ "name": "FP&G my machines" }]
+}
+{% endschema %}

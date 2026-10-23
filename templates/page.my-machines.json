@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "fpg-my-machines",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

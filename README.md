@@ -113,3 +113,9 @@ The pictures on the kit creator, servicing, hire and home pages were made for FP
 - `blocks/fpg-parts-link.liquid` on product pages: "Spare parts for the STIHL MS 261" when the title names a listed model.
 - Home page brand strip: logos now centred in their tiles (fpg-look.css).
 - Waiting on: Polly parts data (which machine and section each part belongs to; names, photos, descriptions) to fill gaps.
+
+### My machines (23 Oct 2026)
+- `templates/page.my-machines.json` + `sections/fpg-my-machines.liquid` + `assets/fpg-my-machines.js`: customers add their machines (model search) and get "Order parts" (straight to that machine in the parts finder) and "Book a service" (service finder pre-filled with machine, brand, model and serial).
+- Signed in: list from customer metafield `fpg.machines`, saved via the Part Finder app proxy (`POST /apps/parts-finder/customer/machines`); machines bought from FP&G from Polly via `GET /apps/parts-finder/customer/owned-machines`. Until those app routes exist it falls back to the browser. Spec and ready-to-paste code: `fpg-tools/my-machines/APP-AND-POLLY.md`.
+- `assets/fpg-service-finder.js` reads `?machine=&brand=&model=&serial=` and opens on the right service.
+- To go live: create the page (handle `my-machines`, template `page.my-machines`) and add "My machines" to the customer account menu.

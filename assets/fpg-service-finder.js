@@ -33,6 +33,38 @@ class FpgServiceFinder extends HTMLElement {
     this.addEventListener('change', this.#onChange);
     this.querySelector('[data-form]')?.addEventListener('submit', this.#onSubmit);
     this.#renderMachines();
+    this.#prefill();
+  }
+
+  /**
+   * Opens the finder ready-filled from a link, e.g. "Book a service" on the
+   * My machines page: ?machine=Chainsaw&brand=STIHL&model=MS 261 C-M&serial=123.
+   * Machine names are matched loosely ("Blower & Vacuum" finds "Blower").
+   */
+  #prefill() {
+    const params = new URLSearchParams(location.search);
+    const machine = params.get('machine') || '';
+    const brand = params.get('brand') || '';
+    const model = params.get('model') || '';
+    if (!machine && !model) return;
+    const words = (/** @type {string} */ v) => this.#key(v).replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
+    const wanted = words(machine);
+    const service =
+      this.services.find(
+        (s) =>
+          (!brand || this.#key(s.brand) === this.#key(brand)) &&
+          words(s.machine).some((w) => wanted.some((x) => x.replace(/s$/, '') === w.replace(/s$/, '')))
+      ) || null;
+    if (service) {
+      this.#chooseMachine(service.machine);
+      this.#chooseService(service.block);
+    }
+    const input = /** @type {HTMLInputElement | null} */ (this.querySelector('input[name="model"]'));
+    if (input && model) input.value = model;
+    const serial = params.get('serial') || '';
+    const serialInput = /** @type {HTMLInputElement | null} */ (this.querySelector('input[name="serial"]'));
+    if (serialInput && serial) serialInput.value = serial;
+    requestAnimationFrame(() => this.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   /** @param {string} value */
