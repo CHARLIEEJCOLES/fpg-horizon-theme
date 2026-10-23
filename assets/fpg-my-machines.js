@@ -150,10 +150,9 @@ class FpgMyMachines extends HTMLElement {
       .filter((m) => m && !this.saved.some((s) => s.modelId === m.modelId));
     if (!add.length) return;
     const next = [...this.saved, .../** @type {Machine[]} */ (add)].slice(0, MAX);
-    if (await this.saveToAccount(next)) {
-      this.saved = next;
-      write(LOCAL_KEY, []);
-    }
+    this.saved = next;
+    if (await this.saveToAccount(next)) write(LOCAL_KEY, []);
+    /* Account saving isn't available: keep showing them, and keep them in this browser. */ else this.synced = false;
   }
 
   async loadOwned() {
