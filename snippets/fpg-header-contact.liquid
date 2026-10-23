@@ -1,0 +1,50 @@
+{%- doc -%}
+  FP&G header contact strip: phone number and today's opening hours (with an
+  "Open now" / "Closed" status worked out in UK time) beside the logo on the
+  dark header. Desktop only. Rendered from blocks/_header-logo.liquid when the
+  header's top row is dark. Styles: assets/fpg-menu.css.
+
+  @example
+  {% render 'fpg-header-contact' %}
+{%- enddoc -%}
+
+<div class="fpg-hcontact">
+  <a class="fpg-hcontact__item" href="tel:+441443230000">
+    <svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="fpg-hcontact__text">
+      <strong>01443 230000</strong>
+      <small>Expert advice</small>
+    </span>
+  </a>
+  <a class="fpg-hcontact__item" href="{{ pages.contact.url | default: '/pages/contact' }}">
+    <span class="fpg-hcontact__dot" data-fpg-open-dot aria-hidden="true"></span>
+    <span class="fpg-hcontact__text">
+      <strong data-fpg-open-status>Mon–Fri 8am–5pm</strong>
+      <small data-fpg-open-detail>Coed Court, Treforest</small>
+    </span>
+  </a>
+</div>
+<script>
+  (() => {
+    const strip = document.currentScript?.previousElementSibling;
+    if (!strip) return;
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      weekday: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      hourCycle: 'h23',
+    }).formatToParts(new Date());
+    const get = (type) => parts.find((p) => p.type === type)?.value || '';
+    const day = get('weekday');
+    const minutes = Number(get('hour')) * 60 + Number(get('minute'));
+    const weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(day);
+    const open = weekday && minutes >= 480 && minutes < 1020;
+    const status = strip.querySelector('[data-fpg-open-status]');
+    const dot = strip.querySelector('[data-fpg-open-dot]');
+    if (status) status.textContent = open ? 'Open now until 5pm' : weekday && minutes < 480 ? 'Opens today at 8am' : day === 'Fri' || day === 'Sat' || day === 'Sun' ? 'Closed, opens Monday 8am' : 'Closed, opens 8am tomorrow';
+    dot?.classList.toggle('is-open', open);
+  })();
+</script>

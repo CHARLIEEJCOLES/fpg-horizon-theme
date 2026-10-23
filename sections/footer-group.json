@@ -183,23 +183,23 @@
           "type": "promo",
           "settings": {
             "menu_title": "Parts & Servicing",
-            "image": "shopify://shop_images/img_065124c2-16c4-4599-9cd7-98f3c2b57e5c.jpg",
+            "image": "shopify://shop_images/Chainsaw_Maintenance_in_a_Warm_Workshop.png",
             "eyebrow": "Workshop",
-            "heading": "Book a service",
-            "text": "Servicing and repairs in our Treforest workshop, using genuine parts.",
-            "label": "Book now",
+            "heading": "Find and book your service",
+            "text": "Pick your machine and brand, see the price and book it online.",
+            "label": "Book a service",
             "link": "shopify://collections/servicing-repair"
           }
         },
         "promo_2": {
           "type": "promo",
           "settings": {
-            "menu_title": "Garden & Tree Machinery",
-            "image": "shopify://shop_images/img_f544e3ea-5ad0-4650-b4a8-1b68c6f1fe14.jpg",
+            "menu_title": "Machinery",
+            "image": "shopify://shop_images/Wood_Chipping_Overlook.png",
             "eyebrow": "Machine hire",
             "heading": "Hire professional machinery",
-            "text": "Chippers, stump grinders, tracked carriers and more, by the day or week.",
-            "label": "View hire range",
+            "text": "Chippers, stump grinders and mowers by the day, weekend or week.",
+            "label": "Plan your hire",
             "link": "shopify://collections/for-hire"
           }
         },
@@ -214,12 +214,51 @@
             "label": "Shop PPE",
             "link": "shopify://collections/all-clothing-and-ppe"
           }
+        },
+        "promo_4": {
+          "type": "promo",
+          "settings": {
+            "menu_title": "Climbing & Arb",
+            "image": "shopify://shop_images/Arborist_Gear_Flat_Lay_in_Earthy_Tones.png",
+            "eyebrow": "Kit creator",
+            "heading": "Build your climbing kit",
+            "text": "Work through each step and check your kit against the minimum list.",
+            "label": "Start building",
+            "link": "shopify://collections/kit-creator"
+          }
+        },
+        "promo_5": {
+          "type": "promo",
+          "settings": {
+            "menu_title": "Hire",
+            "image": "shopify://shop_images/Orange_Forestry_Equipment_Display.png",
+            "eyebrow": "Plan your hire",
+            "heading": "See the price for your dates",
+            "text": "The planner finds the best mix of day, weekend and week rates.",
+            "label": "View hire machines",
+            "link": "shopify://collections/for-hire"
+          }
+        },
+        "promo_6": {
+          "type": "promo",
+          "settings": {
+            "menu_title": "Accessories",
+            "image": "shopify://shop_images/Studio_Chainsaw_Product_Shot.png",
+            "eyebrow": "Common parts look up",
+            "heading": "Find the chain and bar that fit",
+            "text": "Choose your make and model to see matching chains, bars, filters and plugs.",
+            "label": "Look up parts",
+            "link": "shopify://pages/bar-and-chain-finder"
+          }
         }
       },
       "block_order": [
         "promo_1",
         "promo_2",
-        "promo_3"
+        "promo_3",
+        "promo_4",
+        "promo_5",
+        "promo_6"
       ],
       "settings": {}
     }

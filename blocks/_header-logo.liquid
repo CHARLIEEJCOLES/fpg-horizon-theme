@@ -21,6 +21,15 @@
   endif
 
   assign alt_text_fallback = 'accessibility.home_logo_alt' | t: store_name: shop.name
+
+  # FP&G: on a dark top row, show the white version of the logo (assets/fpg-logo-white.svg)
+  assign fpg_white_logo = false
+  if section.settings.background_color_top != blank
+    assign fpg_top_brightness = section.settings.background_color_top | color_brightness
+    if fpg_top_brightness < 90
+      assign fpg_white_logo = true
+    endif
+  endif
 %}
 
 {% comment %}
@@ -57,14 +66,26 @@
     {% endif %}
     data-testid="header-logo"
   >
-    {% render 'image',
-      image: settings.logo,
-      class: 'header-logo__image',
-      height: settings.logo_height,
-      alt_text_fallback: alt_text_fallback,
-      text_fallback: shop.name,
-      style: logo_style
-    %}
+    {%- if fpg_white_logo -%}
+      {%- comment -%} FP&G: white logo for the dark header {%- endcomment -%}
+      <img
+        src="{{ 'fpg-logo-white.svg' | asset_url }}"
+        alt="{{ shop.name | escape }}"
+        class="header-logo__image"
+        width="{{ logo_width }}"
+        height="{{ settings.logo_height }}"
+        style="{{ logo_style }}"
+      >
+    {%- else -%}
+      {% render 'image',
+        image: settings.logo,
+        class: 'header-logo__image',
+        height: settings.logo_height,
+        alt_text_fallback: alt_text_fallback,
+        text_fallback: shop.name,
+        style: logo_style
+      %}
+    {%- endif -%}
   </span>
 
   {% if use_inverse_logo %}
@@ -83,6 +104,10 @@
     </span>
   {% endif %}
 </a>
+{%- if fpg_white_logo -%}
+  {%- comment -%} FP&G: phone number and opening hours beside the logo on desktop {%- endcomment -%}
+  {% render 'fpg-header-contact' %}
+{%- endif -%}
 
 {% stylesheet %}
   .header-logo {

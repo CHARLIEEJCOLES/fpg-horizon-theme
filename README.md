@@ -22,6 +22,7 @@ All new files start with `fpg-`. The only Horizon files that were changed are th
 | Collections | `blocks/fpg-promo-tile.liquid` (promo tiles in the product grid) |
 | Home page | `blocks/fpg-search-bar.liquid` (hero search with popular chips) |
 | Shopping tools | `sections/fpg-kit-builder.liquid` + `assets/fpg-kit-builder.js/.css` (climbing kit builder with minimum-kit checklist), `sections/fpg-service-finder.liquid` + `assets/fpg-service-finder.js/.css` (machine → brand → book a service, model and notes go with the order), `blocks/fpg-hire-calculator.liquid` + `assets/fpg-hire.js` (hire planner: cheapest mix of day, weekend and week rates, or a hire request), `sections/fpg-hire-centre.liquid` + `assets/fpg-hire.css` (hire landing page), `assets/fpg-cart.js` (shared add-to-basket helper that opens the cart drawer) |
+| Header and menu | `assets/fpg-menu.css` (dark teal header, menu bar hover line, dropdown columns and headings, "Build a Climbing Kit" pill, phone drawer), `assets/fpg-logo-white.svg` (the FP&G logo in white and pale sage for the dark header), `snippets/fpg-header-contact.liquid` (phone number and open/closed status beside the logo, 1100px and wider) |
 | Page tops | `sections/fpg-page-hero.liquid` (dark teal hero with breadcrumbs, selling points, buttons and a picture) |
 | Site-wide sections | `sections/fpg-recently-viewed.liquid`, `fpg-back-to-top.liquid`, `fpg-menu-promos.liquid` (picture cards in the menu dropdowns) |
 | Scripts and styles | `assets/fpg-design.css` (design layer), `assets/fpg-design.js` (back to top, countdown, recently viewed, menu promos, fade-up), `assets/fpg-variant-block.js` (refreshes FP&G blocks when the variant changes), `snippets/fpg-head-scripts.liquid` (loads the above, GA4, jQuery on the Part Finder page only), `snippets/fpg-mini-card.liquid` |
@@ -38,6 +39,7 @@ Search for `FP&G` to find the changes in the Liquid files. The two exceptions ar
 - `config/settings_schema.json`: the "FP&G" settings group (VAT rate, clearance tag, stock wording, Cormorant, GA4 and so on)
 - `locales/en.default.json`: "(Ex. VAT)" totals and "Delivery instructions"
 - `sections/main-collection.liquid`: renders the two promo tiles inside the product grid
+- `blocks/_header-logo.liquid`: when the header's top row is dark, shows `fpg-logo-white.svg` in place of the uploaded logo and renders `fpg-header-contact` after it
 
 ### Templates
 
@@ -73,7 +75,8 @@ The pictures on the kit creator, servicing, hire and home pages were made for FP
 
 - **Theme settings › FP&G**: VAT 20%, clearance tag and percentage, dropship tag, stock and pickup wording, Cormorant URL and brands, cart note limit 30, GA4 ID.
 - **Countdowns** stay hidden until an end date (YYYY-MM-DD, UK time) is set. One is on the home page Offers heading and one is under the product price.
-- **The header menu** is `horizon-main-menu`, a copy of `main-menu` with shorter top-level labels. `main-menu` is left alone.
+- **The header menu** is `horizon-main-menu` ("Main menu (Horizon)"). It's built from `fpg-tools/menu/menu_spec.py`: run `python3 -I fpg-tools/menu/build_menu.py items` and send `items.json` with `menuUpdate`. Ten top-level items (Machinery, Mowers, Parts & Servicing, Accessories, Clothing & PPE, Climbing & Arb, Tools & Workshop, Hire, Offers, Help), three levels deep, and every group has an "All …" link or a heading link so phones can reach the group page. `main-menu` is left alone because the live Dawn theme uses it; to roll back, point the header at `main-menu` again.
+- **The menu promo cards** (`fpg-menu-promos` in the footer group) are keyed to the top-level menu titles, so rename them together.
 - **The cart drawer** opens automatically after something is added, which matches the pop-up on the old theme.
 - **Hire products** (vendor FPG HIRE) show a "For hire" badge on product cards, and the hire planner replaces Add to cart on any product with Day / Extra Day / Week / Weekend variants.
 

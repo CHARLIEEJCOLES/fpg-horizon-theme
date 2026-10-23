@@ -1,6 +1,7 @@
 {%- doc -%}
   FP&G scripts for the page head, controlled from Theme settings > FP&G:
   - the FP&G design layer (assets/fpg-design.css and assets/fpg-design.js) on every page
+  - the header and menu styling (assets/fpg-menu.css) and the header texture picture
   - jQuery 3.7.1 for the FPG Part Finder app (the same file the current theme
     loads), only on the Part Finder page template (or site-wide if ticked)
   - an optional GA4 tag. Leave the GA4 ID blank when the Google & YouTube app
@@ -21,6 +22,7 @@
 -%}
 
 {{ 'fpg-design.css' | asset_url | stylesheet_tag }}
+{{ 'fpg-menu.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'fpg-design.js' | asset_url }}" type="module"></script>
 
 {%- if load_jquery -%}
