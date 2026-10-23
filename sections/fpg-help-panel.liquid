@@ -1,0 +1,106 @@
+{%- comment -%}
+  FP&G help panel for the search results and page-not-found templates.
+  - Search with results: a slim tip about searching by part number or model.
+  - Search with no results (or no search yet) and the 404 page: a search box,
+    tips, popular category chips and ways to get help (call, parts finder,
+    parts ID request).
+  Styles: assets/fpg-boost.css.
+{%- endcomment -%}
+
+{%- liquid
+  assign is_search = false
+  if request.page_type == 'search'
+    assign is_search = true
+  endif
+  assign no_results = true
+  if is_search and search.performed and search.results_count > 0
+    assign no_results = false
+  endif
+-%}
+
+<div class="section-background"></div>
+<div class="section section--page-width spacing-style fpg-helpp" style="{% render 'spacing-padding', settings: section.settings %}">
+  {%- if no_results == false -%}
+    <p class="fpg-helpp__tip">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+      <span>Looking for a part? Search the part number from your manual or the old part, or use the <a href="/pages/parts-finder">spare parts diagrams</a>.</span>
+    </p>
+  {%- else -%}
+    <div class="fpg-helpp__card">
+      <div class="fpg-helpp__main">
+        {%- if is_search and search.performed -%}
+          <p class="fpg-eyebrow">No results</p>
+          <h2 class="h3">Nothing found for “{{ search.terms | escape }}”</h2>
+        {%- elsif is_search -%}
+          <p class="fpg-eyebrow">Search</p>
+          <h2 class="h3">What are you looking for?</h2>
+        {%- else -%}
+          <p class="fpg-eyebrow">Page not found</p>
+          <h2 class="h3">That page has moved or no longer exists</h2>
+        {%- endif -%}
+
+        {%- comment -%} The search page already has a search box in its header. {%- endcomment -%}
+        {%- unless is_search -%}
+        <form class="fpg-helpp__search" action="{{ routes.search_url }}" method="get" role="search">
+          <label class="visually-hidden" for="FpgHelpSearch-{{ section.id }}">Search the shop</label>
+          <input
+            id="FpgHelpSearch-{{ section.id }}"
+            type="search"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="Product, model or part number"
+            autocomplete="off"
+          >
+          <input type="hidden" name="options[prefix]" value="last">
+          <button type="submit">Search</button>
+        </form>
+        {%- endunless -%}
+
+        <ul class="fpg-helpp__tips" role="list">
+          <li>Check the spelling, or try fewer words.</li>
+          <li>For parts, search the part number (with or without spaces) or your machine's model, such as “MS 261”.</li>
+        </ul>
+
+        <p class="fpg-helpp__label">Popular</p>
+        <ul class="fpg-subcats__list fpg-helpp__chips" role="list">
+          <li><a class="fpg-subcats__chip" href="/collections/all-chainsaws">Chainsaws</a></li>
+          <li><a class="fpg-subcats__chip" href="/collections/chainsaw-chains">Chainsaw chains</a></li>
+          <li><a class="fpg-subcats__chip" href="/collections/chainsaw-service-kits">Service kits</a></li>
+          <li><a class="fpg-subcats__chip" href="/collections/all-lawnmowers">Lawn mowers</a></li>
+          <li><a class="fpg-subcats__chip" href="/collections/all-clothing-and-ppe">Clothing &amp; PPE</a></li>
+          <li><a class="fpg-subcats__chip" href="/collections/current-promotions">Offers</a></li>
+        </ul>
+      </div>
+
+      <div class="fpg-helpp__side">
+        <p class="fpg-helpp__side-title">We can find it for you</p>
+        <a class="fpg-helpp__action" href="tel:+441443230000">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+          <span><strong>Call 01443 230000</strong><small>Mon–Fri 8am–5pm</small></span>
+        </a>
+        <a class="fpg-helpp__action" href="/pages/parts-finder">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
+          <span><strong>Spare parts diagrams</strong><small>Find parts by machine</small></span>
+        </a>
+        <a class="fpg-helpp__action" href="https://parts.fpandg.com/" target="_blank" rel="noopener">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          <span><strong>Parts ID request</strong><small>Ask us to identify a part</small></span>
+        </a>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "FP&G help panel",
+  "tag": "section",
+  "class": "fpg-helpp-section",
+  "enabled_on": { "templates": ["search", "404"] },
+  "settings": [
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 16 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 32 }
+  ],
+  "presets": [{ "name": "FP&G help panel" }]
+}
+{% endschema %}

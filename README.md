@@ -27,6 +27,7 @@ All new files start with `fpg-`. The only Horizon files that were changed are th
 | Footer | `sections/fpg-footer.liquid` (dark teal footer: newsletter, logo and contact, Shop / Help / More / Visit us columns, policies and payment icons). It replaces Horizon's footer, store info and utilities sections in the footer group |
 | Collections and products | `snippets/fpg-subcat-chips.liquid` (sub-category chips from the menu, shown in every collection title band by the breadcrumbs block; `sections/fpg-subcats.liquid` is the same as a stand-alone section), `blocks/fpg-key-specs.liquid` (power, type, cutting width, drive, area, slope and battery chips under the product title, from the product's fields) |
 | Round 3 styles | `assets/fpg-look.css` (all of the above, the parts finder restyle, card prices, product page price and part number, and the `--fpg-texture` hook for teal bands), `assets/fpg-look.js` (renames the parts finder's "Please Select" to "Part type"; hides the sticky Add to basket bar on Call for Price products) |
+| Round 4 (phones, basket, help) | `sections/fpg-phone-bar.liquid` (search field under the header on phones, not on the home page; holds the phone menu footer template), `snippets/fpg-cart-extras.liquid` (basket: total inc. VAT, free click & collect line, help line, payment icons, empty-basket quick links), `sections/fpg-help-panel.liquid` (search tips and the no-results / page-not-found help card), `assets/fpg-boost.css` (styles for these plus collection filters, announcement arrow, teal sticky basket bar, single-column menu fix) |
 | Page tops | `sections/fpg-page-hero.liquid` (dark teal hero with breadcrumbs, selling points, buttons and a picture) |
 | Site-wide sections | `sections/fpg-recently-viewed.liquid`, `fpg-back-to-top.liquid`, `fpg-menu-promos.liquid` (picture cards in the menu dropdowns) |
 | Scripts and styles | `assets/fpg-design.css` (design layer), `assets/fpg-design.js` (back to top, countdown, recently viewed, menu promos, fade-up), `assets/fpg-variant-block.js` (refreshes FP&G blocks when the variant changes), `snippets/fpg-head-scripts.liquid` (loads the above, GA4, jQuery on the Part Finder page only), `snippets/fpg-mini-card.liquid` |
@@ -38,7 +39,8 @@ Search for `FP&G` to find the changes in the Liquid files. The two exceptions ar
 - `snippets/price.liquid`: VAT display, with clearance rounding matching checkout
 - `blocks/_featured-product-price.liquid`, `blocks/_product-card-gallery.liquid`, `snippets/card-gallery.liquid`: VAT prices and card badges
 - `blocks/buy-buttons.liquid`: pickup wording
-- `snippets/cart-summary.liquid`: cart note character limit
+- `snippets/cart-summary.liquid`: cart note character limit; renders the total inc. VAT under the estimated total
+- `snippets/cart-drawer.liquid`: renders `fpg-cart-extras` under the summary and in the empty basket
 - `layout/theme.liquid`: loads `fpg-head-scripts`
 - `config/settings_schema.json`: the "FP&G" settings group (VAT rate, clearance tag, stock wording, Cormorant, GA4 and so on)
 - `locales/en.default.json`: "(Ex. VAT)" totals and "Delivery instructions"
@@ -48,6 +50,8 @@ Search for `FP&G` to find the changes in the Liquid files. The two exceptions ar
 ### Templates
 
 - `index.json`: the home page
+- `search.json` and `404.json`: the FP&G help panel (Horizon's own 404 text section is switched off)
+- `sections/header-group.json`: the FP&G phone bar after the header
 - `collection.json`
 - `product.json`, `product.quote-needed.json` (hire) and `product.ticket-number.json`
 - `page.bar-and-chain-finder.json` and `page.product-parts-page.json` (Year/Make/Model and Part Finder apps)

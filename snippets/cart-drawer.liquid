@@ -37,6 +37,8 @@
       <div class="cart-drawer__items">
         {% render 'cart-products', force_empty: true, context: 'drawer' %}
       </div>
+      {%- comment -%} FP&G: quick links for an empty basket {%- endcomment -%}
+      {% render 'fpg-cart-extras', mode: 'empty' %}
     </div>
   {% endcapture %}
 
@@ -116,6 +118,8 @@
 
                 <div class="cart-drawer__summary">
                   {% render 'cart-summary', section_id: 'cart-drawer-section' %}
+                  {%- comment -%} FP&G: total inc. VAT, click & collect, help line, payment icons {%- endcomment -%}
+                  {% render 'fpg-cart-extras', mode: 'summary' %}
                 </div>
               </scroll-hint>
             {%- endif -%}

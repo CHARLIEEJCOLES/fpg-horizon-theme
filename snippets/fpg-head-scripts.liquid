@@ -2,7 +2,8 @@
   FP&G scripts for the page head, controlled from Theme settings > FP&G:
   - the FP&G design layer (assets/fpg-design.css and assets/fpg-design.js) on every page
   - the header and menu styling (assets/fpg-menu.css) and the round 3 look
-    (assets/fpg-look.css and assets/fpg-look.js)
+    (assets/fpg-look.css and assets/fpg-look.js), and round 4 (assets/fpg-boost.css)
+  - business details (Store structured data) on the home and contact pages
   - jQuery 3.7.1 for the FPG Part Finder app (the same file the current theme
     loads), only on the Part Finder page template (or site-wide if ticked)
   - an optional GA4 tag. Leave the GA4 ID blank when the Google & YouTube app
@@ -25,6 +26,7 @@
 {{ 'fpg-design.css' | asset_url | stylesheet_tag }}
 {{ 'fpg-menu.css' | asset_url | stylesheet_tag }}
 {{ 'fpg-look.css' | asset_url | stylesheet_tag }}
+{{ 'fpg-boost.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'fpg-design.js' | asset_url }}" type="module"></script>
 <script src="{{ 'fpg-look.js' | asset_url }}" type="module"></script>
 
@@ -35,6 +37,50 @@
     crossorigin="anonymous"
     defer
   ></script>
+{%- endif -%}
+
+{%- comment -%}
+  Business details for search engines (Google's local results and knowledge
+  panel): on the home and contact pages only.
+{%- endcomment -%}
+{%- if request.page_type == 'index' or page.handle == 'contact' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "@id": {{ request.origin | append: '/#store' | json }},
+      "name": {{ shop.name | json }},
+      "url": {{ request.origin | append: routes.root_url | json }},
+      {%- if settings.logo != blank %}
+      "logo": {{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }},
+      "image": {{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }},
+      {%- endif %}
+      "telephone": "+44 1443 230000",
+      "email": "sales@fpandg.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Coed Court, Treforest Industrial Estate",
+        "addressLocality": "Pontypridd",
+        "addressRegion": "Rhondda Cynon Taf",
+        "postalCode": "CF37 5SW",
+        "addressCountry": "GB"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "08:00",
+          "closes": "17:00"
+        }
+      ],
+      "sameAs": [
+        "https://www.facebook.com/forestparkandgarden",
+        "https://www.instagram.com/forestparkgarden",
+        "https://www.youtube.com/channel/UCr5dTuiDN2TnXuPl0UGb2iA",
+        "https://twitter.com/forestparkgarde"
+      ]
+    }
+  </script>
 {%- endif -%}
 
 {%- if settings.fpg_ga4_id != blank -%}

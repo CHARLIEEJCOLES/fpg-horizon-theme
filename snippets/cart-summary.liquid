@@ -246,6 +246,8 @@
         <bdi>{{ total_price }}</bdi>
       </text-component>
     </span>
+    {%- comment -%} FP&G: total including VAT under the ex-VAT total {%- endcomment -%}
+    {% render 'fpg-cart-extras', mode: 'inc-vat' %}
     {% if settings.show_installments %}
       <span class="cart-totals__item cart-totals__installments">
         {% form 'cart', cart %}

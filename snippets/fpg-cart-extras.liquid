@@ -1,0 +1,72 @@
+{%- doc -%}
+  FP&G extras for the basket drawer (rendered from snippets/cart-drawer.liquid).
+  - mode 'inc-vat': the basket total including VAT (VAT only on taxable lines,
+    with any basket-level discount shared across them, delivery not included).
+    Rendered under the estimated total in snippets/cart-summary.liquid, so it
+    shows in the drawer and on the cart page.
+  - mode 'summary': free click & collect note, help line and payment icons.
+  - mode 'empty': quick links and a call button for an empty basket.
+  Styles: assets/fpg-boost.css.
+
+  @param {string} mode - 'summary' or 'empty'
+
+  @example
+  {% render 'fpg-cart-extras', mode: 'summary' %}
+{%- enddoc -%}
+
+{%- if mode == 'empty' -%}
+  <div class="fpg-cartx fpg-cartx--empty">
+    <p class="fpg-cartx__lead">Popular right now</p>
+    <ul class="fpg-cartx__links" role="list">
+      <li><a href="/collections/chainsaw-chains">Chainsaw chains</a></li>
+      <li><a href="/collections/chainsaw-service-kits">Service kits</a></li>
+      <li><a href="/collections/2-stroke-oil">Fuel &amp; oils</a></li>
+      <li><a href="/collections/all-clothing-and-ppe">Clothing &amp; PPE</a></li>
+      <li><a href="/collections/servicing-repair">Book a service</a></li>
+      <li><a href="/collections/for-hire">Machine hire</a></li>
+    </ul>
+    <a class="fpg-cartx__call" href="tel:+441443230000">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+      Not sure what you need? Call 01443 230000
+    </a>
+  </div>
+{%- elsif mode == 'inc-vat' -%}
+  {%- liquid
+    assign vat_rate = settings.fpg_vat_rate | default: 20
+    assign taxable_total = 0
+    for item in cart.items
+      if item.variant.taxable
+        assign taxable_total = taxable_total | plus: item.final_line_price
+      endif
+    endfor
+    if cart.items_subtotal_price > 0 and cart.total_price < cart.items_subtotal_price
+      assign taxable_total = taxable_total | times: cart.total_price | divided_by: cart.items_subtotal_price
+    endif
+    assign vat = taxable_total | times: vat_rate | divided_by: 100.0 | round
+    assign inc_total = cart.total_price | plus: vat
+  -%}
+  <span class="cart-totals__item fpg-cartx__inc">
+    <span>Total inc. VAT</span>
+    <strong>{{ inc_total | money }}</strong>
+  </span>
+{%- else -%}
+  <div class="fpg-cartx">
+    <ul class="fpg-cartx__perks" role="list">
+      <li>
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <span><strong>Free click &amp; collect</strong> from Coed Court, Treforest</span>
+      </li>
+      <li>
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+        <span>Questions? <a href="tel:+441443230000">01443 230000</a></span>
+      </li>
+    </ul>
+    {%- if shop.enabled_payment_types.size > 0 -%}
+      <ul class="fpg-cartx__pay" role="list" aria-label="Payment methods">
+        {%- for type in shop.enabled_payment_types limit: 8 -%}
+          <li>{{ type | payment_type_svg_tag }}</li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+{%- endif -%}

@@ -171,10 +171,18 @@
         "padding-block-start": 40,
         "padding-block-end": 40
       }
+    },
+    "fpg_help": {
+      "type": "fpg-help-panel",
+      "settings": {
+        "padding-block-start": 16,
+        "padding-block-end": 16
+      }
     }
   },
   "order": [
     "search",
+    "fpg_help",
     "main"
   ]
 }

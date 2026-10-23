@@ -1,0 +1,62 @@
+{%- comment -%}
+  FP&G phone bar, placed in the header group under the header.
+  - On phones (under 750px) an always-visible search field, so part numbers can
+    be typed straight away. Hidden on larger screens, where the header search is,
+    and on the home page, which has its own search in the hero.
+  - A template for the phone menu's footer (call button, today's opening
+    status, account and basket links). assets/fpg-look.js copies it into the
+    menu drawer, so Horizon's header-drawer snippet stays untouched.
+  Styles: assets/fpg-boost.css.
+{%- endcomment -%}
+
+{%- if section.settings.show_search and request.page_type != 'index' -%}
+  <div class="fpg-phonebar">
+    <form class="fpg-phonebar__form" action="{{ routes.search_url }}" method="get" role="search">
+      <label class="visually-hidden" for="FpgPhoneSearch">Search the shop</label>
+      <svg aria-hidden="true" class="fpg-phonebar__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input
+        id="FpgPhoneSearch"
+        type="search"
+        name="q"
+        placeholder="{{ section.settings.placeholder | escape }}"
+        autocomplete="off"
+        enterkeyhint="search"
+      >
+      <input type="hidden" name="options[prefix]" value="last">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+{%- endif -%}
+
+<template id="fpg-drawer-help">
+  <div class="fpg-drawerhelp">
+    <a class="fpg-drawerhelp__call" href="tel:{{ section.settings.phone | remove: ' ' | prepend: '+44' | replace: '+440', '+44' }}">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+      Call {{ section.settings.phone | escape }}
+    </a>
+    <p class="fpg-drawerhelp__status">
+      <span class="fpg-hcontact__dot" data-fpg-open-dot aria-hidden="true"></span>
+      <span data-fpg-open-status>Mon–Fri 8am–5pm</span>
+    </p>
+    <ul class="fpg-drawerhelp__links" role="list">
+      <li><a href="{{ routes.account_url }}">My account</a></li>
+      <li><a href="{{ routes.cart_url }}">Basket</a></li>
+      <li><a href="/pages/contact">Find us</a></li>
+    </ul>
+  </div>
+</template>
+
+{% schema %}
+{
+  "name": "FP&G phone bar",
+  "tag": "div",
+  "class": "fpg-phonebar-section",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    { "type": "checkbox", "id": "show_search", "label": "Show search field on phones", "default": true },
+    { "type": "text", "id": "placeholder", "label": "Search placeholder", "default": "Search products or part numbers" },
+    { "type": "text", "id": "phone", "label": "Phone number for the menu", "default": "01443 230000" }
+  ],
+  "presets": [{ "name": "FP&G phone bar" }]
+}
+{% endschema %}

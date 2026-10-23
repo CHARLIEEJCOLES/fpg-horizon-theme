@@ -198,13 +198,32 @@ Charlie approved a list of 10 look improvements and asked for picture prompts. C
 - 4 category heroes (chainsaws, lawn mowers, ride-on mowers, clothing & PPE) → teal hero tops on those collections.
 - Contour texture → set as --fpg-texture in fpg-head-scripts; header top row, brand band, page heroes and footer pick it up.
 
+## Round 4: fixes and boosts (23 Oct)
+
+Charlie asked for "next 10 fixes and boosts". All uploaded to the unpublished theme and checked on the preview (phone width and desktop).
+- **Phone search bar:** search field under the header on phones (part numbers can be typed straight away). Not on the home page, which has the hero search.
+- **Phone menu footer:** call button, open/closed status for today, My account / Basket / Find us.
+- **Basket drawer:** total inc. VAT under the ex-VAT total (VAT only on taxable lines, basket discounts shared, delivery excluded; also on the cart page), free click & collect line, help line, payment icons, quick links and a call button when the basket is empty.
+- **Search results:** part-number tip; no-results card with tips, popular chips and help (call, spare parts diagrams, Parts ID request).
+- **404 page:** the same help card with its own search box, then the product list.
+- **Google business data:** Store structured data (address, phone, email, hours, logo, social links) on the home and contact pages. No price range, since that would be invented.
+- **Collection filters:** sticky filter column on wide screens, teal active-filter pills and ticks.
+- **Announcement bar:** arrow on linked messages; wraps cleanly on phones.
+- **Sticky basket bar:** teal styling. Note: Horizon hides this bar whenever Shopify Inbox chat is installed, and on desktop, so it won't show until that changes (Charlie's call).
+- **Polish:** parts finder Reset button border; single-list menus (Help, Offers) spread over three columns.
+
+**Not built:** free-delivery progress bar. Free delivery (£83.33 ex VAT) only applies on some delivery profiles and weights, so one target would mislead.
+**Not checked at full width:** sticky filters and three-column menus need a screen wider than the preview window (990px+).
+**Awaiting Charlie's OK:** fixing collection-name typos on the live store.
+
 ## FP&G files (all prefixed fpg-)
 
 - **snippets/fpg-vat-price:** prices shown as "£X + VAT (£Y)".
 - **snippets/fpg-card-badges:** stock, sale and dropship badges, plus the fix for duplicated Call for Price card titles.
 - **Product blocks:** fpg-stock-status, fpg-product-notices, fpg-cormorant, fpg-variant-pairs, fpg-spec-tabs, fpg-hire-rates, fpg-store-info.
 - **assets/fpg-variant-block.js:** refreshes the FP&G blocks when the variant changes.
-- **snippets/fpg-head-scripts:** loads the design CSS/JS; jQuery on the Part Finder page only; GA4.
+- **snippets/fpg-head-scripts:** loads the design CSS/JS; jQuery on the Part Finder page only; GA4; Store structured data.
+- **Round 4:** sections/fpg-phone-bar, sections/fpg-help-panel, snippets/fpg-cart-extras, assets/fpg-boost.css.
 - **Templates:**
   - Core: index, collection, product, product.quote-needed (hire), product.ticket-number.
   - Finder pages: page.bar-and-chain-finder, page.product-parts-page.
@@ -218,7 +237,8 @@ These need re-applying after Horizon updates; each edit is marked "FP&G".
 - blocks/_product-card-gallery.liquid
 - snippets/card-gallery.liquid
 - blocks/buy-buttons.liquid
-- snippets/cart-summary.liquid
+- snippets/cart-summary.liquid (note limit; total inc. VAT)
+- snippets/cart-drawer.liquid (FP&G basket extras)
 - layout/theme.liquid (render line)
 - config/settings_schema.json (FP&G group)
 - locales/en.default.json

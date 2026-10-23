@@ -106,10 +106,19 @@
         "bubble_background_color": "#5F7D6D",
         "bubble_text_color": "#FFFFFF"
       }
+    },
+    "fpg_phone_bar": {
+      "type": "fpg-phone-bar",
+      "settings": {
+        "show_search": true,
+        "placeholder": "Search products or part numbers",
+        "phone": "01443 230000"
+      }
     }
   },
   "order": [
     "header_announcements_9jGBFp",
-    "header_section"
+    "header_section",
+    "fpg_phone_bar"
   ]
 }

@@ -1,0 +1,518 @@
+/* FP&G round 4 (loaded by snippets/fpg-head-scripts.liquid).
+   Phone search bar and menu footer, basket drawer extras, search / 404 help
+   panel, collection filters, announcement bar, sticky basket bar and polish. */
+
+/* ---------- Phone search bar (sections/fpg-phone-bar.liquid) ---------- */
+.fpg-phonebar {
+  display: none;
+}
+
+@media screen and (max-width: 749px) {
+  .fpg-phonebar {
+    display: block;
+    padding: 10px 16px 12px;
+    background: #0b3c47;
+  }
+}
+
+.fpg-phonebar__form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 4px 0 12px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.fpg-phonebar__icon {
+  flex: 0 0 auto;
+  color: var(--fpg-sage);
+}
+
+.fpg-phonebar__form input[type='search'] {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--fpg-ink);
+  font-size: 16px; /* 16px stops iPhones zooming in */
+  outline: none;
+}
+
+.fpg-phonebar__form button {
+  flex: 0 0 auto;
+  height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--fpg-teal);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.fpg-phonebar__form:focus-within {
+  box-shadow: 0 0 0 3px rgb(169 196 181 / 0.6);
+}
+
+/* ---------- Phone menu footer (copied into the drawer by fpg-look.js) ---------- */
+.fpg-drawerhelp {
+  display: grid;
+  gap: 12px;
+  margin: 8px 0 0;
+  padding: 18px 0 6px;
+  border-top: 1px solid var(--fpg-line);
+}
+
+.fpg-drawerhelp__call {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 50px;
+  border-radius: 8px;
+  background: var(--fpg-teal);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.fpg-drawerhelp__status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.875rem;
+  color: rgb(18 38 43 / 0.8);
+}
+
+.fpg-drawerhelp__links {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fpg-drawerhelp__links a {
+  display: inline-flex;
+  padding: 8px 12px;
+  border: 1px solid var(--fpg-line);
+  border-radius: 999px;
+  color: var(--fpg-teal);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------- Basket drawer extras (snippets/fpg-cart-extras.liquid) ---------- */
+.fpg-cartx {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 0.875rem;
+}
+
+.fpg-cartx__inc {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  color: var(--fpg-teal);
+  font-size: 0.875rem;
+}
+
+.fpg-cartx__inc strong {
+  font-size: 1rem;
+}
+
+.fpg-cartx__perks {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fpg-cartx__perks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(18 38 43 / 0.85);
+}
+
+.fpg-cartx__perks svg {
+  flex: 0 0 auto;
+  color: var(--fpg-sage);
+}
+
+.fpg-cartx__perks a {
+  color: var(--fpg-teal);
+  font-weight: 600;
+}
+
+.fpg-cartx__pay {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fpg-cartx__pay svg {
+  display: block;
+  width: 32px;
+  height: 20px;
+}
+
+.fpg-cartx--empty {
+  gap: 12px;
+  margin: 8px 0 0;
+}
+
+.fpg-cartx__lead {
+  margin: 0;
+  font-family: var(--font-heading--family);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fpg-sage);
+}
+
+.fpg-cartx__links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fpg-cartx__links a {
+  display: block;
+  padding: 12px;
+  border: 1px solid var(--fpg-line);
+  border-radius: 10px;
+  color: var(--fpg-teal);
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.fpg-cartx__links a:hover {
+  border-color: var(--fpg-sage);
+  background: var(--fpg-mist);
+}
+
+.fpg-cartx__call {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--fpg-teal);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------- Search and 404 help panel (sections/fpg-help-panel.liquid) ---------- */
+.fpg-helpp__tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--fpg-mist);
+  color: rgb(18 38 43 / 0.85);
+  font-size: 0.875rem;
+}
+
+.fpg-helpp__tip svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--fpg-sage);
+}
+
+.fpg-helpp__tip a {
+  color: var(--fpg-teal);
+  font-weight: 600;
+}
+
+.fpg-helpp__card {
+  display: grid;
+  gap: 24px;
+  padding: 24px;
+  border: 1px solid var(--fpg-line);
+  border-radius: 16px;
+  background: #fff;
+}
+
+@media screen and (min-width: 900px) {
+  .fpg-helpp__card {
+    grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+    gap: 40px;
+    padding: 36px;
+  }
+}
+
+.fpg-helpp__main .h3 {
+  margin: 4px 0 16px;
+}
+
+.fpg-helpp__search {
+  display: flex;
+  gap: 8px;
+  max-width: 560px;
+}
+
+.fpg-helpp__search input[type='search'] {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 50px;
+  padding: 0 16px;
+  border: 1px solid var(--fpg-line);
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.fpg-helpp__search input[type='search']:focus {
+  border-color: var(--fpg-sage);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(95 125 109 / 0.18);
+}
+
+.fpg-helpp__search button {
+  height: 50px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--fpg-teal);
+  color: #fff;
+  font-weight: 700;
+}
+
+.fpg-helpp__tips {
+  margin: 16px 0 0;
+  padding-inline-start: 18px;
+  color: rgb(18 38 43 / 0.75);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.fpg-helpp__label {
+  margin: 20px 0 8px;
+  font-family: var(--font-heading--family);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fpg-sage);
+}
+
+.fpg-helpp__chips {
+  flex-wrap: wrap;
+}
+
+.fpg-helpp__side {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--fpg-pale);
+}
+
+.fpg-helpp__side-title {
+  margin: 0 0 4px;
+  font-family: var(--font-heading--family);
+  font-weight: 700;
+  color: var(--fpg-teal);
+}
+
+.fpg-helpp__action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--fpg-ink);
+  text-decoration: none;
+  transition: box-shadow 0.2s;
+}
+
+.fpg-helpp__action:hover {
+  box-shadow: var(--fpg-shadow-sm);
+}
+
+.fpg-helpp__action svg {
+  flex: 0 0 auto;
+  color: var(--fpg-teal);
+}
+
+.fpg-helpp__action span {
+  display: grid;
+  gap: 1px;
+}
+
+.fpg-helpp__action strong {
+  color: var(--fpg-teal);
+  font-size: 0.9375rem;
+}
+
+.fpg-helpp__action small {
+  color: rgb(18 38 43 / 0.65);
+  font-size: 0.8125rem;
+}
+
+/* ---------- Collection filters ---------- */
+@media screen and (min-width: 990px) {
+  .facets-block-wrapper--vertical {
+    position: sticky;
+    top: 16px;
+    align-self: start;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+.facets--vertical .facets__summary {
+  font-family: var(--font-heading--family);
+  font-weight: 700;
+  color: var(--fpg-teal);
+}
+
+.facets .checkbox__input {
+  accent-color: var(--fpg-teal);
+}
+
+.facets-remove__pill {
+  border: 1px solid var(--fpg-teal) !important;
+  background: var(--fpg-teal) !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.facets-remove__pill:hover {
+  background: var(--fpg-sage) !important;
+  border-color: var(--fpg-sage) !important;
+}
+
+.facets__clear-all-link {
+  color: var(--fpg-sage);
+  font-weight: 600;
+}
+
+.facets__bubble {
+  background: var(--fpg-teal);
+  color: #fff;
+}
+
+/* ---------- Announcement bar ---------- */
+.announcement-bar__slide:has(.announcement-bar__link) p::after {
+  content: '→';
+  display: inline-block;
+  margin-inline-start: 6px;
+  color: #a9c4b5;
+  transition: transform 0.2s var(--fpg-ease);
+}
+
+.announcement-bar__slide:has(.announcement-bar__link):hover p {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.announcement-bar__slide:has(.announcement-bar__link):hover p::after {
+  transform: translateX(3px);
+}
+
+/* ---------- Sticky basket bar (Horizon's sticky add to cart) ---------- */
+.sticky-add-to-cart__bar {
+  border: 0 !important;
+  background: var(--fpg-teal) !important;
+  color: #fff !important;
+  box-shadow: 0 -8px 24px rgb(0 45 55 / 0.25);
+}
+
+.sticky-add-to-cart__title,
+.sticky-add-to-cart__variant {
+  color: #fff !important;
+}
+
+.sticky-add-to-cart__variant {
+  opacity: 0.75;
+}
+
+.sticky-add-to-cart__price .price {
+  color: #fff;
+  font-weight: 700;
+}
+
+.sticky-add-to-cart__price .fpg-vat {
+  color: rgb(255 255 255 / 0.75);
+  font-weight: 500;
+}
+
+.sticky-add-to-cart__button {
+  --button-background-color: #fff;
+  --button-color: var(--fpg-teal);
+  background: #fff !important;
+  color: var(--fpg-teal) !important;
+}
+
+.sticky-add-to-cart__button:hover {
+  background: var(--fpg-pale) !important;
+}
+
+.sticky-add-to-cart__image {
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* ---------- Polish ---------- */
+/* Parts finder: Horizon's secondary-button border showed through on Reset. */
+.cws_ymm_box_cont #ymm_reset {
+  box-shadow: none !important;
+  outline: 0;
+}
+
+.cws_ymm_box_cont #ymm_reset:focus-visible {
+  outline: 2px solid var(--fpg-sage);
+  outline-offset: 2px;
+}
+
+/* Menus with a single list of links (Help, Offers): spread the links over
+   columns instead of one narrow column. */
+@media screen and (min-width: 750px) {
+  #header-component .mega-menu__column--span-1:only-child:not(:has(.mega-menu__link--parent)) {
+    grid-column: 1 / span 3;
+    column-count: 3;
+    column-gap: 32px;
+  }
+
+  #header-component .mega-menu__column--span-1:only-child:not(:has(.mega-menu__link--parent)) > div {
+    break-inside: avoid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement-bar__slide p::after,
+  .fpg-cartx__links a,
+  .fpg-helpp__action {
+    transition: none;
+  }
+}

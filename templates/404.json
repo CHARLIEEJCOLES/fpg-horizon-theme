@@ -90,7 +90,8 @@
         "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 100,
         "padding-block-end": 100
-      }
+      },
+      "disabled": true
     },
     "product_list_iA96Tq": {
       "type": "product-list",
@@ -261,9 +262,17 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "fpg_help": {
+      "type": "fpg-help-panel",
+      "settings": {
+        "padding-block-start": 40,
+        "padding-block-end": 56
+      }
     }
   },
   "order": [
+    "fpg_help",
     "main",
     "product_list_iA96Tq"
   ]
