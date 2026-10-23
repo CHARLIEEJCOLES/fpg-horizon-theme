@@ -53,7 +53,7 @@
         "gap": 8,
         "toggle_overlay": false,
         "padding-block-start": 24,
-        "padding-block-end": 32,
+        "padding-block-end": 28,
         "background_color": "#E2E9E5"
       }
     },

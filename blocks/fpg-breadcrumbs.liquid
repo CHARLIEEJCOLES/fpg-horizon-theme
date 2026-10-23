@@ -8,6 +8,9 @@
   appears in the chosen menu (a third-level menu link beats a second-level
   one, and so on), so "Petrol Chainsaws" wins over "All chainsaws".
   Collections listed under "Never use" are skipped.
+
+  On collection pages it also shows sub-category chips from the same menu
+  (snippets/fpg-subcat-chips.liquid), placed at the end of the title band.
 {%- enddoc -%}
 
 {%- liquid
@@ -59,6 +62,10 @@
         assign rank = 1
         if level_3 contains key
           assign rank = 4
+          # An "All ..." link repeats its group's collection one level down; it still counts as the group.
+          if level_2 contains key or level_1 contains key
+            assign rank = 3
+          endif
         elsif level_2 contains key
           assign rank = 3
         elsif level_1 contains key
@@ -161,6 +168,12 @@
     </ol>
   </nav>
 
+  {%- if request.page_type == 'collection' and block_settings.show_subcats -%}
+    <div class="fpg-subcats fpg-subcats--band">
+      {% render 'fpg-subcat-chips', menu: block_settings.menu, label: block_settings.subcats_label %}
+    </div>
+  {%- endif -%}
+
   {%- if block_settings.structured_data -%}
     {%- liquid
       assign base = request.origin
@@ -228,6 +241,19 @@
         { "value": "center", "label": "Centre" }
       ],
       "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subcats",
+      "label": "Show sub-category chips on collection pages",
+      "default": true,
+      "info": "Taken from the menu above. They sit at the bottom of the title band."
+    },
+    {
+      "type": "text",
+      "id": "subcats_label",
+      "label": "Chips label",
+      "default": "Shop by type"
     },
     {
       "type": "checkbox",

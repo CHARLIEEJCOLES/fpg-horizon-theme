@@ -1,0 +1,224 @@
+{%- comment -%}
+  FP&G footer. Dark teal with an optional contour texture (set in
+  snippets/fpg-head-scripts.liquid as --fpg-texture). Newsletter band, then
+  columns: logo with contact details and social links, Shop (top level of the
+  shop menu), Help (the children of the menu item named in "Help item"), More
+  (two small menus) and Visit us (address, today's hours, directions). A bottom
+  bar holds the copyright, policies and payment icons. Styles: assets/fpg-look.css.
+{%- endcomment -%}
+
+{%- liquid
+  assign shop_menu = section.settings.shop_menu
+  assign help_title = section.settings.help_item | default: 'Help' | downcase
+  assign help_item = null
+  for link in shop_menu.links
+    assign t = link.title | downcase
+    if t == help_title
+      assign help_item = link
+    endif
+  endfor
+  assign phone_link = section.settings.phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-'
+  if phone_link contains '+44'
+  else
+    assign phone_link = phone_link | prepend: '+44' | replace: '+440', '+44'
+  endif
+-%}
+
+<footer class="fpg-footer" aria-label="Footer">
+  {%- if section.settings.show_newsletter -%}
+    <div class="fpg-footer__news">
+      <div class="fpg-wrap fpg-footer__news-inner">
+        <div>
+          <p class="fpg-footer__news-title">{{ section.settings.news_heading | escape }}</p>
+          {%- if section.settings.news_text != blank -%}
+            <p class="fpg-footer__news-text">{{ section.settings.news_text | escape }}</p>
+          {%- endif -%}
+        </div>
+        {%- form 'customer', id: 'FpgFooterNewsletter', class: 'fpg-footer__news-form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          {%- if form.posted_successfully? -%}
+            <p class="fpg-footer__news-done" role="status">Thanks, you're on the list.</p>
+          {%- else -%}
+            <label class="visually-hidden" for="FpgFooterEmail">Email address</label>
+            <input
+              id="FpgFooterEmail"
+              type="email"
+              name="contact[email]"
+              autocomplete="email"
+              placeholder="Your email address"
+              required
+            >
+            <button type="submit" class="fpg-footer__news-btn">Sign up</button>
+            {%- if form.errors -%}
+              <p class="fpg-footer__news-error" role="alert">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="fpg-wrap fpg-footer__grid">
+    <div class="fpg-footer__brand">
+      <a href="{{ routes.root_url }}" class="fpg-footer__logo">
+        <img
+          src="{{ 'fpg-logo-white.svg' | asset_url }}"
+          alt="{{ shop.name | escape }}"
+          width="220"
+          height="46"
+          loading="lazy"
+        >
+      </a>
+      {%- if section.settings.about != blank -%}
+        <p class="fpg-footer__about">{{ section.settings.about | escape }}</p>
+      {%- endif -%}
+      <ul class="fpg-footer__contact" role="list">
+        {%- if section.settings.phone != blank -%}
+          <li>
+            <a href="tel:{{ phone_link }}">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+              {{ section.settings.phone | escape }}
+            </a>
+          </li>
+        {%- endif -%}
+        {%- if section.settings.email != blank -%}
+          <li>
+            <a href="mailto:{{ section.settings.email | escape }}">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              {{ section.settings.email | escape }}
+            </a>
+          </li>
+        {%- endif -%}
+      </ul>
+      <ul class="fpg-footer__social" role="list">
+        {%- if section.settings.facebook != blank -%}
+          <li><a href="{{ section.settings.facebook }}" aria-label="Facebook" target="_blank" rel="noopener"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14 8.5V6.8c0-.8.2-1.3 1.4-1.3H17V2.3C16.6 2.2 15.4 2 14 2c-2.9 0-4.6 1.7-4.6 4.8v1.7H6.5V12h2.9v10H14V12h2.8l.4-3.5H14Z"/></svg></a></li>
+        {%- endif -%}
+        {%- if section.settings.instagram != blank -%}
+          <li><a href="{{ section.settings.instagram }}" aria-label="Instagram" target="_blank" rel="noopener"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a></li>
+        {%- endif -%}
+        {%- if section.settings.youtube != blank -%}
+          <li><a href="{{ section.settings.youtube }}" aria-label="YouTube" target="_blank" rel="noopener"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22 8.2a3 3 0 0 0-2.1-2.1C18 5.6 12 5.6 12 5.6s-6 0-7.9.5A3 3 0 0 0 2 8.2 31 31 0 0 0 1.6 12c0 1.3.1 2.6.4 3.8a3 3 0 0 0 2.1 2.1c1.9.5 7.9.5 7.9.5s6 0 7.9-.5a3 3 0 0 0 2.1-2.1c.3-1.2.4-2.5.4-3.8s-.1-2.6-.4-3.8ZM10 15.1V8.9l5.2 3.1L10 15.1Z"/></svg></a></li>
+        {%- endif -%}
+        {%- if section.settings.twitter != blank -%}
+          <li><a href="{{ section.settings.twitter }}" aria-label="X (Twitter)" target="_blank" rel="noopener"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.8 3h3.1l-6.8 7.7L22 21h-6.2l-4.9-6.4L5.3 21H2.2l7.2-8.3L1.9 3h6.4l4.4 5.8L17.8 3Zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5Z"/></svg></a></li>
+        {%- endif -%}
+      </ul>
+    </div>
+
+    {%- if shop_menu != blank -%}
+      <nav class="fpg-footer__col" aria-label="{{ section.settings.shop_heading | escape }}">
+        <p class="fpg-footer__heading">{{ section.settings.shop_heading | escape }}</p>
+        <ul role="list">
+          {%- for link in shop_menu.links -%}
+            {%- assign t = link.title | downcase -%}
+            {%- if t != help_title -%}
+              {%- assign url = link.url -%}
+              {%- if url == '#' and link.links.size > 0 -%}
+                {%- assign url = link.links.first.url -%}
+              {%- endif -%}
+              <li><a href="{{ url }}">{{ link.title | escape }}</a></li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    {%- if help_item != blank -%}
+      <nav class="fpg-footer__col" aria-label="{{ help_item.title | escape }}">
+        <p class="fpg-footer__heading">{{ help_item.title | escape }}</p>
+        <ul role="list">
+          {%- for link in help_item.links -%}
+            <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    {%- if section.settings.more_menu != blank or section.settings.more_menu_2 != blank -%}
+      <nav class="fpg-footer__col" aria-label="{{ section.settings.more_heading | escape }}">
+        <p class="fpg-footer__heading">{{ section.settings.more_heading | escape }}</p>
+        <ul role="list">
+          {%- for link in section.settings.more_menu.links -%}
+            <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+          {%- endfor -%}
+          {%- for link in section.settings.more_menu_2.links -%}
+            <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    <div class="fpg-footer__col fpg-footer__visit">
+      <p class="fpg-footer__heading">{{ section.settings.visit_heading | escape }}</p>
+      {%- if section.settings.address != blank -%}
+        <address>{{ section.settings.address | escape | newline_to_br }}</address>
+      {%- endif -%}
+      {%- if section.settings.hours != blank -%}
+        <p class="fpg-footer__hours">{{ section.settings.hours | escape | newline_to_br }}</p>
+      {%- endif -%}
+      {%- if section.settings.directions_url != blank -%}
+        <a class="fpg-footer__directions" href="{{ section.settings.directions_url }}" target="_blank" rel="noopener">
+          Get directions
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4.5 10h11M15.5 10l-5-5M15.5 10l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="fpg-footer__bottom">
+    <div class="fpg-wrap fpg-footer__bottom-inner">
+      <p class="fpg-footer__copy">© {{ 'now' | date: '%Y' }} {{ shop.name | escape }}</p>
+      {%- if shop.policies.size > 0 -%}
+        <ul class="fpg-footer__policies" role="list">
+          {%- for policy in shop.policies -%}
+            <li><a href="{{ policy.url }}">{{ policy.title | escape }}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if section.settings.show_payment -%}
+        <ul class="fpg-footer__pay" role="list" aria-label="Payment methods">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag: class: 'fpg-footer__pay-icon' }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "FP&G footer",
+  "tag": "section",
+  "class": "fpg-footer-section",
+  "settings": [
+    { "type": "header", "content": "Newsletter" },
+    { "type": "checkbox", "id": "show_newsletter", "label": "Show newsletter sign-up", "default": true },
+    { "type": "text", "id": "news_heading", "label": "Heading", "default": "Join our email list" },
+    { "type": "text", "id": "news_text", "label": "Text", "default": "Get exclusive deals and early access to new products." },
+    { "type": "header", "content": "Contact" },
+    { "type": "textarea", "id": "about", "label": "Short intro" },
+    { "type": "text", "id": "phone", "label": "Phone", "default": "01443 230000" },
+    { "type": "text", "id": "email", "label": "Email", "default": "sales@fpandg.com" },
+    { "type": "text", "id": "visit_heading", "label": "Visit heading", "default": "Visit us" },
+    { "type": "textarea", "id": "address", "label": "Address" },
+    { "type": "textarea", "id": "hours", "label": "Opening hours" },
+    { "type": "url", "id": "directions_url", "label": "Directions link" },
+    { "type": "header", "content": "Links" },
+    { "type": "text", "id": "shop_heading", "label": "Shop heading", "default": "Shop" },
+    { "type": "link_list", "id": "shop_menu", "label": "Shop menu", "info": "Its top-level items are listed. The item named below becomes its own column." },
+    { "type": "text", "id": "help_item", "label": "Help item", "default": "Help" },
+    { "type": "text", "id": "more_heading", "label": "More heading", "default": "More" },
+    { "type": "link_list", "id": "more_menu", "label": "More menu" },
+    { "type": "link_list", "id": "more_menu_2", "label": "More menu (second)" },
+    { "type": "header", "content": "Social" },
+    { "type": "url", "id": "facebook", "label": "Facebook" },
+    { "type": "url", "id": "instagram", "label": "Instagram" },
+    { "type": "url", "id": "youtube", "label": "YouTube" },
+    { "type": "url", "id": "twitter", "label": "X (Twitter)" },
+    { "type": "checkbox", "id": "show_payment", "label": "Show payment icons", "default": true }
+  ],
+  "presets": [{ "name": "FP&G footer" }]
+}
+{% endschema %}

@@ -1,0 +1,115 @@
+{%- comment -%}
+  FP&G category tiles: matching pale sage tiles with a cut-out product picture,
+  a title and a short line of what's inside. Four across on desktop, two on
+  phones. Styles: assets/fpg-look.css.
+{%- endcomment -%}
+
+{%- liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="section section--page-width spacing-style fpg-cats{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+>
+  <header class="fpg-cats__head">
+    <div>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="fpg-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+    </div>
+    {%- if section.settings.button_label != blank -%}
+      <a class="button button-secondary" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+        {{- section.settings.button_label | escape -}}
+      </a>
+    {%- endif -%}
+  </header>
+
+  <ul class="fpg-cats__grid" role="list">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign link = block.settings.link
+        if link == blank and block.settings.collection != blank
+          assign link = block.settings.collection.url
+        endif
+        assign title = block.settings.title
+        if title == blank
+          assign title = block.settings.collection.title
+        endif
+        assign image = block.settings.image
+      -%}
+      <li {{ block.shopify_attributes }}>
+        <a class="fpg-cats__tile" href="{{ link | default: '#' }}">
+          <span class="fpg-cats__media">
+            {%- if image != blank -%}
+              {{
+                image
+                | image_url: width: 600
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '300, 450, 600',
+                  sizes: '(min-width: 990px) 25vw, 50vw',
+                  alt: '',
+                  class: 'fpg-cats__img'
+              }}
+            {%- elsif block.settings.collection.featured_image != blank -%}
+              {{
+                block.settings.collection.featured_image
+                | image_url: width: 600
+                | image_tag: loading: 'lazy', alt: '', class: 'fpg-cats__img fpg-cats__img--photo'
+              }}
+            {%- else -%}
+              {{ 'collection-1' | placeholder_svg_tag: 'fpg-cats__img' }}
+            {%- endif -%}
+          </span>
+          <span class="fpg-cats__text">
+            <span class="fpg-cats__title">{{ title | escape }}</span>
+            {%- if block.settings.subline != blank -%}
+              <span class="fpg-cats__sub">{{ block.settings.subline | escape }}</span>
+            {%- endif -%}
+          </span>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+
+{% schema %}
+{
+  "name": "FP&G category tiles",
+  "tag": "section",
+  "class": "fpg-cats-section",
+  "max_blocks": 16,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Browse" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by category" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "All products" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "color", "id": "background_color", "label": "Background colour" },
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Tile",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "image_picker", "id": "image", "label": "Picture", "info": "A cut-out product on a transparent or pale sage background works best." },
+        { "type": "text", "id": "title", "label": "Title", "info": "Leave blank to use the collection's name." },
+        { "type": "text", "id": "subline", "label": "What's inside" },
+        { "type": "url", "id": "link", "label": "Link", "info": "Leave blank to link to the collection." }
+      ]
+    }
+  ],
+  "presets": [{ "name": "FP&G category tiles" }]
+}
+{% endschema %}

@@ -87,13 +87,18 @@
                     "style": "pill"
                   },
                   "blocks": {}
+                },
+                "fpg_key_specs": {
+                  "type": "fpg-key-specs",
+                  "settings": {}
                 }
               },
               "block_order": [
                 "fpg_vendor",
                 "text_xpVMaM",
                 "price_tVjtKg",
-                "fpg_countdown"
+                "fpg_countdown",
+                "fpg_key_specs"
               ]
             },
             "divider_VJhene": {

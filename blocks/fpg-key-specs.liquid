@@ -1,0 +1,67 @@
+{%- doc -%}
+  FP&G key specs: a row of small spec chips near the product title, filled from
+  the product's own fields, so nothing is shown that isn't in the data:
+  - Power: custom.power_type
+  - Type: custom.form_factor
+  - Cutting width: custom.cutting_width_cm_
+  - Drive: custom.drive_system
+  - Working area / max slope: custom.working_area, custom.max_slope (robotic mowers)
+  - Battery: custom.battery_operated (battery, run time)
+  Nothing renders when the product has none of these.
+{%- enddoc -%}
+
+{%- liquid
+  assign product = closest.product
+  assign mf = product.metafields.custom
+  assign power = mf.power_type.value | join: ', '
+  assign form = mf.form_factor.value
+  assign width = mf.cutting_width_cm_.value
+  assign drive = mf.drive_system.value
+  assign area = mf.working_area.value
+  assign slope = mf.max_slope.value
+  assign battery = mf.battery_operated.value
+  assign battery_name = battery.battery.value
+  assign run_time = battery.working_time.value
+-%}
+
+{%- if power != blank or form != blank or width != blank or drive != blank or area != blank or slope != blank or battery_name != blank or run_time != blank -%}
+  <ul class="fpg-key-specs" role="list" aria-label="Key specifications" {{ block.shopify_attributes }}>
+    {%- if power != blank -%}
+      <li><span>Power</span><strong>{{ power | escape }}</strong></li>
+    {%- endif -%}
+    {%- if form != blank -%}
+      <li><span>Type</span><strong>{{ form | escape }}</strong></li>
+    {%- endif -%}
+    {%- if width != blank -%}
+      <li><span>Cutting width</span><strong>{{ width }} cm</strong></li>
+    {%- endif -%}
+    {%- if drive != blank -%}
+      <li><span>Drive</span><strong>{{ drive | escape }}</strong></li>
+    {%- endif -%}
+    {%- if area != blank -%}
+      <li><span>Working area</span><strong>up to {{ area }} m²</strong></li>
+    {%- endif -%}
+    {%- if slope != blank -%}
+      <li><span>Max slope</span><strong>{{ slope }}%</strong></li>
+    {%- endif -%}
+    {%- if battery_name != blank -%}
+      <li><span>Battery</span><strong>{{ battery_name | escape }}</strong></li>
+    {%- endif -%}
+    {%- if run_time != blank -%}
+      <li><span>Run time</span><strong>{{ run_time | escape }} mins</strong></li>
+    {%- endif -%}
+  </ul>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FP&G key specs",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows power, type, cutting width, drive, working area, slope and battery details from the product's fields. Hidden when none are filled in."
+    }
+  ]
+}
+{% endschema %}

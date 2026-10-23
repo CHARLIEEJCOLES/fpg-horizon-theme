@@ -1,0 +1,38 @@
+{%- comment -%}
+  FP&G sub-category chips as a section of their own (snippets/fpg-subcat-chips.liquid).
+  Collection title bands already show the chips through the breadcrumbs block,
+  so this is only needed on a collection template without that block.
+{%- endcomment -%}
+
+{%- liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="section section--page-width spacing-style fpg-subcats{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+>
+  {% render 'fpg-subcat-chips', menu: section.settings.menu, label: section.settings.label %}
+</div>
+
+{% schema %}
+{
+  "name": "FP&G sub-categories",
+  "tag": "section",
+  "class": "fpg-subcats-section",
+  "enabled_on": { "templates": ["collection"] },
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu" },
+    { "type": "text", "id": "label", "label": "Label", "default": "Shop by type" },
+    { "type": "color", "id": "background_color", "label": "Background colour" },
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 24 }
+  ],
+  "presets": [{ "name": "FP&G sub-categories" }]
+}
+{% endschema %}

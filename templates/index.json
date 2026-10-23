@@ -252,413 +252,6 @@
         "padding-block-end": 18
       }
     },
-    "fpg_help": {
-      "type": "section",
-      "blocks": {
-        "help_head": {
-          "type": "group",
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "gap": 16
-          },
-          "blocks": {
-            "help_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "help_head_eyebrow": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Parts · Servicing · Hire · Kit</p>",
-                    "width": "100%",
-                    "type_preset": "h6",
-                    "wrap": "pretty",
-                    "text_color": "#5F7D6D"
-                  },
-                  "blocks": {}
-                },
-                "help_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>How can we help?</h2>",
-                    "width": "100%",
-                    "type_preset": "h2",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "help_head_eyebrow",
-                "help_head_title"
-              ]
-            }
-          },
-          "block_order": [
-            "help_head_left"
-          ]
-        },
-        "help_cards": {
-          "type": "group",
-          "settings": {
-            "content_direction": "row",
-            "vertical_alignment": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "help_0": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 10,
-                "height": "fill",
-                "background_color": "#F3F6F4",
-                "border_radius": 12,
-                "link": "shopify://pages/fpg-part-finder",
-                "padding-block-start": 24,
-                "padding-block-end": 24,
-                "padding-inline-start": 24,
-                "padding-inline-end": 24
-              },
-              "blocks": {
-                "help_0_icon": {
-                  "type": "icon",
-                  "settings": {
-                    "icon": "clipboard",
-                    "width": 32,
-                    "icon_color": "#002D37"
-                  },
-                  "blocks": {}
-                },
-                "help_0_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h3>Find a part</h3>",
-                    "width": "100%",
-                    "type_preset": "h4",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_0_text": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Parts diagrams and genuine spares for STIHL, Husqvarna and more.</p>",
-                    "width": "100%",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_0_more": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p><strong>Go →</strong></p>",
-                    "width": "100%",
-                    "type_preset": "paragraph",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty",
-                    "text_color": "#5F7D6D"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "help_0_icon",
-                "help_0_title",
-                "help_0_text",
-                "help_0_more"
-              ]
-            },
-            "help_1": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 10,
-                "height": "fill",
-                "background_color": "#F3F6F4",
-                "border_radius": 12,
-                "link": "shopify://pages/bar-and-chain-finder",
-                "padding-block-start": 24,
-                "padding-block-end": 24,
-                "padding-inline-start": 24,
-                "padding-inline-end": 24
-              },
-              "blocks": {
-                "help_1_icon": {
-                  "type": "icon",
-                  "settings": {
-                    "icon": "ruler",
-                    "width": 32,
-                    "icon_color": "#002D37"
-                  },
-                  "blocks": {}
-                },
-                "help_1_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h3>Common parts look up</h3>",
-                    "width": "100%",
-                    "type_preset": "h4",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_1_text": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Chains, bars, filters and plugs matched to your machine.</p>",
-                    "width": "100%",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_1_more": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p><strong>Go →</strong></p>",
-                    "width": "100%",
-                    "type_preset": "paragraph",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty",
-                    "text_color": "#5F7D6D"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "help_1_icon",
-                "help_1_title",
-                "help_1_text",
-                "help_1_more"
-              ]
-            },
-            "help_2": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 10,
-                "height": "fill",
-                "background_color": "#F3F6F4",
-                "border_radius": 12,
-                "link": "shopify://collections/servicing-repair",
-                "padding-block-start": 24,
-                "padding-block-end": 24,
-                "padding-inline-start": 24,
-                "padding-inline-end": 24
-              },
-              "blocks": {
-                "help_2_icon": {
-                  "type": "icon",
-                  "settings": {
-                    "icon": "stopwatch",
-                    "width": 32,
-                    "icon_color": "#002D37"
-                  },
-                  "blocks": {}
-                },
-                "help_2_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h3>Book a service</h3>",
-                    "width": "100%",
-                    "type_preset": "h4",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_2_text": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Servicing and repairs in our Treforest workshop.</p>",
-                    "width": "100%",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_2_more": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p><strong>Go →</strong></p>",
-                    "width": "100%",
-                    "type_preset": "paragraph",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty",
-                    "text_color": "#5F7D6D"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "help_2_icon",
-                "help_2_title",
-                "help_2_text",
-                "help_2_more"
-              ]
-            },
-            "help_3": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 10,
-                "height": "fill",
-                "background_color": "#F3F6F4",
-                "border_radius": 12,
-                "link": "shopify://collections/for-hire",
-                "padding-block-start": 24,
-                "padding-block-end": 24,
-                "padding-inline-start": 24,
-                "padding-inline-end": 24
-              },
-              "blocks": {
-                "help_3_icon": {
-                  "type": "icon",
-                  "settings": {
-                    "icon": "truck",
-                    "width": 32,
-                    "icon_color": "#002D37"
-                  },
-                  "blocks": {}
-                },
-                "help_3_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h3>Hire a machine</h3>",
-                    "width": "100%",
-                    "type_preset": "h4",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_3_text": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Chippers, stump grinders, mowers and more, by the day or week.</p>",
-                    "width": "100%",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_3_more": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p><strong>Go →</strong></p>",
-                    "width": "100%",
-                    "type_preset": "paragraph",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty",
-                    "text_color": "#5F7D6D"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "help_3_icon",
-                "help_3_title",
-                "help_3_text",
-                "help_3_more"
-              ]
-            },
-            "help_4": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 10,
-                "height": "fill",
-                "background_color": "#F3F6F4",
-                "border_radius": 12,
-                "link": "shopify://collections/kit-creator",
-                "padding-block-start": 24,
-                "padding-block-end": 24,
-                "padding-inline-start": 24,
-                "padding-inline-end": 24
-              },
-              "blocks": {
-                "help_4_icon": {
-                  "type": "icon",
-                  "settings": {
-                    "icon": "check_box",
-                    "width": 32,
-                    "icon_color": "#002D37"
-                  },
-                  "blocks": {}
-                },
-                "help_4_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h3>Build a climbing kit</h3>",
-                    "width": "100%",
-                    "type_preset": "h4",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_4_text": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Pick a harness, ropes and hardware, checked against the minimum kit.</p>",
-                    "width": "100%",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "help_4_more": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p><strong>Go →</strong></p>",
-                    "width": "100%",
-                    "type_preset": "paragraph",
-                    "font_size": "0.875rem",
-                    "wrap": "pretty",
-                    "text_color": "#5F7D6D"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "help_4_icon",
-                "help_4_title",
-                "help_4_text",
-                "help_4_more"
-              ]
-            }
-          },
-          "block_order": [
-            "help_0",
-            "help_1",
-            "help_2",
-            "help_3",
-            "help_4"
-          ]
-        }
-      },
-      "block_order": [
-        "help_head",
-        "help_cards"
-      ],
-      "name": "How can we help",
-      "settings": {
-        "gap": 24,
-        "padding-block-start": 56,
-        "padding-block-end": 24
-      }
-    },
     "fpg_categories": {
       "type": "collection-list",
       "blocks": {
@@ -761,8 +354,8 @@
         "rows_gap": 24,
         "max_collections": 8,
         "gap": 24,
-        "padding-block-start": 32,
-        "padding-block-end": 56
+        "padding-block-start": 64,
+        "padding-block-end": 64
       }
     },
     "fpg_offers": {
@@ -893,8 +486,8 @@
         "icons_shape": "circle",
         "gap": 24,
         "background_color": "#F3F6F4",
-        "padding-block-start": 56,
-        "padding-block-end": 56
+        "padding-block-start": 64,
+        "padding-block-end": 64
       }
     },
     "fpg_service": {
@@ -993,179 +586,8 @@
         "media_height": "60svh",
         "section_width": "page-width",
         "extend_media": false,
-        "padding-block-start": 56,
-        "padding-block-end": 56
-      }
-    },
-    "fpg_brands_head": {
-      "type": "section",
-      "blocks": {
-        "brands_title": {
-          "type": "text",
-          "settings": {
-            "text": "<h2>Brands we stock</h2>",
-            "width": "100%",
-            "alignment": "center",
-            "type_preset": "h3",
-            "wrap": "pretty"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "brands_title"
-      ],
-      "name": "Brands heading",
-      "settings": {
-        "horizontal_alignment": "center",
-        "horizontal_alignment_flex_direction_column": "center",
-        "gap": 24,
-        "padding-block-start": 40,
-        "padding-block-end": 8
-      }
-    },
-    "fpg_brands": {
-      "type": "marquee",
-      "blocks": {
-        "brand_stihl": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/Stihl_Logo_WhiteOnOrange_svg_42e7043e-acc2-426a-8126-a5f03a44a2d3.png",
-            "width": 120,
-            "link": "shopify://collections/stihl"
-          },
-          "blocks": {}
-        },
-        "brand_husqvarna": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/husqvarna_logo.png",
-            "width": 120,
-            "link": "shopify://collections/husqvarna"
-          },
-          "blocks": {}
-        },
-        "brand_echo": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/echo_logo.png",
-            "width": 120,
-            "link": "shopify://collections/echo"
-          },
-          "blocks": {}
-        },
-        "brand_mitox": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/mitox_logo.png",
-            "width": 120,
-            "link": "shopify://collections/mitox"
-          },
-          "blocks": {}
-        },
-        "brand_oregon": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/oregon.png",
-            "width": 120,
-            "link": "shopify://collections/oregon"
-          },
-          "blocks": {}
-        },
-        "brand_bulldog": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/bulldog-tools-logo.webp",
-            "width": 120,
-            "link": "shopify://collections/bulldog"
-          },
-          "blocks": {}
-        },
-        "brand_greenmech": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/Greenmech.png",
-            "width": 120,
-            "link": "shopify://collections/greenmech"
-          },
-          "blocks": {}
-        },
-        "brand_darlac": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/darlac.png",
-            "width": 120,
-            "link": "shopify://collections/darlac"
-          },
-          "blocks": {}
-        },
-        "brand_ohashi": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/Ohashi.png",
-            "width": 120,
-            "link": "shopify://collections/ohashi"
-          },
-          "blocks": {}
-        },
-        "brand_toro": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/Toro.png",
-            "width": 120,
-            "link": "shopify://collections/toro"
-          },
-          "blocks": {}
-        },
-        "brand_ferris": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/Ferris.png",
-            "width": 120,
-            "link": "shopify://collections/ferris"
-          },
-          "blocks": {}
-        },
-        "brand_etesia": {
-          "type": "icon",
-          "settings": {
-            "icon": "none",
-            "image_upload": "shopify://shop_images/Etesia.png",
-            "width": 120,
-            "link": "shopify://collections/etesia"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "brand_stihl",
-        "brand_husqvarna",
-        "brand_echo",
-        "brand_mitox",
-        "brand_oregon",
-        "brand_bulldog",
-        "brand_greenmech",
-        "brand_darlac",
-        "brand_ohashi",
-        "brand_toro",
-        "brand_ferris",
-        "brand_etesia"
-      ],
-      "settings": {
-        "padding-block-start": 16,
-        "padding-block-end": 48,
-        "gap_between_elements": 16
+        "padding-block-start": 64,
+        "padding-block-end": 64
       }
     },
     "fpg_hire": {
@@ -1266,8 +688,8 @@
         "section_width": "page-width",
         "extend_media": false,
         "background_color": "#F3F6F4",
-        "padding-block-start": 56,
-        "padding-block-end": 56
+        "padding-block-start": 64,
+        "padding-block-end": 64
       }
     },
     "fpg_new": {
@@ -1388,8 +810,8 @@
         "rows_gap": 24,
         "icons_shape": "circle",
         "gap": 24,
-        "padding-block-start": 56,
-        "padding-block-end": 56
+        "padding-block-start": 64,
+        "padding-block-end": 64
       }
     },
     "fpg_training": {
@@ -1450,8 +872,8 @@
         "horizontal_alignment": "space-between",
         "gap": 24,
         "background_color": "#E2E9E5",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 48,
+        "padding-block-end": 48
       }
     },
     "fpg_finder": {
@@ -1542,21 +964,206 @@
         "horizontal_alignment_flex_direction_column": "center",
         "gap": 28,
         "background_color": "#E2E9E5",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "fpg_help_cards": {
+      "type": "fpg-help-cards",
+      "blocks": {
+        "help_0": {
+          "type": "card",
+          "settings": {
+            "icon": "part",
+            "title": "Find a part",
+            "text": "Parts diagrams and genuine spares for STIHL, Husqvarna and more.",
+            "link": "shopify://pages/fpg-part-finder"
+          }
+        },
+        "help_1": {
+          "type": "card",
+          "settings": {
+            "icon": "chain",
+            "title": "Common parts look up",
+            "text": "Chains, bars, filters and plugs matched to your machine.",
+            "link": "shopify://pages/bar-and-chain-finder"
+          }
+        },
+        "help_2": {
+          "type": "card",
+          "settings": {
+            "icon": "service",
+            "title": "Book a service",
+            "text": "Servicing and repairs in our Treforest workshop.",
+            "link": "shopify://collections/servicing-repair"
+          }
+        },
+        "help_3": {
+          "type": "card",
+          "settings": {
+            "icon": "hire",
+            "title": "Hire a machine",
+            "text": "Chippers, stump grinders, mowers and more, by the day or week.",
+            "link": "shopify://collections/for-hire"
+          }
+        },
+        "help_4": {
+          "type": "card",
+          "settings": {
+            "icon": "kit",
+            "title": "Build a climbing kit",
+            "text": "Pick a harness, ropes and hardware, checked against the minimum kit.",
+            "link": "shopify://collections/kit-creator"
+          }
+        }
+      },
+      "block_order": [
+        "help_0",
+        "help_1",
+        "help_2",
+        "help_3",
+        "help_4"
+      ],
+      "settings": {
+        "eyebrow": "Parts · Servicing · Hire · Kit",
+        "heading": "How can we help?",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "fpg_brand_strip": {
+      "type": "fpg-brands",
+      "blocks": {
+        "brand_stihl": {
+          "type": "brand",
+          "settings": {
+            "name": "STIHL",
+            "logo": "shopify://shop_images/Stihl_Logo_WhiteOnOrange_svg_42e7043e-acc2-426a-8126-a5f03a44a2d3.png",
+            "link": "shopify://collections/stihl"
+          }
+        },
+        "brand_husqvarna": {
+          "type": "brand",
+          "settings": {
+            "name": "Husqvarna",
+            "logo": "shopify://shop_images/husqvarna_logo.png",
+            "link": "shopify://collections/husqvarna"
+          }
+        },
+        "brand_echo": {
+          "type": "brand",
+          "settings": {
+            "name": "ECHO",
+            "logo": "shopify://shop_images/echo_logo.png",
+            "link": "shopify://collections/echo"
+          }
+        },
+        "brand_mitox": {
+          "type": "brand",
+          "settings": {
+            "name": "Mitox",
+            "logo": "shopify://shop_images/mitox_logo.png",
+            "link": "shopify://collections/mitox"
+          }
+        },
+        "brand_oregon": {
+          "type": "brand",
+          "settings": {
+            "name": "Oregon",
+            "logo": "shopify://shop_images/oregon.png",
+            "link": "shopify://collections/oregon"
+          }
+        },
+        "brand_bulldog": {
+          "type": "brand",
+          "settings": {
+            "name": "Bulldog",
+            "logo": "shopify://shop_images/bulldog-tools-logo.webp",
+            "link": "shopify://collections/bulldog"
+          }
+        },
+        "brand_greenmech": {
+          "type": "brand",
+          "settings": {
+            "name": "GreenMech",
+            "logo": "shopify://shop_images/Greenmech.png",
+            "link": "shopify://collections/greenmech"
+          }
+        },
+        "brand_darlac": {
+          "type": "brand",
+          "settings": {
+            "name": "Darlac",
+            "logo": "shopify://shop_images/darlac.png",
+            "link": "shopify://collections/darlac"
+          }
+        },
+        "brand_ohashi": {
+          "type": "brand",
+          "settings": {
+            "name": "Ohashi",
+            "logo": "shopify://shop_images/Ohashi.png",
+            "link": "shopify://collections/ohashi"
+          }
+        },
+        "brand_toro": {
+          "type": "brand",
+          "settings": {
+            "name": "Toro",
+            "logo": "shopify://shop_images/Toro.png",
+            "link": "shopify://collections/toro"
+          }
+        },
+        "brand_ferris": {
+          "type": "brand",
+          "settings": {
+            "name": "Ferris",
+            "logo": "shopify://shop_images/Ferris.png",
+            "link": "shopify://collections/ferris"
+          }
+        },
+        "brand_etesia": {
+          "type": "brand",
+          "settings": {
+            "name": "Etesia",
+            "logo": "shopify://shop_images/Etesia.png",
+            "link": "shopify://collections/etesia"
+          }
+        }
+      },
+      "block_order": [
+        "brand_stihl",
+        "brand_husqvarna",
+        "brand_echo",
+        "brand_mitox",
+        "brand_oregon",
+        "brand_bulldog",
+        "brand_greenmech",
+        "brand_darlac",
+        "brand_ohashi",
+        "brand_toro",
+        "brand_ferris",
+        "brand_etesia"
+      ],
+      "settings": {
+        "eyebrow": "Approved dealer",
+        "heading": "Brands we stock",
+        "speed": 60,
         "padding-block-start": 56,
-        "padding-block-end": 56
+        "padding-block-end": 56,
+        "background_color": "#002D37"
       }
     }
   },
   "order": [
     "fpg_hero",
     "fpg_usps",
-    "fpg_help",
+    "fpg_help_cards",
     "fpg_finder",
     "fpg_categories",
     "fpg_offers",
     "fpg_service",
-    "fpg_brands_head",
-    "fpg_brands",
+    "fpg_brand_strip",
     "fpg_hire",
     "fpg_new",
     "fpg_training"

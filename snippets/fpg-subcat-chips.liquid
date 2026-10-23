@@ -1,0 +1,76 @@
+{%- doc -%}
+  FP&G sub-category chips for a collection page, taken from a menu. The
+  current collection is looked up at any level of the menu:
+  - a top item or group that has links → those links are shown
+  - a link inside a group → the links of that group are shown, current one highlighted
+  Nothing renders when the collection isn't in the menu or there's only one link.
+  Used by blocks/fpg-breadcrumbs.liquid (in every collection title band) and
+  sections/fpg-subcats.liquid. Styles: assets/fpg-look.css.
+
+  @param {linklist} menu - The menu to search
+  @param {string} [label] - Small label before the chips
+
+  @example
+  {% render 'fpg-subcat-chips', menu: linklists['horizon-main-menu'], label: 'Shop by type' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign here = collection.url
+  assign chips = null
+  assign found = false
+
+  for l1 in menu.links
+    if found
+      break
+    endif
+    if l1.url == here and l1.links.size > 0
+      assign chips = l1.links
+      assign found = true
+      break
+    endif
+    for l2 in l1.links
+      if l2.url == here
+        if l2.links.size > 0
+          assign chips = l2.links
+        else
+          assign chips = l1.links
+        endif
+        assign found = true
+        break
+      endif
+      for l3 in l2.links
+        if l3.url == here
+          assign chips = l2.links
+          assign found = true
+          break
+        endif
+      endfor
+      if found
+        break
+      endif
+    endfor
+  endfor
+-%}
+
+{%- if chips != blank and chips.size > 1 -%}
+  <nav class="fpg-subcats__nav" aria-label="{{ label | default: 'Sub-categories' | escape }}">
+    {%- if label != blank -%}
+      <p class="fpg-subcats__label">{{ label | escape }}</p>
+    {%- endif -%}
+    <ul class="fpg-subcats__list" role="list">
+      {%- for link in chips -%}
+        <li>
+          <a
+            class="fpg-subcats__chip{% if link.url == here %} is-current{% endif %}"
+            href="{{ link.url }}"
+            {% if link.url == here %}
+              aria-current="page"
+            {% endif %}
+          >
+            {{- link.title | escape -}}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </nav>
+{%- endif -%}

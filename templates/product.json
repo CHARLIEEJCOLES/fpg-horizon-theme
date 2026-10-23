@@ -92,6 +92,10 @@
                     "style": "pill"
                   },
                   "blocks": {}
+                },
+                "fpg_key_specs": {
+                  "type": "fpg-key-specs",
+                  "settings": {}
                 }
               },
               "block_order": [
@@ -99,6 +103,7 @@
                 "text_xpVMaM",
                 "price_tVjtKg",
                 "fpg_countdown",
+                "fpg_key_specs",
                 "fpg_sku"
               ]
             },

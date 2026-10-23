@@ -49,7 +49,9 @@ class FpgBackToTop extends HTMLElement {
   };
 
   #update() {
-    const threshold = Number(this.dataset.threshold || 700);
+    // Phones: appear later, so the arrow doesn't sit over the page from the first scroll.
+    const base = Number(this.dataset.threshold || 700);
+    const threshold = window.matchMedia('(max-width: 749px)').matches ? base * 2.5 : base;
     this.toggleAttribute('data-visible', window.scrollY > threshold);
   }
 

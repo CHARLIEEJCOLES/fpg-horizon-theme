@@ -11,167 +11,6 @@
   "type": "footer",
   "name": "t:names.footer",
   "sections": {
-    "footer": {
-      "type": "footer",
-      "blocks": {
-        "group_wErUQf": {
-          "type": "group",
-          "settings": {
-            "toggle_overlay": false,
-            "link": "",
-            "placeholder": ""
-          },
-          "blocks": {
-            "text_pF6rVi": {
-              "type": "text",
-              "name": "t:names.heading",
-              "settings": {
-                "text": "<h2>Join our email list</h2>",
-                "width": "100%",
-                "type_preset": "h3",
-                "font_size": "",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            },
-            "text_HafH7P": {
-              "type": "text",
-              "name": "t:names.text",
-              "settings": {
-                "text": "<p>Get exclusive deals and early access to new products.</p>",
-                "width": "100%",
-                "font_size": "",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            },
-            "email-signup_HafH7P": {
-              "type": "email-signup",
-              "name": "t:names.email_signup",
-              "settings": {
-                "heading": "",
-                "input_style": "custom",
-                "input_background_color": "{{ settings.color_palette.color1 }}",
-                "input_border_color": "",
-                "style_class": "button-secondary",
-                "label": "Sign up"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "text_pF6rVi",
-            "text_HafH7P",
-            "email-signup_HafH7P"
-          ]
-        },
-        "menu_footer": {
-          "type": "menu",
-          "settings": {
-            "menu": "footer",
-            "heading": "",
-            "accordion_icon": "plus",
-            "heading_preset": "paragraph"
-          }
-        },
-        "menu_main": {
-          "type": "menu",
-          "settings": {
-            "menu": "footer-2",
-            "heading": "",
-            "accordion_icon": "plus",
-            "heading_preset": "paragraph"
-          }
-        },
-        "menu_footer_3": {
-          "type": "menu",
-          "settings": {
-            "menu": "footer-3",
-            "heading": "",
-            "accordion_icon": "plus",
-            "heading_preset": "paragraph"
-          }
-        }
-      },
-      "block_order": [
-        "group_wErUQf",
-        "menu_footer",
-        "menu_main",
-        "menu_footer_3"
-      ],
-      "name": "t:names.footer",
-      "settings": {
-        "gap": 40,
-        "background_color": "{{ settings.color_palette.color1 }}",
-        "padding-block-start": 36,
-        "padding-block-end": 36
-      }
-    },
-    "utilities": {
-      "type": "footer-utilities",
-      "blocks": {
-        "copyright": {
-          "type": "footer-copyright",
-          "settings": {}
-        },
-        "policy_list": {
-          "type": "footer-policy-list",
-          "settings": {}
-        },
-        "social_icons": {
-          "type": "social-links",
-          "settings": {
-            "facebook_url": "https://www.facebook.com/forestparkandgarden",
-            "instagram_url": "https://www.instagram.com/forestparkgarden",
-            "youtube_url": "https://www.youtube.com/channel/UCr5dTuiDN2TnXuPl0UGb2iA",
-            "twitter_url": "https://twitter.com/forestparkgarde"
-          }
-        }
-      },
-      "block_order": [
-        "copyright",
-        "policy_list",
-        "social_icons"
-      ],
-      "settings": {
-        "background_color": "{{ settings.color_palette.color1 }}",
-        "padding-block-start": 12,
-        "padding-block-end": 16
-      }
-    },
-    "fpg_store": {
-      "type": "footer",
-      "blocks": {
-        "fpg_store_group": {
-          "type": "group",
-          "settings": {
-            "toggle_overlay": false,
-            "link": "",
-            "placeholder": ""
-          },
-          "blocks": {
-            "fpg_store_info": {
-              "type": "fpg-store-info",
-              "settings": {},
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "fpg_store_info"
-          ]
-        }
-      },
-      "block_order": [
-        "fpg_store_group"
-      ],
-      "name": "t:names.footer",
-      "settings": {
-        "gap": 40,
-        "background_color": "{{ settings.color_palette.color1 }}",
-        "padding-block-start": 36,
-        "padding-block-end": 0
-      }
-    },
     "fpg_back_to_top": {
       "type": "fpg-back-to-top",
       "settings": {}
@@ -261,12 +100,36 @@
         "promo_6"
       ],
       "settings": {}
+    },
+    "fpg_footer": {
+      "type": "fpg-footer",
+      "settings": {
+        "show_newsletter": true,
+        "news_heading": "Join our email list",
+        "news_text": "Get exclusive deals and early access to new products.",
+        "about": "Approved STIHL dealer in Treforest. Machinery, genuine parts, PPE, hire and workshop servicing for forestry, arb and grounds care.",
+        "phone": "01443 230000",
+        "email": "sales@fpandg.com",
+        "visit_heading": "Visit us",
+        "address": "Coed Court\nTreforest Ind. Est.\nPontypridd CF37 5SW",
+        "hours": "Mon–Fri 8am–5pm\nSat–Sun closed",
+        "directions_url": "https://www.google.com/maps/search/?api=1&query=Forest+Park+%26+Garden+Coed+Court+Treforest",
+        "shop_heading": "Shop",
+        "shop_menu": "horizon-main-menu",
+        "help_item": "Help",
+        "more_heading": "More",
+        "more_menu": "footer",
+        "more_menu_2": "footer-2",
+        "facebook": "https://www.facebook.com/forestparkandgarden",
+        "instagram": "https://www.instagram.com/forestparkgarden",
+        "youtube": "https://www.youtube.com/channel/UCr5dTuiDN2TnXuPl0UGb2iA",
+        "twitter": "https://twitter.com/forestparkgarde",
+        "show_payment": true
+      }
     }
   },
   "order": [
-    "fpg_store",
-    "footer",
-    "utilities",
+    "fpg_footer",
     "fpg_back_to_top",
     "fpg_menu_promos"
   ]

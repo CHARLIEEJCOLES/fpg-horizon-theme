@@ -25,26 +25,39 @@
 
   assign stock_class = 'fpg-card-badge--stock'
   assign stock_text = ''
+  assign stock_state = 'order'
 
   if product.vendor == 'FPG HIRE'
     assign stock_text = 'For hire'
     assign stock_class = 'fpg-card-badge--hire'
+    assign stock_state = 'hire'
   elsif is_managed and total_stock <= 0 and variant.inventory_policy == 'deny'
     assign stock_text = 'content.product_badge_sold_out' | t
     assign stock_class = 'color-custom-badge-sold-out'
+    assign stock_state = 'sold-out'
   elsif is_managed and total_stock > 0
     assign stock_text = settings.fpg_in_stock_badge | default: '[count] in stock' | replace: '[count]', total_stock
+    assign stock_state = 'in-stock'
   elsif product.tags contains dropship_tag
     assign stock_text = settings.fpg_dropship_badge | default: 'Dropship item'
+    assign stock_state = 'dropship'
   else
     assign stock_text = settings.fpg_backorder_label | default: 'Available to order'
   endif
 
   assign show_sale = false
+  assign sale_text = 'content.product_badge_sale' | t
   if product.available and product.compare_at_price > product.price
     assign show_sale = true
+    if variant.compare_at_price > variant.price
+      assign saving = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price
+      if saving >= 5
+        assign sale_text = 'Save ' | append: saving | append: '%'
+      endif
+    endif
   elsif product.tags contains clearance_tag
     assign show_sale = true
+    assign sale_text = 'Clearance'
   endif
 -%}
 
@@ -58,6 +71,7 @@
   {%- if stock_text != blank -%}
     <div
       class="product-badges__badge product-badges__badge--rectangle {{ stock_class }}"
+      data-stock="{{ stock_state }}"
       {% if stock_class == 'fpg-card-badge--hire' %}
         style="background: #5f7d6d; color: #fff;"
       {% endif %}
@@ -67,17 +81,55 @@
   {%- endif -%}
   {%- if show_sale -%}
     <div class="product-badges__badge product-badges__badge--rectangle color-custom-badge-sale">
-      {{- 'content.product_badge_sale' | t -}}
+      {{- sale_text | escape -}}
     </div>
   {%- endif -%}
 </div>
 
 {% stylesheet %}
+  /* One neat row of small pills: stock (with a coloured dot) then sale. */
   .fpg-card-badges {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--gap-2xs);
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    max-width: calc(100% - 16px);
+  }
+
+  .fpg-card-badges .product-badges__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .fpg-card-badges [data-stock]::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #c08a2e;
+    flex: 0 0 auto;
+  }
+
+  .fpg-card-badges [data-stock='in-stock']::before {
+    background: #2f9e6b;
+  }
+
+  .fpg-card-badges [data-stock='sold-out']::before {
+    background: #c7362b;
+  }
+
+  .fpg-card-badges [data-stock='hire']::before,
+  .fpg-card-badges [data-stock='dropship']::before {
+    background: currentColor;
+    opacity: 0.6;
   }
 
   .fpg-card-badges.product-badges--top-right {
@@ -85,7 +137,9 @@
   }
 
   .fpg-card-badge--stock {
-    border: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-20));
+    background: #fff;
+    color: #12262b;
+    border: 1px solid #d6ded9;
   }
 
   /* FP&G: the Call for Price app's CSS forces .product-grid-view-zoom-out--details
