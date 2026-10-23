@@ -831,7 +831,7 @@ class FpgPartsFinder extends HTMLElement {
   toggleSave(/** @type {number} */ id, /** @type {HTMLElement} */ button) {
     let list = readStore(STORE_MACHINES, []).filter((/** @type {number} */ x) => x !== id);
     const saving = button.getAttribute('aria-pressed') !== 'true';
-    if (saving) list = [id, ...list].slice(0, 6);
+    if (saving) list = [id, ...list].slice(0, 20);
     writeStore(STORE_MACHINES, list);
     button.setAttribute('aria-pressed', String(saving));
     button.textContent = saving ? 'Saved to my machines' : 'Save to my machines';
@@ -855,9 +855,10 @@ class FpgPartsFinder extends HTMLElement {
     if (!this.mine || !this.data) return;
     const ids = readStore(STORE_MACHINES, []);
     const models = ids.map((/** @type {number} */ id) => this.data?.models.find((m) => m.id === id)).filter(Boolean);
-    this.mine.hidden = models.length === 0;
+    const page = esc(this.dataset.machinesUrl || '/pages/my-machines');
+    this.mine.hidden = false;
     this.mine.innerHTML = models.length
-      ? `<span class="fpg-pf-mine__label">My machines</span><ul role="list">${models
+      ? `<a class="fpg-pf-mine__label" href="${page}">My machines</a><ul role="list">${models
           .map(
             (/** @type {Model} */ m) => `<li class="fpg-pf-chip">
               <button type="button" data-go-model="${m.id}">${machineIcon(m.type.name, 18)}<span>${esc(m.type.brand.name)} ${esc(m.name)}</span></button>
@@ -865,7 +866,7 @@ class FpgPartsFinder extends HTMLElement {
             </li>`
           )
           .join('')}</ul>`
-      : '';
+      : `<a class="fpg-pf-mine__empty" href="${page}">${machineIcon('', 18)}<span>Save the machines you own for one-tap parts and servicing</span><span aria-hidden="true">→</span></a>`;
   }
 
   /* ---------- search box */

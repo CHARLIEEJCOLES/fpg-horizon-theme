@@ -9,6 +9,10 @@
 {%- assign product = closest.product -%}
 {{ 'fpg-parts.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'fpg-parts.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- if block.settings.show_save -%}
+  <script src="{{ 'fpg-save-machine.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}
+<div class="fpg-machine-tools" {{ block.shopify_attributes }}>
 <fpg-parts-link
   class="fpg-parts-link"
   data-index="{{ 'fpg-parts-index.json' | asset_url }}"
@@ -16,7 +20,6 @@
   data-vendor="{{ product.vendor | escape }}"
   data-title="{{ product.title | escape }}"
   hidden
-  {{ block.shopify_attributes }}
 >
   <a href="{{ block.settings.finder_url | default: '/pages/fpg-part-finder' }}">
     <span class="fpg-parts-link__icon" data-icon aria-hidden="true"></span>
@@ -27,6 +30,89 @@
     <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M7 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </a>
 </fpg-parts-link>
+{%- if block.settings.show_save -%}
+  <fpg-save-machine
+    class="fpg-save-machine"
+    data-index="{{ 'fpg-parts-index.json' | asset_url }}"
+    data-parts-script="{{ 'fpg-parts.js' | asset_url }}"
+    data-vendor="{{ product.vendor | escape }}"
+    data-title="{{ product.title | escape }}"
+    hidden
+  >
+    <button type="button" class="fpg-save-machine__btn" aria-pressed="false" data-save>
+      <svg class="fpg-save-machine__off" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg class="fpg-save-machine__on" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false"><path d="M4.5 10.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-text>Save to My machines</span>
+    </button>
+    <a class="fpg-save-machine__link" href="{{ block.settings.machines_url | default: '/pages/my-machines' }}">View My machines</a>
+  </fpg-save-machine>
+{%- endif -%}
+</div>
+
+{% stylesheet %}
+  .fpg-machine-tools {
+    display: grid;
+    gap: 10px;
+  }
+
+  .fpg-save-machine {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+  }
+
+  .fpg-save-machine[hidden] {
+    display: none;
+  }
+
+  .fpg-save-machine__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 18px;
+    border: 1px solid rgb(0 45 55 / 0.14);
+    border-radius: 999px;
+    background: #fff;
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--fpg-teal, #002d37);
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .fpg-save-machine__btn:hover {
+    border-color: var(--fpg-teal, #002d37);
+  }
+
+  .fpg-save-machine__btn[aria-pressed='true'] {
+    border-color: #24734a;
+    background: #e8f3ec;
+    color: #24734a;
+  }
+
+  .fpg-save-machine__on,
+  .fpg-save-machine__btn[aria-pressed='true'] .fpg-save-machine__off {
+    display: none;
+  }
+
+  .fpg-save-machine__btn[aria-pressed='true'] .fpg-save-machine__on {
+    display: block;
+  }
+
+  .fpg-save-machine__link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--fpg-teal, #002d37);
+    text-underline-offset: 0.2em;
+  }
+
+  .fpg-save-machine:not([data-saved='true']) .fpg-save-machine__link {
+    display: none;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -35,7 +121,9 @@
   "settings": [
     { "type": "text", "id": "label", "label": "Label", "default": "Spare parts for the" },
     { "type": "text", "id": "text", "label": "Text", "default": "Every part listed for this machine, with live stock" },
-    { "type": "text", "id": "finder_url", "label": "Parts finder page", "default": "/pages/fpg-part-finder" }
+    { "type": "text", "id": "finder_url", "label": "Parts finder page", "default": "/pages/fpg-part-finder" },
+    { "type": "checkbox", "id": "show_save", "label": "Show \"Save to My machines\"", "default": true },
+    { "type": "text", "id": "machines_url", "label": "My machines page", "default": "/pages/my-machines" }
   ],
   "presets": [{ "name": "FP&G machine parts link" }]
 }

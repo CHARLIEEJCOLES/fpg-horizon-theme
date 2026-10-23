@@ -38,6 +38,7 @@
     data-dealer-brands="{{ section.settings.dealer_brands | escape }}"
     data-contact-url="{{ section.settings.contact_url | default: '/pages/contact' }}"
     data-search-url="{{ routes.search_url }}"
+    data-machines-url="{{ section.settings.machines_url | default: '/pages/my-machines' }}"
   >
     <header class="fpg-pf-hero">
       <div class="fpg-pf-hero__text">
@@ -109,6 +110,7 @@
     { "type": "text", "id": "heading", "label": "Heading", "default": "Find the right part for your machine" },
     { "type": "textarea", "id": "text", "label": "Text", "default": "Search your model, or pick the brand and machine below. Every part is listed in the section of the machine it belongs to, with live stock." },
     { "type": "text", "id": "placeholder", "label": "Search box hint", "default": "Model or part number, e.g. MS 261" },
+    { "type": "text", "id": "machines_url", "label": "My machines page", "default": "/pages/my-machines" },
     { "type": "text", "id": "dealer_label", "label": "Dealer badge", "default": "Approved dealer" },
     { "type": "text", "id": "dealer_brands", "label": "Brands that get the dealer badge", "info": "Comma separated. Only list brands FP&G is an approved dealer for.", "default": "STIHL" },
     { "type": "checkbox", "id": "maker_stock", "label": "Show live manufacturer stock", "info": "Uses the Cormorant server in Theme settings > FP&G, for parts we have none of.", "default": true },

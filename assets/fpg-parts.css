@@ -214,6 +214,47 @@
   color: #b9d3c4;
 }
 
+a.fpg-pf-mine__label {
+  text-decoration: none;
+}
+
+a.fpg-pf-mine__label:hover,
+a.fpg-pf-mine__label:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.fpg-pf-mine__empty {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 8px 16px 8px 12px;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.fpg-pf-mine__empty:hover,
+.fpg-pf-mine__empty:focus-visible {
+  border-color: rgb(255 255 255 / 0.5);
+  background: rgb(255 255 255 / 0.1);
+}
+
+.fpg-pf-mine__empty .fpg-pf-icon {
+  flex: none;
+  color: #b9d3c4;
+}
+
+.fpg-pf:not([data-step='brands']) .fpg-pf-mine:has(.fpg-pf-mine__empty) {
+  display: none;
+}
+
 .fpg-pf-mine ul {
   display: flex;
   flex-wrap: wrap;
