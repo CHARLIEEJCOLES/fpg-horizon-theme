@@ -6,14 +6,35 @@
   chosen position (so position 5 makes it the 5th item on page 1).
   Leave "Collections" empty to show it on every collection.
 
+  Content: "Matched to the collection" picks from the ad library in
+  snippets/fpg-feed-ad.liquid (chain finder on saw collections, the kit
+  builder on climbing, hire on chippers, and so on), rotating so the two tiles,
+  later repeats and neighbouring collections show different ads. "My own
+  content" uses the fields below. "Repeat every" places the tile again further
+  down long collections, including pages loaded by infinite scroll.
+
   @param {number} fpg_position - Position (1-based, across pages) of the next product in the grid
 {%- enddoc -%}
 
 {%- liquid
   assign block_settings = block.settings
   assign show = false
-  if block_settings.enabled and fpg_position == block_settings.position
-    assign show = true
+  assign occurrence = 0
+  assign start = block_settings.position
+  assign every = block_settings.repeat_every | default: 0
+  if block_settings.enabled
+    if fpg_position == start
+      assign show = true
+    elsif every > 0 and fpg_position > start
+      assign gap = fpg_position | minus: start
+      assign rest = gap | modulo: every
+      if rest == 0
+        assign show = true
+        assign occurrence = gap | divided_by: every
+      endif
+    endif
+  endif
+  if show
     if block_settings.collections != blank
       assign show = false
       for c in block_settings.collections
@@ -34,7 +55,30 @@
   endif
 -%}
 
-{%- if show -%}
+{%- if show and block_settings.mode != 'custom' -%}
+  {%- liquid
+    capture pool_list
+      render 'fpg-feed-ad', mode: 'pool'
+    endcapture
+    assign pool = pool_list | split: ','
+    # Tile 1 and tile 2 take turns through the pool. Each collection starts at one of
+    # its three most relevant ads, so neighbouring collections differ but the first
+    # tiles stay on topic.
+    assign tile_offset = 0
+    if block.id contains 'promo-tile-2'
+      assign tile_offset = 1
+    endif
+    assign slot = occurrence | times: 2 | plus: tile_offset
+    assign start_range = pool.size | at_most: 3 | at_least: 1
+    assign start_at = collection.id | modulo: start_range
+    assign pick = slot | plus: start_at | modulo: pool.size
+    assign ad_key = pool[pick]
+    capture attrs
+      echo block.shopify_attributes
+    endcapture
+  -%}
+  {% render 'fpg-feed-ad', key: ad_key, attrs: attrs %}
+{%- elsif show -%}
   <li class="product-grid__item fpg-promo-tile{% if block_settings.image != blank %} fpg-promo-tile--image{% endif %}" style="{{ tile_style }}" {{ block.shopify_attributes }}>
     {%- if block_settings.link != blank -%}
       <a class="fpg-promo-tile__link" href="{{ block_settings.link }}">
@@ -102,6 +146,27 @@
       "default": 4
     },
     {
+      "type": "range",
+      "id": "repeat_every",
+      "label": "Repeat every",
+      "info": "Show the tile again after this many products, all the way down the collection. 0 shows it once.",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "mode",
+      "label": "Content",
+      "options": [
+        { "value": "auto", "label": "Matched to the collection" },
+        { "value": "custom", "label": "My own content" }
+      ],
+      "default": "auto",
+      "info": "Matched ads rotate through the FP&G ad set (parts finder, servicing, hire, kit builder, training and more), picked for each collection."
+    },
+    {
       "type": "collection_list",
       "id": "collections",
       "label": "Only on these collections",
@@ -110,45 +175,53 @@
     {
       "type": "image_picker",
       "id": "image",
+      "visible_if": "{{ block.settings.mode == 'custom' }}",
       "label": "Image",
       "info": "Optional. Text sits on a dark overlay when an image is used."
     },
     {
       "type": "text",
       "id": "eyebrow",
+      "visible_if": "{{ block.settings.mode == 'custom' }}",
       "label": "Small heading"
     },
     {
       "type": "text",
       "id": "heading",
+      "visible_if": "{{ block.settings.mode == 'custom' }}",
       "label": "Heading",
       "default": "Heading"
     },
     {
       "type": "textarea",
       "id": "text",
+      "visible_if": "{{ block.settings.mode == 'custom' }}",
       "label": "Text"
     },
     {
       "type": "text",
       "id": "button_label",
+      "visible_if": "{{ block.settings.mode == 'custom' }}",
       "label": "Link label",
       "default": "Find out more"
     },
     {
       "type": "url",
       "id": "link",
+      "visible_if": "{{ block.settings.mode == 'custom' }}",
       "label": "Link"
     },
     {
       "type": "color",
       "id": "background_color",
+      "visible_if": "{{ block.settings.mode == 'custom' }}",
       "label": "Background colour",
       "default": "#002D37"
     },
     {
       "type": "color",
       "id": "text_color",
+      "visible_if": "{{ block.settings.mode == 'custom' }}",
       "label": "Text colour",
       "default": "#FFFFFF"
     }

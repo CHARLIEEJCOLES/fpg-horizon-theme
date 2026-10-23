@@ -1,0 +1,232 @@
+{%- doc -%}
+  FP&G in-feed ads: the library of ads the collection grid's promo tiles
+  (blocks/fpg-promo-tile.liquid, "Matched to the collection" mode) choose from.
+
+  mode 'pool': prints a comma-separated list of ad keys suited to the current
+  collection (most relevant first, then general ones). Ads that link to the
+  collection being viewed are left out.
+  Otherwise: renders the ad named by `key` as a grid item.
+
+  Every ad points at something FP&G really offers (pages, collections and
+  services already on the site). Photos come from Settings > Files by name;
+  an ad whose photo is missing falls back to a solid card.
+
+  @param {string} [mode] - 'pool' to list ad keys for the current collection
+  @param {string} [key] - The ad to render
+  @param {string} [attrs] - Block attributes for the theme editor
+
+  @example
+  {%- capture pool -%}{% render 'fpg-feed-ad', mode: 'pool' %}{%- endcapture -%}
+  {% render 'fpg-feed-ad', key: 'service', attrs: block.shopify_attributes %}
+{%- enddoc -%}
+
+{%- if mode == 'pool' -%}
+  {%- liquid
+    # Spaces around every word, so short keywords match whole words only (' ppe' must not match 'chippers')
+    assign ctx = ' ' | append: collection.handle | append: ' ' | append: collection.title | append: ' ' | downcase | replace: '-', ' ' | replace: '/', ' ' | replace: '&', ' '
+    assign here = '/collections/' | append: collection.handle
+
+    if ctx contains 'trouser' or ctx contains ' boot' or ctx contains 'helmet' or ctx contains 'glove' or ctx contains ' ppe' or ctx contains 'clothing' or ctx contains 'jacket' or ctx contains 'visor' or ctx contains 'protect' or ctx contains 'footwear' or ctx contains 'shirt' or ctx contains 'waterproof' or ctx contains 'respirator'
+      assign pool = 'training,ppe,collect,kit,advice,mymachines'
+    elsif ctx contains 'climb' or ctx contains ' rope' or ctx contains 'karabiner' or ctx contains 'harness' or ctx contains 'lanyard' or ctx contains 'pulley' or ctx contains 'rigging' or ctx contains 'spike' or ctx contains 'friction' or ctx contains 'hitch' or ctx contains 'throw' or ctx contains 'cambium' or ctx contains 'sling' or ctx contains 'ascender' or ctx contains 'lowering' or ctx contains 'mechanical' or ctx contains 'strop'
+      assign pool = 'kit,training,ppe,advice,collect'
+    elsif ctx contains ' oil' or ctx contains 'fuel' or ctx contains 'grease' or ctx contains 'alkylate' or ctx contains 'bulk' or ctx contains 'cleaning' or ctx contains 'lubric' or ctx contains 'canister'
+      assign pool = 'bulk,collect,parts,barchain,advice'
+    elsif ctx contains 'battery' or ctx contains 'batteries' or ctx contains 'cordless' or ctx contains 'charger' or ctx contains 'aspire'
+      assign pool = 'cordless,mymachines,service,collect,advice'
+    elsif ctx contains 'hedge'
+      assign pool = 'hedges,service,parts,mymachines,collect,advice'
+    elsif ctx contains 'chipper' or ctx contains 'shredder' or ctx contains 'stump' or ctx contains 'splitter' or ctx contains 'loader' or ctx contains 'tracked' or ctx contains 'carrier' or ctx contains 'hire'
+      assign pool = 'hire,service,parts,advice,mymachines'
+    elsif ctx contains 'mow' or ctx contains ' ride' or ctx contains 'tractor' or ctx contains 'robot' or ctx contains 'zero' or ctx contains 'lawn' or ctx contains 'scarif' or ctx contains 'flail' or ctx contains ' deck'
+      assign pool = 'service,mymachines,parts,hire,collect,advice'
+    elsif ctx contains 'saw' or ctx contains 'chain' or ctx contains ' bar' or ctx contains 'pruner' or ctx contains 'sharpen' or ctx contains ' file'
+      assign pool = 'barchain,parts,ppe,service,mymachines,hire,advice'
+    elsif ctx contains 'brushcutter' or ctx contains 'strimmer' or ctx contains 'blower' or ctx contains 'vacuum' or ctx contains 'sprayer' or ctx contains 'auger' or ctx contains ' disc' or ctx contains 'pressure' or ctx contains 'tiller' or ctx contains 'combi' or ctx contains ' line' or ctx contains ' head'
+      assign pool = 'service,parts,mymachines,cordless,collect,advice'
+    else
+      assign pool = 'advice,service,hire,parts,mymachines,collect,training'
+    endif
+
+    # Never advertise the page the shopper is already on
+    assign links = 'ppe:/collections/all-clothing-and-ppe,kit:/collections/kit-creator,bulk:/collections/bulk-buy,hire:/collections/for-hire,service:/collections/servicing-repair' | split: ','
+    assign out = ''
+    assign keys = pool | split: ','
+    for k in keys
+      assign skip = false
+      for pair in links
+        assign p = pair | split: ':'
+        if p[0] == k and p[1] == here
+          assign skip = true
+        endif
+      endfor
+      unless skip
+        assign out = out | append: k | append: ','
+      endunless
+    endfor
+    echo out
+  -%}
+{%- else -%}
+  {%- liquid
+    # style: dark | sage | light | photo
+    case key
+      when 'advice'
+        assign style = 'light'
+        assign icon = 'phone'
+        assign eyebrow = 'Need a hand?'
+        assign heading = 'Talk to our team'
+        assign text = "Not sure which model or part you need? We'll point you to the right one."
+        assign big = '01443 230000'
+        assign cta = 'Contact us'
+        assign url = '/pages/contact'
+      when 'service'
+        assign style = 'photo'
+        assign photo = 'Chainsaw_Maintenance_in_a_Warm_Workshop.png'
+        assign eyebrow = 'Workshop'
+        assign heading = 'Servicing and repairs'
+        assign text = 'Keep your kit running with a service in our Treforest workshop, using genuine parts.'
+        assign cta = 'Book a service'
+        assign url = '/collections/servicing-repair'
+      when 'hire'
+        assign style = 'photo'
+        assign photo = 'Wood_Chipping_Overlook.png'
+        assign eyebrow = 'Machine hire'
+        assign heading = 'Only need it for the weekend?'
+        assign text = 'Hire chippers, stump grinders, mowers and more from Treforest by the day, weekend or week.'
+        assign cta = 'See hire machines'
+        assign url = '/collections/for-hire'
+      when 'parts'
+        assign style = 'dark'
+        assign icon = 'part'
+        assign eyebrow = 'Spare parts'
+        assign heading = 'Every part for your machine'
+        assign text = 'Search your model and see each part listed in the section it belongs to, with live stock.'
+        assign cta = 'Open the parts finder'
+        assign url = '/pages/fpg-part-finder'
+      when 'barchain'
+        assign style = 'sage'
+        assign icon = 'chain'
+        assign eyebrow = 'Chains and bars'
+        assign heading = 'What fits your saw?'
+        assign text = 'Pick your make and model to see the chains, bars, filters and plugs that fit.'
+        assign cta = 'Look it up'
+        assign url = '/pages/bar-and-chain-finder'
+      when 'mymachines'
+        assign style = 'light'
+        assign icon = 'saved'
+        assign eyebrow = 'My machines'
+        assign heading = 'Save the machines you own'
+        assign text = 'Keep them in one place, with their parts and servicing a tap away.'
+        assign cta = 'Add your machines'
+        assign url = '/pages/my-machines'
+      when 'kit'
+        assign style = 'photo'
+        assign photo = 'Arborist_Climbing_Gear_Flat_Lay.png'
+        assign eyebrow = 'Climbing'
+        assign heading = 'Build a climbing kit'
+        assign text = 'Pick a harness, ropes and hardware, checked against the minimum kit.'
+        assign cta = 'Start your kit'
+        assign url = '/collections/kit-creator'
+      when 'training'
+        assign style = 'dark'
+        assign icon = 'cert'
+        assign eyebrow = 'FPG Training'
+        assign heading = 'Get qualified'
+        assign text = 'NPTC and City & Guilds courses with FPG Training.'
+        assign cta = 'Visit FPG Training'
+        assign url = 'https://fpgtraining.co.uk/'
+      when 'ppe'
+        assign style = 'photo'
+        assign photo = 'Arborist_Gear_Flat_Lay_in_Earthy_Tones.png'
+        assign eyebrow = 'Stay protected'
+        assign heading = 'Complete your PPE'
+        assign text = 'Helmets, chainsaw trousers, boots and gloves for working safely.'
+        assign cta = 'Shop clothing & PPE'
+        assign url = '/collections/all-clothing-and-ppe'
+      when 'cordless'
+        assign style = 'photo'
+        assign photo = 'Husqvarna_Aspire-P5-P4A_Cordless_Pruner_Lifestyle.webp'
+        assign eyebrow = 'Cordless'
+        assign heading = 'Which battery system?'
+        assign text = 'Compare the battery platforms before you buy, so every tool shares the same packs.'
+        assign cta = 'Read the guide'
+        assign url = '/pages/cordless-systems-guide'
+      when 'hedges'
+        assign style = 'photo'
+        assign photo = 'Professional_Petrol_Hedge_Trimmer.png'
+        assign eyebrow = 'Tall hedges'
+        assign heading = 'Cutting high and wide?'
+        assign text = 'The long reach trimmers and pole tools we recommend for tall hedges.'
+        assign cta = 'See the guide'
+        assign url = '/pages/tall-hedges'
+      when 'collect'
+        assign style = 'sage'
+        assign icon = 'pin'
+        assign eyebrow = 'Click & collect'
+        assign heading = 'Pick it up in Treforest'
+        assign text = 'Order online and collect from us at Coed Court, Treforest.'
+        assign cta = 'Find us'
+        assign url = '/pages/contact'
+      when 'bulk'
+        assign style = 'light'
+        assign icon = 'box'
+        assign eyebrow = 'Bulk buy'
+        assign heading = 'Buying for a team?'
+        assign text = 'Fuel, oil and consumables in larger packs for busy crews and workshops.'
+        assign cta = 'Shop bulk buy'
+        assign url = '/collections/bulk-buy'
+    endcase
+
+    assign img = blank
+    if style == 'photo'
+      assign img = images[photo]
+      if img == blank
+        assign style = 'dark'
+        assign icon = 'arrow'
+      endif
+    endif
+    assign external = false
+    if url contains 'https://'
+      assign external = true
+    endif
+  -%}
+  {%- if heading != blank -%}
+    <li class="product-grid__item fpg-promo-tile fpg-promo-tile--{{ style }}{% if img != blank %} fpg-promo-tile--image{% endif %}" data-fpg-ad="{{ key }}" {{ attrs }}>
+      <a class="fpg-promo-tile__link" href="{{ url }}"{% if external %} target="_blank" rel="noopener"{% endif %}>
+        {%- if img != blank -%}
+          <span class="fpg-promo-tile__media">
+            {{ img | image_url: width: 900 | image_tag: loading: 'lazy', widths: '300, 450, 600, 900', sizes: '(min-width: 990px) 25vw, 50vw', alt: '' }}
+          </span>
+        {%- endif -%}
+        <span class="fpg-promo-tile__content">
+          {%- if icon != blank and img == blank -%}
+            <span class="fpg-promo-tile__icon" aria-hidden="true">
+              {%- case icon -%}
+                {%- when 'phone' -%}<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+                {%- when 'part' -%}<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
+                {%- when 'chain' -%}<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="8" rx="4"/><path d="M6 12h12" stroke-dasharray="2 2.5"/></svg>
+                {%- when 'saved' -%}<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/><path d="M12 8v5M9.5 10.5h5"/></svg>
+                {%- when 'cert' -%}<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/></svg>
+                {%- when 'pin' -%}<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                {%- when 'box' -%}<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg>
+                {%- else -%}<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              {%- endcase -%}
+            </span>
+          {%- endif -%}
+          <span class="fpg-promo-tile__eyebrow">{{ eyebrow | escape }}</span>
+          <span class="fpg-promo-tile__heading">{{ heading | escape }}</span>
+          {%- if big != blank -%}
+            <span class="fpg-promo-tile__big">{{ big | escape }}</span>
+          {%- endif -%}
+          <span class="fpg-promo-tile__text">{{ text | escape }}</span>
+          <span class="fpg-promo-tile__cta">
+            {{ cta | escape }}
+            <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </span>
+      </a>
+    </li>
+  {%- endif -%}
+{%- endif -%}
