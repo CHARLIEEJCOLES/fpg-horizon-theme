@@ -1,0 +1,63 @@
+{%- comment -%} YMM APP Searchbox APP Block OS 2.0 Theme - 786/92/313/ASKMPF {%- endcomment -%}
+{% if shop.metafields.cws_ymm.enable_app == "yes" %}
+{%- comment -%} Get ymm json data from metafield {%- endcomment -%} 
+{%- assign ymm_data_json_obj = shop.metafields.cws_ymm.first_field_json.value -%}
+{%- assign ymm_fields_obj = shop.metafields.cws_ymm.ymm_fields_json.value -%}
+<div class="page-width container ymm_app" data-ymm-theme-type="os">
+<div id="ymm_searchbox" class="{{ searchbox_style }}">
+<h2 id="ymm_label" style="display: none;">{{ searchbox_title | replace: '&#39;', "'" }}</h2>
+<form name="ymm" id="ymm_form">
+  	{%- comment -%} DO NOT EDIT BELOW LINES [ DYNAMIC FORM FIELDS ARE WRITTEN IN THIS PART ] {%- endcomment -%}
+  	<div class="formFields clearfix">
+    <ul class="dropdowns" style="display: none;">
+      
+	  {%- if shop.metafields.cws_ymm.speedup_mode == "on" -%}
+   
+      {%- comment -%} Display YMM First Field - 786 {%- endcomment -%}
+      <li class="{{ ymm_fields_obj.first_field.field_key }}">
+        <label class='ymm_label' for='dropdown-{{ ymm_fields_obj.first_field.field_key }}'>{{ ymm_fields_obj.first_field.field_lbl }}</label>
+        <select id='dropdown-{{ ymm_fields_obj.first_field.field_key }}' class='ymm-filter'>
+          	<option value='-1'>Select {{ ymm_fields_obj.first_field.field_lbl }}</option>
+          
+           	{% for first_ymm_field in ymm_data_json_obj %}
+          	<option value="{{ first_ymm_field.tag_val }}">{{ first_ymm_field.field_val }}</option>
+    		{% endfor %}
+        </select>
+      </li>
+      
+      {%- comment -%} Display YMM Second Field - 786 {%- endcomment -%}
+      <li class="{{ ymm_fields_obj.second_field.field_key }}">
+        <label class='ymm_label' for='dropdown-2-{{ ymm_fields_obj.second_field.field_key }}'>{{ ymm_fields_obj.second_field.field_lbl }}</label>
+        <select id='dropdown-2-{{ ymm_fields_obj.second_field.field_key }}' class='ymm-filter' disabled="disabled">
+          <option value='-1'>Select {{ ymm_fields_obj.second_field.field_lbl }}</option>
+        </select>
+      </li>
+      
+      {%- comment -%} Display YMM Unlimited Dynamic Field(s) on page load - 786 {%- endcomment -%}
+      {%- for dyn_field in ymm_fields_obj.dynamic_fields -%}
+      
+      {%- assign j = forloop.index | plus: 2 -%}
+   
+      <li class='{{ dyn_field.field_key }}'>
+        <label class='ymm_label' for='dropdown-{{ j }}-{{ dyn_field.field_key }}'>{{ dyn_field.field_lbl }}</label>
+        <select id='dropdown-{{ j }}-{{ dyn_field.field_key }}' class='ymm-filter' disabled="disabled">
+          <option value='-1'>Select {{ dyn_field.field_lbl }}</option>
+        </select>
+      </li>
+      {%- endfor -%}
+      
+     {%- comment -%} Display Search and reset buttons. - 786 {%- endcomment -%}
+     <li class='ymm_bttns'>
+        <div id='ymm_actions' class='button-action' align='center'>
+          <input type='button' name='submit' id='ymm_search' value='Search' class='btn ymm_search' disabled="disabled">
+          <input type='button' name='reset' id='ymm_reset' value='Reset' class='btn btn--secondary ymm_reset'>
+        </div>
+     </li> 
+     {%- endif -%}
+   </ul>
+  </div>
+{%- comment -%} ENDS HERE {%- endcomment -%}
+</form>
+</div>  
+</div>
+{% endif %}

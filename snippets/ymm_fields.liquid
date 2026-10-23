@@ -1,0 +1,86 @@
+{%- comment -%} YMM File Updated for 2023-04 API. {%- endcomment -%}
+
+{%- if shop.metafields.cws_ymm.speedup_mode == "on" -%}
+
+{%- liquid
+# Lang text Fetch - 786
+assign curr_locale_key = request.locale.iso_code | prepend: "lang_"
+assign curr_lang_found = shop.metafields.cws_ymm[curr_locale_key].value
+   
+if curr_lang_found == blank
+   
+# Find primary lang of client store - - 786/92/313/ASKMPF
+assign primary_lang = "lang_" | append: shop.locale
+   
+if localization.available_languages.size > 1
+	for lang in localization.available_languages
+		if lang.primary
+			assign primary_lang = "lang_" | append: lang.iso_code
+			break
+		endif
+	endfor
+endif
+   
+assign primary_lang_found = shop.metafields.cws_ymm[primary_lang].value
+assign select_label = primary_lang_found.select_label | default: "Select"
+assign search_button = primary_lang_found.search_button | default: "Search"
+assign reset_button = primary_lang_found.reset_button | default: "Reset"
+
+else
+assign select_label = curr_lang_found.select_label | default: "Select"
+assign search_button = curr_lang_found.search_button | default: "Search"
+assign reset_button = curr_lang_found.reset_button | default: "Reset"
+   
+endif
+-%}
+        {%- comment -%} Get ymm json data from metafield {%- endcomment -%} 
+        {%- assign ymm_data_json_obj = shop.metafields.cws_ymm.first_field_json.value -%}
+        {%- assign ymm_fields_obj = shop.metafields.cws_ymm.ymm_fields_json.value -%}
+
+        {%- comment -%} Display YMM First Field - 786 {%- endcomment -%}
+        <li class="{{ ymm_fields_obj.first_field.field_key }}">
+        <label class='ymm_label' for='dropdown-{{ ymm_fields_obj.first_field.field_key }}'>{{ ymm_fields_obj.first_field.field_lbl }}</label>
+        <select id='dropdown-{{ ymm_fields_obj.first_field.field_key }}' class='ymm-filter'>
+          	<option value='-1'>{{ select_label }} {{ ymm_fields_obj.first_field.field_lbl }}</option>
+          
+           	{% for first_ymm_field in ymm_data_json_obj %}
+          	<option value="{{ first_ymm_field.tag_val }}">{{ first_ymm_field.field_val | escape }}</option>
+    		{% endfor %}
+        </select>
+        </li>
+      
+        {%- comment -%} Display YMM Second Field - 786 {%- endcomment -%}
+        <li class="{{ ymm_fields_obj.second_field.field_key }}{% if ymm_fields_obj.dynamic_fields == blank %} last_ymm_field{% endif %}">
+        <label class='ymm_label' for='dropdown-2-{{ ymm_fields_obj.second_field.field_key }}'>{{ ymm_fields_obj.second_field.field_lbl }}</label>
+        <select id='dropdown-2-{{ ymm_fields_obj.second_field.field_key }}' class='ymm-filter' disabled="disabled">
+          <option value='-1'>{{ select_label }}  {{ ymm_fields_obj.second_field.field_lbl }}</option>
+        </select>
+        </li>
+      
+        {%- comment -%} Display YMM Unlimited Dynamic Field(s) on page load - 786 {%- endcomment -%}
+        {%- for dyn_field in ymm_fields_obj.dynamic_fields -%}
+        {%- liquid
+		assign j = forloop.index | plus: 2
+		assign last_field_cls = ""
+        
+		if forloop.last
+			assign last_field_cls = "last_ymm_field"
+		endif 
+	    -%}
+        
+        <li class='{{ dyn_field.field_key }} {{ last_field_cls }}'>
+        <label class='ymm_label' for='dropdown-{{ j }}-{{ dyn_field.field_key }}'>{{ dyn_field.field_lbl }}</label>
+        <select id='dropdown-{{ j }}-{{ dyn_field.field_key }}' class='ymm-filter' disabled="disabled">
+          <option value='-1'>{{ select_label }} {{ dyn_field.field_lbl }}</option>
+        </select>
+        </li>
+        {%- endfor -%}
+
+        {%- comment -%} Display Search and reset buttons. - 786 {%- endcomment -%}
+        <li class='ymm_bttns'>
+        <div id='ymm_actions' class='button-action' align='center'>
+          <button type='button' name='submit' id='ymm_search' class='btn ymm_search' disabled="disabled"><span class="ymm_btn_lbl">{{ search_button }}</span></button>
+          <button type='button' name='reset' id='ymm_reset' class='btn btn--secondary ymm_reset'><span class="ymm_btn_lbl">{{ reset_button }}</span></button>
+        </div>
+        </li> 
+{%- endif -%}

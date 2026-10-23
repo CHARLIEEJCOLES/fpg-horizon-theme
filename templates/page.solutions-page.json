@@ -1,0 +1,70 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "t:names.title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "type_preset": "h2",
+            "wrap": "pretty"
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "page-content"
+      ],
+      "settings": {
+        "gap": 32,
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      },
+      "disabled": true
+    },
+    "fpg_01": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_27ffdd8_tyCbBF": {
+          "type": "ai_gen_block_27ffdd8",
+          "settings": {
+            "collection": "solution-tall-branches",
+            "products_to_show": 50,
+            "grid_gap": 15,
+            "title": "Shop our Cutting Tall Branches Collection",
+            "description": "Shop based on your needs with all kinds of ways to reach your solution with our professionally complied solutions."
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_27ffdd8_tyCbBF"
+      ],
+      "settings": {},
+      "name": "Filtered collection"
+    }
+  },
+  "order": [
+    "main",
+    "fpg_01"
+  ]
+}

@@ -1,0 +1,55 @@
+{%- comment -%} FP&G: Year/Make/Model app results page, copied from the Dawn theme. The app writes the matching products into #products. {%- endcomment -%}
+<div class="fpg-legacy-page">
+<!-- Start YMM short code -->
+{%- capture the_snippet_content -%} 
+	{% render 'ymm-searchbox' %}{%- endcapture -%}
+	{% unless the_snippet_content contains "Liquid error" %}
+		{%- assign searchbox_style = "horizontal" -%}<!-- eg. horizontal or vertical -->
+		{%- assign searchbox_title = "Search Compatible Products By Make, Product Type and Model" -%}
+		{% render 'ymm-searchbox', searchbox_style: searchbox_style, searchbox_title: searchbox_title %}
+{% endunless %}	
+<!-- Ended YMM short code --> 
+
+{%- assign is_sidebar = false -%}
+
+<div class="page-width container{% if is_sidebar == true %} ymm-result-page{% endif %}">
+{% if is_sidebar == true %}
+<div class="sidebar">SIDE BAR FILE INCLUDE</div>
+{% endif %}
+<div class="ymm-grid">
+    <div class="page-ymm-custom">
+      <div class="section-header text-center">
+        <h1 id="title" class="ymm_pg_title"></h1>
+        <h4><span id="total_products"></span></h4>
+      </div>
+      <div class="ymm_content">
+        	{{ page.content }}
+        
+        	{%- comment -%} DO NOT EDIT BELOW LINES [ PRODUCTS ARE WRITTEN IN THIS PART DYNAMICALLY ] {%- endcomment -%}
+        	<div id="product_container" class="clearfix">
+              <div class="ymm-prd-loader" style="display: none;"></div>
+              <div id="products" class="grid search-result-ctm"></div>
+              <div class="clearfix paging-outr"><ul class="pagination" id="paginate"></ul></div>
+        	</div>
+        	{%- comment -%} ENDS HERE {%- endcomment -%}
+      </div>
+    </div>
+</div>
+</div>
+</div>
+
+{% style %}
+  /* Dawn's page-width class, which the app's markup uses. */
+  .fpg-legacy-page { padding-block: 32px 56px; }
+  .fpg-legacy-page .page-width {
+    max-width: var(--page-width);
+    margin-inline: auto;
+    padding-inline: var(--page-margin);
+  }
+  .fpg-legacy-page .ymm_pg_title:empty { display: none; }
+  .fpg-legacy-page #products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+    gap: 24px 16px;
+  }
+{% endstyle %}

@@ -46,11 +46,31 @@ Search for `FP&G` to find the changes in the Liquid files. The two exceptions ar
 
 App blocks in these templates (Hulk offers, YMM search, Part Finder) only work in the store, so offline Theme Check reports them as missing. That's expected.
 
+#### Templates carried over from the old Dawn theme
+
+These collections and pages use their own template, so each one was rebuilt in Horizon with the same wording and pictures. Without them, the pages would lose their content when the theme goes live.
+
+| Template | Used by | What's on it |
+| --- | --- | --- |
+| `collection.petrol-chainsaws`, `top-handle-chainsaw`, `pole-saws`, `power-pruners`, `helmets`, `class-a-trousers`, `class-c-trousers` | Chainsaws - Petrol, Chainsaws - Top Handle, Pole Saws, Power Pruners, Helmets, Type A and Type C trousers | Products first, then the buying guide: intro, questions, price-range cards, picture rows and links |
+| `collection.tool-help` | Tool Help, Aldi & Lidl Products | Partner text and link under the products |
+| `collection.repair-page` | Servicing & Repair | Banner and "How it works" above the services |
+| `collection.combi-machines` | Combi Machines | Six brand carousels |
+| `collection.kit-creator` | Kit Creator | Banner, minimum kit lists and 14 carousels of climbing kit |
+| `collection.forestry-arboriculture` | Forestry & Arboriculture Essentials | Nine carousels and "Daily uses". The old February offer was left out. |
+| `page.shipping-policy` | Shipping Policy | The full shipping text and the rates map |
+| `page.solutions-page`, `page.tall-hedges-solu` | Solutions, Tall Hedges | The filtered-collection AI block |
+| `page.test-page` | Test Page | The Recomma quiz app block |
+| `page.ymm-custom.liquid` | Product Result | The Year/Make/Model results page, using the app's `snippets/ymm-searchbox.liquid` and `ymm_fields.liquid` |
+
+`fpg-tools/make_alt_templates.py` generated these from the Dawn templates.
+
 ## Settings worth knowing
 
 - **Theme settings › FP&G**: VAT 20%, clearance tag and percentage, dropship tag, stock and pickup wording, Cormorant URL and brands, cart note limit 30, GA4 ID.
 - **Countdowns** stay hidden until an end date (YYYY-MM-DD, UK time) is set. One is on the home page Offers heading and one is under the product price.
 - **The header menu** is `horizon-main-menu`, a copy of `main-menu` with shorter top-level labels. `main-menu` is left alone.
+- **The cart drawer** opens automatically after something is added, which matches the pop-up on the old theme.
 
 ## Working on the theme
 

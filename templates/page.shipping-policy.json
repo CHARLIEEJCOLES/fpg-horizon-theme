@@ -1,0 +1,163 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "t:names.title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "type_preset": "h2",
+            "wrap": "pretty"
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "page-content"
+      ],
+      "settings": {
+        "gap": 32,
+        "background_color": "{{ settings.color_palette.background }}",
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      }
+    },
+    "fpg_00": {
+      "type": "section",
+      "name": "Text",
+      "blocks": {
+        "fpg_00_col": {
+          "type": "group",
+          "settings": {
+            "vertical_alignment": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 75
+          },
+          "blocks": {
+            "fpg_00_b0": {
+              "type": "text",
+              "settings": {
+                "text": "<h2><strong>WHERE WE SHIP:</strong></h2>",
+                "width": "100%",
+                "wrap": "pretty"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "fpg_00_b0"
+          ]
+        }
+      },
+      "block_order": [
+        "fpg_00_col"
+      ],
+      "settings": {
+        "gap": 20,
+        "padding-block-start": 40,
+        "padding-block-end": 24
+      }
+    },
+    "fpg_01": {
+      "type": "section",
+      "name": "Pictures",
+      "blocks": {
+        "fpg_01_col": {
+          "type": "group",
+          "settings": {
+            "vertical_alignment": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 75
+          },
+          "blocks": {
+            "fpg_01_b0": {
+              "type": "image",
+              "settings": {
+                "image": "shopify://shop_images/Shipping_Rates_v3.png",
+                "border_radius": 12
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "fpg_01_b0"
+          ]
+        }
+      },
+      "block_order": [
+        "fpg_01_col"
+      ],
+      "settings": {
+        "gap": 20,
+        "padding-block-start": 8,
+        "padding-block-end": 8
+      }
+    },
+    "fpg_02": {
+      "type": "section",
+      "name": "Text",
+      "blocks": {
+        "fpg_02_col": {
+          "type": "group",
+          "settings": {
+            "vertical_alignment": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 75
+          },
+          "blocks": {
+            "fpg_02_b0": {
+              "type": "text",
+              "settings": {
+                "text": "<h2><strong>ORDER PROCESSING:</strong></h2><p>Please allow 1-2 business days to process your order. Expect an email to let you know your order is on the way.</p><p>Orders containing an \"Available to order\" item will have an additional delay of 2-4 business days. This is the average time taken for an item ordered from the manufacturer to reach us. If the expected delivery date is greater than 2-4 business days, we will make contact, explaining your options and when to expect your order. </p><h2><strong>STORE PICKUP:</strong></h2><p>For those that choose \"Pickup in store\", please allow 2-4 days for the order to be prepared. Customers will be contacted via email/telephone to inform them that their order is available for collection.</p><p>Orders that are ready can be collected from 08:00-17:00, Monday to Friday at the below address:</p><p><strong>Coed Court, Treforest Ind. Est., Pontypridd, South Wales, CF37 5SW</strong></p><h2><strong>REGULAR SHIPPING:</strong></h2><p>Orders are generally shipped within 1-2 business days of the order being placed. Once shipped, delivery times are 1-3 days.</p><p>Orders containing \"Available to Order\" items will be sent once all ordered items are at our warehouse. If you require certain items to be sent before all items have arrived, please contact us to arrange separate dispatches.</p><p><strong>WE DO NOT SHIP OUTSIDE OF THE UK</strong></p><p>The cost of shipping will vary depending on several factors, if an item is declared as oversized or dense, and the total weight of the order.</p><p><span style=\"text-decoration:underline\"><strong>Orders containing a Large product (this will be displayed when viewing the product) will have their shipping set to £14.99.</strong></span></p><p><span style=\"text-decoration:underline\"><strong>Orders containing an oversized product will have their shipping set to £24.99.</strong></span></p><p>Orders without an oversized product have their shipping dependent on the total weight of the order.</p><ul><li>0 - 1.99 kg : £4.99</li><li>2 - 29.99 kg : £7.49</li><li>30+ kg : £24.99</li></ul><p>Orders that contain a dense product, or a liquid, have one additional tier to their shipping cost.</p><ul><li>70+ kg : £49.99</li></ul><h2><strong>SHIPPING AT A HIGHER RATE</strong></h2><p>The areas highlighted red on the map follow the same rules for shipping times.</p><p>If you live in an area highlighted in red, you must select \"Scottish Highlands, Isle of Mann, Isle of Wight\" as your Shipping Method. Failure to do so may have your order cancelled.</p><p>Items declared as Oversized have their shipping set to £99.99.</p><p>Orders without an oversized product have their shipping dependent on the total weight of the order.</p><ul><li>0 - 29.99 kg : £24.99</li><li>30+ kg : £99.99</li></ul><p> If you have any further questions, please don't hesitate to contact us at mail@fpandg.com.</p><h2><strong>DROPSHIP ITEMS</strong></h2><p>Dropship items will be tagged as Dropship. These items are sent directly from the manufacturer, leading to quicker shipping times compared to the \"Available to Order\" items.</p><p>Dropship items cannot be collected in-store and orders containing a Dropship item cannot be collected in-store.</p><p>Orders containing a combination of Available to Order/In Stock and Dropship items are possible, however the Dropship item will be sent separately to the rest of the order, leading to two separate deliveries.</p><h2><strong>AGE RESTRICTED ITEMS</strong></h2><p>You must be over 18 to purchase an age restricted item.</p><p>Upon delivery of the item you may be asked to produce identification to verify your age.</p><h2><strong>DELIVERY INSTRUCTIONS</strong></h2><p><strong>Important:</strong> We try to honour your delivery instructions whenever possible. However, we can't always guarantee that the courier can meet these requests.</p><p>Adding delivery instructions can be achieved by typing in the \"Delivery Instructions\" box shown in the cart.</p><p>If your instructions request the delivery is left with a neighbour, you must give a specific neighbour's address. If the neighbour isn't available, the delivery will be attempted again at a later date.</p><p>If your instructions state to leave it at a safe place, you must specify what that safe space is.</p><p>Once an item has been delivered to a safe place/with a neighbour, we are not responsible for any complications that occur after delivery, e.g., the neighbour will not return the item or the parcel is stolen from the declared safe place.</p>",
+                "width": "100%",
+                "wrap": "pretty"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "fpg_02_b0"
+          ]
+        }
+      },
+      "block_order": [
+        "fpg_02_col"
+      ],
+      "settings": {
+        "gap": 20,
+        "padding-block-start": 40,
+        "padding-block-end": 24
+      }
+    }
+  },
+  "order": [
+    "main",
+    "fpg_00",
+    "fpg_01",
+    "fpg_02"
+  ]
+}

@@ -1,0 +1,777 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "section": {
+      "type": "section",
+      "blocks": {
+        "text_tqQTNE": {
+          "type": "text",
+          "name": "t:names.title",
+          "settings": {
+            "text": "<h1>{{ closest.collection.title }}</h1>",
+            "width": "100%",
+            "type_preset": "h2",
+            "font_size": "",
+            "wrap": "pretty"
+          },
+          "blocks": {}
+        },
+        "text_twGGkJ": {
+          "type": "text",
+          "name": "t:names.description",
+          "settings": {
+            "text": "{{ closest.collection.description }}",
+            "width": "100%",
+            "font_size": "",
+            "wrap": "pretty"
+          },
+          "blocks": {}
+        },
+        "fpg_crumbs": {
+          "type": "fpg-breadcrumbs",
+          "settings": {
+            "menu": "horizon-main-menu"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "fpg_crumbs",
+        "text_tqQTNE",
+        "text_twGGkJ"
+      ],
+      "name": "t:names.heading",
+      "settings": {
+        "gap": 8,
+        "toggle_overlay": false,
+        "padding-block-start": 24,
+        "padding-block-end": 32,
+        "background_color": "#E2E9E5"
+      }
+    },
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "filters": {
+          "type": "filters",
+          "static": true,
+          "settings": {
+            "enable_filtering": true,
+            "filter_style": "vertical",
+            "padding-block-start": 8,
+            "padding-block-end": 8
+          },
+          "blocks": {}
+        },
+        "product-card": {
+          "type": "_product-card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 8
+          },
+          "blocks": {
+            "card-gallery": {
+              "type": "_product-card-gallery",
+              "settings": {
+                "image_ratio": "square",
+                "border_radius": 8
+              },
+              "blocks": {}
+            },
+            "product_title_4nY4eT": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "type_preset": "custom",
+                "font": "var(--font-subheading--family)",
+                "font_size": "0.875rem",
+                "wrap": "pretty",
+                "padding-block-start": 4
+              },
+              "blocks": {}
+            },
+            "price_EzJzMm": {
+              "type": "price",
+              "settings": {
+                "type_preset": "paragraph"
+              },
+              "blocks": {}
+            },
+            "swatches": {
+              "type": "swatches",
+              "name": "t:names.swatches",
+              "settings": {}
+            },
+            "card_vendor": {
+              "type": "text",
+              "settings": {
+                "text": "<p>{{ closest.product.vendor }}</p>",
+                "width": "100%",
+                "type_preset": "h6",
+                "wrap": "pretty",
+                "text_color": "#5F7D6D"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "card-gallery",
+            "card_vendor",
+            "product_title_4nY4eT",
+            "price_EzJzMm",
+            "swatches"
+          ]
+        },
+        "fpg-promo-tile-1": {
+          "type": "fpg-promo-tile",
+          "static": true,
+          "settings": {
+            "enabled": true,
+            "position": 6,
+            "eyebrow": "Need a hand?",
+            "heading": "Talk to our team",
+            "text": "Not sure which model or part you need? Call 01443 230000 or visit us at Coed Court, Treforest.",
+            "button_label": "Contact us",
+            "link": "shopify://pages/contact"
+          },
+          "blocks": {}
+        },
+        "fpg-promo-tile-2": {
+          "type": "fpg-promo-tile",
+          "static": true,
+          "settings": {
+            "enabled": true,
+            "position": 15,
+            "image": "shopify://shop_images/img_065124c2-16c4-4599-9cd7-98f3c2b57e5c.jpg",
+            "eyebrow": "Workshop",
+            "heading": "Servicing and repairs",
+            "text": "Keep your kit running with a service in our Treforest workshop.",
+            "button_label": "Book a service",
+            "link": "shopify://collections/servicing-repair"
+          },
+          "blocks": {}
+        }
+      },
+      "settings": {
+        "columns_gap_vertical": 24,
+        "padding-block-start": 24,
+        "padding-block-end": 56
+      }
+    },
+    "fpg_00": {
+      "type": "section",
+      "name": "Text",
+      "blocks": {
+        "fpg_00_col": {
+          "type": "group",
+          "settings": {
+            "vertical_alignment": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 75
+          },
+          "blocks": {
+            "fpg_00_eyebrow": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Buying guide</p>",
+                "width": "100%",
+                "type_preset": "h6",
+                "wrap": "pretty",
+                "text_color": "#5F7D6D"
+              },
+              "blocks": {}
+            },
+            "fpg_00_b0": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Unleash the Power of Petrol Chainsaws at Forest Park and Garden</h2>",
+                "width": "100%",
+                "type_preset": "h3",
+                "wrap": "pretty"
+              },
+              "blocks": {}
+            },
+            "fpg_00_b1": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Welcome to <strong>Forest Park and Garden's </strong>extensive collection of <strong>petrol chainsaws</strong>, where performance and durability come together to offer you the best in tree-cutting solutions. Our selection includes top-notch models from leading brands like <strong>Husqvarna, Stihl, Echo, and Mitox</strong>. Let's explore why a petrol chainsaw could be the perfect fit for your needs and how to choose the right model.</p>",
+                "width": "100%",
+                "wrap": "pretty"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "fpg_00_eyebrow",
+            "fpg_00_b0",
+            "fpg_00_b1"
+          ]
+        }
+      },
+      "block_order": [
+        "fpg_00_col"
+      ],
+      "settings": {
+        "gap": 20,
+        "padding-block-start": 40,
+        "padding-block-end": 24
+      }
+    },
+    "fpg_01": {
+      "type": "section",
+      "name": "Questions",
+      "blocks": {
+        "fpg_01_col": {
+          "type": "group",
+          "settings": {
+            "vertical_alignment": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 75
+          },
+          "blocks": {
+            "fpg_01_title": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Why Choose a Petrol Chainsaw?</h2>",
+                "width": "100%",
+                "type_preset": "h3",
+                "wrap": "pretty"
+              },
+              "blocks": {}
+            },
+            "fpg_01_accordion": {
+              "type": "accordion",
+              "settings": {
+                "icon": "plus",
+                "divider_color": "#D6DED9",
+                "type_preset": "h5"
+              },
+              "blocks": {
+                "fpg_01_row0": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Frequent Use & Longer Run Time"
+                  },
+                  "blocks": {
+                    "fpg_01_row0_text": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Petrol chainsaws are ideal for those who need a chainsaw for frequent use or for extended periods.</p>",
+                        "width": "100%",
+                        "wrap": "pretty"
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "fpg_01_row0_text"
+                  ]
+                },
+                "fpg_01_row1": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Extra Power & Efficiency"
+                  },
+                  "blocks": {
+                    "fpg_01_row1_text": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>With higher chain speed and more power, petrol chainsaws can handle larger trees and trunks with ease.</p>",
+                        "width": "100%",
+                        "wrap": "pretty"
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "fpg_01_row1_text"
+                  ]
+                },
+                "fpg_01_row2": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Quick Refueling"
+                  },
+                  "blocks": {
+                    "fpg_01_row2_text": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>A very short time is needed for refuelling, allowing you to get back to work quickly.</p>",
+                        "width": "100%",
+                        "wrap": "pretty"
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "fpg_01_row2_text"
+                  ]
+                },
+                "fpg_01_row3": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Versatility in Bar Length & Chain Type"
+                  },
+                  "blocks": {
+                    "fpg_01_row3_text": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Petrol chainsaws offer a wider range of options in terms of bar length and chain type.</p>",
+                        "width": "100%",
+                        "wrap": "pretty"
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "fpg_01_row3_text"
+                  ]
+                },
+                "fpg_01_row4": {
+                  "type": "_accordion-row",
+                  "settings": {
+                    "heading": "Lower Lifetime Cost"
+                  },
+                  "blocks": {
+                    "fpg_01_row4_text": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>The purchase and lifetime cost of a petrol chainsaw is generally lower compared to cordless or electric versions.</p>",
+                        "width": "100%",
+                        "wrap": "pretty"
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "fpg_01_row4_text"
+                  ]
+                }
+              },
+              "block_order": [
+                "fpg_01_row0",
+                "fpg_01_row1",
+                "fpg_01_row2",
+                "fpg_01_row3",
+                "fpg_01_row4"
+              ]
+            }
+          },
+          "block_order": [
+            "fpg_01_title",
+            "fpg_01_accordion"
+          ]
+        }
+      },
+      "block_order": [
+        "fpg_01_col"
+      ],
+      "settings": {
+        "gap": 20,
+        "padding-block-start": 48,
+        "padding-block-end": 48,
+        "background_color": "#F3F6F4"
+      }
+    },
+    "fpg_02": {
+      "type": "section",
+      "name": "Columns",
+      "blocks": {
+        "fpg_02_title": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Price Range</h2>",
+            "width": "100%",
+            "type_preset": "h3",
+            "wrap": "pretty"
+          },
+          "blocks": {}
+        },
+        "fpg_02_cards": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_alignment": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16
+          },
+          "blocks": {
+            "fpg_02_b0": {
+              "type": "group",
+              "settings": {
+                "vertical_alignment": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 8,
+                "border_radius": 12,
+                "padding-block-start": 24,
+                "padding-block-end": 24,
+                "padding-inline-start": 24,
+                "padding-inline-end": 24,
+                "background_color": "#F3F6F4"
+              },
+              "blocks": {
+                "fpg_02_b0_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>Budget-Friendly</h3>",
+                    "width": "100%",
+                    "type_preset": "h5",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                },
+                "fpg_02_b0_text": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>For those on a budget, the Husqvarna 120 Mark II or the Stihl MS 170 are great options.</p>",
+                    "width": "100%",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "fpg_02_b0_title",
+                "fpg_02_b0_text"
+              ]
+            },
+            "fpg_02_b1": {
+              "type": "group",
+              "settings": {
+                "vertical_alignment": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 8,
+                "border_radius": 12,
+                "padding-block-start": 24,
+                "padding-block-end": 24,
+                "padding-inline-start": 24,
+                "padding-inline-end": 24,
+                "background_color": "#F3F6F4"
+              },
+              "blocks": {
+                "fpg_02_b1_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>Mid-Range</h3>",
+                    "width": "100%",
+                    "type_preset": "h5",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                },
+                "fpg_02_b1_text": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Consider models like the Husqvarna 435 II or the Stihl MS 211 for a balance of features and price.</p>",
+                    "width": "100%",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "fpg_02_b1_title",
+                "fpg_02_b1_text"
+              ]
+            },
+            "fpg_02_b2": {
+              "type": "group",
+              "settings": {
+                "vertical_alignment": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 8,
+                "border_radius": 12,
+                "padding-block-start": 24,
+                "padding-block-end": 24,
+                "padding-inline-start": 24,
+                "padding-inline-end": 24,
+                "background_color": "#F3F6F4"
+              },
+              "blocks": {
+                "fpg_02_b2_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>High-End</h3>",
+                    "width": "100%",
+                    "type_preset": "h5",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                },
+                "fpg_02_b2_text": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>If you're looking for premium features, the Echo CS-4510ES or the Husqvarna 445 II are worth considering.</p>",
+                    "width": "100%",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "fpg_02_b2_title",
+                "fpg_02_b2_text"
+              ]
+            }
+          },
+          "block_order": [
+            "fpg_02_b0",
+            "fpg_02_b1",
+            "fpg_02_b2"
+          ]
+        }
+      },
+      "block_order": [
+        "fpg_02_title",
+        "fpg_02_cards"
+      ],
+      "settings": {
+        "gap": 20,
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+    "fpg_03": {
+      "type": "section",
+      "name": "Columns",
+      "blocks": {
+        "fpg_03_title": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Type of Work</h2>",
+            "width": "100%",
+            "type_preset": "h3",
+            "wrap": "pretty"
+          },
+          "blocks": {}
+        },
+        "fpg_03_cards": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_alignment": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16
+          },
+          "blocks": {
+            "fpg_03_b0": {
+              "type": "group",
+              "settings": {
+                "vertical_alignment": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 8,
+                "border_radius": 12,
+                "padding-block-start": 24,
+                "padding-block-end": 24,
+                "padding-inline-start": 24,
+                "padding-inline-end": 24,
+                "background_color": "#F3F6F4"
+              },
+              "blocks": {
+                "fpg_03_b0_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>Light-Duty</h3>",
+                    "width": "100%",
+                    "type_preset": "h5",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                },
+                "fpg_03_b0_text": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>For smaller tasks like pruning and light cutting, models like the Mitox 385CSX or the Echo CS-310ES are suitable.</p>",
+                    "width": "100%",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "fpg_03_b0_title",
+                "fpg_03_b0_text"
+              ]
+            },
+            "fpg_03_b1": {
+              "type": "group",
+              "settings": {
+                "vertical_alignment": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 8,
+                "border_radius": 12,
+                "padding-block-start": 24,
+                "padding-block-end": 24,
+                "padding-inline-start": 24,
+                "padding-inline-end": 24,
+                "background_color": "#F3F6F4"
+              },
+              "blocks": {
+                "fpg_03_b1_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>Medium-Duty</h3>",
+                    "width": "100%",
+                    "type_preset": "h5",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                },
+                "fpg_03_b1_text": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>For more demanding tasks, the Stihl MS 181 or the Husqvarna 135 Mark II are excellent choices.</p>",
+                    "width": "100%",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "fpg_03_b1_title",
+                "fpg_03_b1_text"
+              ]
+            },
+            "fpg_03_b2": {
+              "type": "group",
+              "settings": {
+                "vertical_alignment": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 8,
+                "border_radius": 12,
+                "padding-block-start": 24,
+                "padding-block-end": 24,
+                "padding-inline-start": 24,
+                "padding-inline-end": 24,
+                "background_color": "#F3F6F4"
+              },
+              "blocks": {
+                "fpg_03_b2_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>Heavy-Duty</h3>",
+                    "width": "100%",
+                    "type_preset": "h5",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                },
+                "fpg_03_b2_text": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>For professional-level tasks, consider high-end models like the Echo CS-362TES or the Husqvarna 440 II.</p>",
+                    "width": "100%",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "fpg_03_b2_title",
+                "fpg_03_b2_text"
+              ]
+            }
+          },
+          "block_order": [
+            "fpg_03_b0",
+            "fpg_03_b1",
+            "fpg_03_b2"
+          ]
+        }
+      },
+      "block_order": [
+        "fpg_03_title",
+        "fpg_03_cards"
+      ],
+      "settings": {
+        "gap": 20,
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+    "fpg_04": {
+      "type": "section",
+      "name": "Text",
+      "blocks": {
+        "fpg_04_col": {
+          "type": "group",
+          "settings": {
+            "vertical_alignment": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 75
+          },
+          "blocks": {
+            "fpg_04_b0": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Petrol Chainsaws not cutting it why not <strong>check out our Cordless Chainsaw range</strong>?!</p>",
+                "width": "100%",
+                "wrap": "pretty"
+              },
+              "blocks": {}
+            },
+            "fpg_04_buttons": {
+              "type": "group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": false,
+                "vertical_alignment": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "width": "fit-content"
+              },
+              "blocks": {
+                "fpg_04_b1_btn0": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Cordless Chainsaw's",
+                    "link": "shopify://collections/chainsaws-cordless"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "fpg_04_b1_btn0"
+              ]
+            }
+          },
+          "block_order": [
+            "fpg_04_b0",
+            "fpg_04_buttons"
+          ]
+        }
+      },
+      "block_order": [
+        "fpg_04_col"
+      ],
+      "settings": {
+        "gap": 20,
+        "padding-block-start": 40,
+        "padding-block-end": 24
+      }
+    }
+  },
+  "order": [
+    "section",
+    "main",
+    "fpg_00",
+    "fpg_01",
+    "fpg_02",
+    "fpg_03",
+    "fpg_04"
+  ]
+}

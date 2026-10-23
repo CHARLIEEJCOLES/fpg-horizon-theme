@@ -177,6 +177,29 @@ function writeViewed(list) {
   }
 }
 
+/**
+ * Products set to "Request Quote" in the Call for Price app keep their price hidden.
+ * The app only knows Horizon's own product cards, so the fetched cards are handled here,
+ * using the app's own product list and button wording.
+ * @param {HTMLElement} card
+ * @param {string} id
+ */
+function hideQuotePrice(card, id) {
+  /** @type {any} */
+  const win = window;
+  const list = String(win.cfp_products?.products || '').split(',');
+  if (!list.includes(id)) return;
+  const price = card.querySelector('.fpg-mini-card__price');
+  const href = card.querySelector('a')?.getAttribute('href');
+  if (!price) return;
+  const label = String(win.cfp_configuration?.callforprice_label || '').trim() || 'Request a quote';
+  const link = document.createElement('a');
+  link.className = 'fpg-mini-card__quote';
+  link.href = href || '#';
+  link.textContent = label;
+  price.replaceChildren(link);
+}
+
 class FpgRecentlyViewed extends HTMLElement {
   connectedCallback() {
     const current = this.dataset.productId || '';
@@ -210,7 +233,10 @@ class FpgRecentlyViewed extends HTMLElement {
       track.replaceChildren();
       for (const id of ids) {
         const card = cards.get(id);
-        if (card) track.append(document.importNode(card, true));
+        if (!card) continue;
+        const copy = /** @type {HTMLElement} */ (document.importNode(card, true));
+        hideQuotePrice(copy, id);
+        track.append(copy);
       }
       if (track.children.length > 0) this.hidden = false;
     } catch (error) {
