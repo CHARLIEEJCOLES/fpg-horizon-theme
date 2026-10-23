@@ -1148,7 +1148,7 @@
       "settings": {
         "eyebrow": "Approved dealer",
         "heading": "Brands we stock",
-        "speed": 60,
+        "speed": 30,
         "padding-block-start": 56,
         "padding-block-end": 56,
         "background_color": "#002D37"
