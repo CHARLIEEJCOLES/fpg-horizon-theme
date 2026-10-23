@@ -27,7 +27,9 @@
       {%- if section.settings.eyebrow != blank -%}
         <p class="fpg-eyebrow">{{ section.settings.eyebrow | escape }}</p>
       {%- endif -%}
-      <h2 class="fpg-hirec__title h2">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.heading != blank -%}
+        <h2 class="fpg-hirec__title h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
       {%- if section.settings.intro != blank -%}
         <div class="fpg-hirec__intro">{{ section.settings.intro }}</div>
       {%- endif -%}
@@ -47,7 +49,7 @@
     </ol>
 
     {%- if source != blank -%}
-      <ul class="fpg-hirec__grid" role="list">
+      <ul class="fpg-hirec__grid" id="hire-machines" role="list">
         {%- for product in source.products limit: 24 -%}
           {%- liquid
             assign r_day = null

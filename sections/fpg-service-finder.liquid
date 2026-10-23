@@ -22,6 +22,7 @@
   class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
 ></div>
 <fpg-service-finder
+  id="service-finder"
   class="section section--page-width spacing-style fpg-svc{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
   style="{% render 'spacing-padding', settings: section.settings %}"
   data-vat-rate="{{ vat_rate }}"
@@ -35,6 +36,7 @@
             "block": {{ block.id | json }},
             "machine": {{ block.settings.machine | strip | json }},
             "brand": {{ block.settings.brand | strip | json }},
+            "machineImage": {% if block.settings.machine_image %}{{ block.settings.machine_image | image_url: width: 400 | json }}{% else %}null{% endif %},
             "productId": {{ p.id }},
             "title": {{ p.title | json }},
             "url": {{ p.url | json }},
@@ -53,7 +55,9 @@
       {%- if section.settings.eyebrow != blank -%}
         <p class="fpg-eyebrow">{{ section.settings.eyebrow | escape }}</p>
       {%- endif -%}
-      <h2 class="fpg-svc__title h2">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.heading != blank -%}
+        <h2 class="fpg-svc__title h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
       {%- if section.settings.intro != blank -%}
         <div class="fpg-svc__intro">{{ section.settings.intro }}</div>
       {%- endif -%}
@@ -201,7 +205,13 @@
       "settings": [
         { "type": "product", "id": "product", "label": "Service product" },
         { "type": "text", "id": "machine", "label": "Machine type", "info": "Services with the same machine type are grouped, e.g. Chainsaw.", "default": "Chainsaw" },
-        { "type": "text", "id": "brand", "label": "Brand", "default": "STIHL" }
+        { "type": "text", "id": "brand", "label": "Brand", "default": "STIHL" },
+        {
+          "type": "image_picker",
+          "id": "machine_image",
+          "label": "Machine picture",
+          "info": "Shown on the machine type button. Square, plain background. Only needed on one service per machine type."
+        }
       ]
     }
   ],

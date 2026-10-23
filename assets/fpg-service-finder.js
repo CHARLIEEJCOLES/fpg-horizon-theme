@@ -9,7 +9,7 @@ const tools = () => /** @type {any} */ (window).FPGTools;
 
 /**
  * @typedef {{id: number, title: string, price: number, available: boolean}} Variant
- * @typedef {{block: string, machine: string, brand: string, productId: number, title: string, url: string,
+ * @typedef {{block: string, machine: string, brand: string, machineImage: string | null, productId: number, title: string, url: string,
  *   image: string | null, option: string, variants: Variant[], guides: string[]}} Service
  */
 
@@ -47,10 +47,14 @@ class FpgServiceFinder extends HTMLElement {
     if (!box) return;
     box.innerHTML = machines
       .map((machine) => {
-        const brands = new Set(this.services.filter((s) => this.#key(s.machine) === this.#key(machine)).map((s) => this.#key(s.brand)));
-        return `<button type="button" class="fpg-svc__choice" data-machine="${tools().escapeHtml(machine)}" aria-pressed="false">
+        const group = this.services.filter((s) => this.#key(s.machine) === this.#key(machine));
+        const brands = new Set(group.map((s) => this.#key(s.brand)));
+        const picture = group.find((s) => s.machineImage)?.machineImage;
+        const from = Math.min(...group.flatMap((s) => s.variants.map((v) => v.price)));
+        return `<button type="button" class="fpg-svc__choice${picture ? ' fpg-svc__choice--image' : ''}" data-machine="${tools().escapeHtml(machine)}" aria-pressed="false">
+          ${picture ? `<span class="fpg-svc__choice-img"><img src="${tools().escapeHtml(picture)}" alt="" width="200" height="200" loading="lazy"></span>` : ''}
           <span class="fpg-svc__choice-name">${tools().escapeHtml(machine)}</span>
-          <span class="fpg-svc__choice-meta">${brands.size} brand${brands.size === 1 ? '' : 's'}</span>
+          <span class="fpg-svc__choice-meta">${brands.size} brand${brands.size === 1 ? '' : 's'}${Number.isFinite(from) ? ` · from ${tools().money(from)}` : ''}</span>
         </button>`;
       })
       .join('');

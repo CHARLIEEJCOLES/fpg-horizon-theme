@@ -9,76 +9,6 @@
  */
 {
   "sections": {
-    "section": {
-      "type": "section",
-      "blocks": {
-        "text_tqQTNE": {
-          "type": "text",
-          "name": "t:names.title",
-          "settings": {
-            "text": "<h1>{{ closest.collection.title }}</h1>",
-            "width": "100%",
-            "type_preset": "h2",
-            "font_size": "",
-            "wrap": "pretty"
-          },
-          "blocks": {}
-        },
-        "text_twGGkJ": {
-          "type": "text",
-          "name": "t:names.description",
-          "settings": {
-            "text": "{{ closest.collection.description }}",
-            "width": "100%",
-            "font_size": "",
-            "wrap": "pretty"
-          },
-          "blocks": {}
-        },
-        "fpg_crumbs": {
-          "type": "fpg-breadcrumbs",
-          "settings": {
-            "menu": "horizon-main-menu"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "fpg_crumbs",
-        "text_tqQTNE",
-        "text_twGGkJ"
-      ],
-      "name": "t:names.heading",
-      "settings": {
-        "gap": 8,
-        "background_color": "#E2E9E5",
-        "toggle_overlay": false,
-        "padding-block-start": 24,
-        "padding-block-end": 32
-      }
-    },
-    "fpg_00": {
-      "type": "section",
-      "blocks": {
-        "fpg_00_img": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/Untitled-1.jpg",
-            "border_radius": 12
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "fpg_00_img"
-      ],
-      "name": "Banner",
-      "settings": {
-        "gap": 20,
-        "padding-block-start": 24,
-        "padding-block-end": 8
-      }
-    },
     "main": {
       "type": "main-collection",
       "blocks": {
@@ -196,7 +126,8 @@
           "settings": {
             "product": "stihl-chainsaw-service",
             "machine": "Chainsaw",
-            "brand": "STIHL"
+            "brand": "STIHL",
+            "machine_image": "shopify://shop_images/Studio_Chainsaw_Product_Shot.png"
           }
         },
         "service_2": {
@@ -228,7 +159,8 @@
           "settings": {
             "product": "stihl-hedge-trimmer-service",
             "machine": "Hedge trimmer",
-            "brand": "STIHL"
+            "brand": "STIHL",
+            "machine_image": "shopify://shop_images/Professional_Petrol_Hedge_Trimmer.png"
           }
         },
         "service_6": {
@@ -244,7 +176,8 @@
           "settings": {
             "product": "stihl-blower-service",
             "machine": "Blower",
-            "brand": "STIHL"
+            "brand": "STIHL",
+            "machine_image": "shopify://shop_images/Orange_and_Black_Backpack_Leaf_Blower.png"
           }
         },
         "service_8": {
@@ -260,7 +193,8 @@
           "settings": {
             "product": "stihl-kombi-engine-service",
             "machine": "KombiEngine",
-            "brand": "STIHL"
+            "brand": "STIHL",
+            "machine_image": "shopify://shop_images/Modular_Garden_Multitool_Attachment_Set.png"
           }
         },
         "service_10": {
@@ -286,13 +220,29 @@
       ],
       "settings": {
         "padding-block-start": 40,
-        "padding-block-end": 48
+        "padding-block-end": 48,
+        "included": ""
+      }
+    },
+    "fpg_hero": {
+      "type": "fpg-page-hero",
+      "settings": {
+        "eyebrow": "Nationwide service and repair",
+        "text": "<p>Send us your machine from anywhere in the UK. Our Treforest workshop services it with genuine parts and sends it straight back.</p>",
+        "point_1": "Genuine replacement parts",
+        "point_2": "Speedy completion",
+        "point_3": "Delivery and return included",
+        "button_1_label": "Find your service",
+        "button_1_link": "#service-finder",
+        "button_2_label": "Call the workshop",
+        "button_2_link": "tel:01443230000",
+        "image": "shopify://shop_images/Chainsaw_Maintenance_in_a_Warm_Workshop.png",
+        "image_position": "right center"
       }
     }
   },
   "order": [
-    "section",
-    "fpg_00",
+    "fpg_hero",
     "fpg_finder",
     "main"
   ]

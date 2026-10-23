@@ -1,0 +1,412 @@
+{%- comment -%}
+  FP&G page hero: the top of the kit creator, servicing and hire pages.
+  Dark teal band with breadcrumbs, a heading, short text, up to three
+  selling points and two buttons. With an image the picture sits on the
+  right; without one the selling points show as a card there instead, so the
+  hero looks finished either way. The heading defaults to the page or
+  collection title and the text to the collection description.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign heading = s.heading
+  if heading == blank
+    if collection != blank
+      assign heading = collection.title
+    elsif page != blank
+      assign heading = page.title
+    endif
+  endif
+  assign crumb_title = heading
+  if collection != blank
+    assign crumb_title = collection.title
+  elsif page != blank
+    assign crumb_title = page.title
+  endif
+  assign crumb_url = request.path
+  assign text = s.text
+  if text == blank and s.use_description and collection.description != blank
+    assign text = collection.description
+  endif
+  assign has_points = false
+  if s.point_1 != blank or s.point_2 != blank or s.point_3 != blank
+    assign has_points = true
+  endif
+-%}
+
+<div
+  class="section section--page-width spacing-style fpg-phero{% if s.image != blank %} fpg-phero--image{% endif %}"
+  style="{% render 'spacing-padding', settings: s %}"
+>
+  <div class="fpg-phero__band">
+    <div class="fpg-phero__text">
+      {%- if s.show_crumbs -%}
+        <nav class="fpg-phero__crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="{{ routes.root_url }}">Home</a></li>
+            <li aria-current="page">{{ crumb_title | escape }}</li>
+          </ol>
+        </nav>
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {"@type": "ListItem", "position": 1, "name": "Home", "item": {{ shop.url | append: routes.root_url | json }}},
+              {"@type": "ListItem", "position": 2, "name": {{ crumb_title | json }}, "item": {{ shop.url | append: crumb_url | json }}}
+            ]
+          }
+        </script>
+      {%- endif -%}
+      {%- if s.eyebrow != blank -%}
+        <p class="fpg-phero__eyebrow">{{ s.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if s.heading_level == 'h2' -%}
+        <h2 class="fpg-phero__title">{{ heading | escape }}</h2>
+      {%- else -%}
+        <h1 class="fpg-phero__title">{{ heading | escape }}</h1>
+      {%- endif -%}
+      {%- if text != blank -%}
+        <div class="fpg-phero__copy">{{ text }}</div>
+      {%- endif -%}
+      {%- if has_points and s.image != blank -%}
+        <ul class="fpg-phero__points" role="list">
+          {%- if s.point_1 != blank -%}<li>{{ s.point_1 | escape }}</li>{%- endif -%}
+          {%- if s.point_2 != blank -%}<li>{{ s.point_2 | escape }}</li>{%- endif -%}
+          {%- if s.point_3 != blank -%}<li>{{ s.point_3 | escape }}</li>{%- endif -%}
+        </ul>
+      {%- endif -%}
+      {%- if s.button_1_label != blank or s.button_2_label != blank -%}
+        <div class="fpg-phero__buttons">
+          {%- if s.button_1_label != blank -%}
+            <a class="fpg-phero__btn fpg-phero__btn--primary" href="{{ s.button_1_link | default: '#' | escape }}">{{ s.button_1_label | escape }}</a>
+          {%- endif -%}
+          {%- if s.button_2_label != blank -%}
+            <a class="fpg-phero__btn" href="{{ s.button_2_link | default: '#' | escape }}">{{ s.button_2_label | escape }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if s.image != blank -%}
+      <div class="fpg-phero__media" style="--fpg-phero-pos: {{ s.image_position }};">
+        {{
+          s.image
+          | image_url: width: 1600
+          | image_tag: widths: '600, 900, 1200, 1600', sizes: '(min-width: 990px) 50vw, 100vw', loading: 'eager', fetchpriority: 'high', class: 'fpg-phero__img'
+        }}
+      </div>
+    {%- elsif has_points -%}
+      <div class="fpg-phero__card">
+        {%- if s.card_heading != blank -%}
+          <p class="fpg-phero__card-title">{{ s.card_heading | escape }}</p>
+        {%- endif -%}
+        <ul class="fpg-phero__card-list" role="list">
+          {%- if s.point_1 != blank -%}<li>{{ s.point_1 | escape }}</li>{%- endif -%}
+          {%- if s.point_2 != blank -%}<li>{{ s.point_2 | escape }}</li>{%- endif -%}
+          {%- if s.point_3 != blank -%}<li>{{ s.point_3 | escape }}</li>{%- endif -%}
+        </ul>
+        {%- if s.card_note != blank -%}
+          <div class="fpg-phero__card-note">{{ s.card_note }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .fpg-phero__band {
+    position: relative;
+    display: grid;
+    gap: 28px;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    overflow: hidden;
+    padding: 28px 22px;
+    border-radius: 18px;
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgb(95 125 109 / 0.45) 0%, rgb(95 125 109 / 0) 55%),
+      linear-gradient(135deg, #002d37 0%, #0b3c47 100%);
+    color: #fff;
+  }
+
+  .fpg-phero__band::after {
+    content: '';
+    position: absolute;
+    inset: auto -60px -80px auto;
+    width: 280px;
+    height: 280px;
+    border: 40px solid rgb(255 255 255 / 0.05);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .fpg-phero__band {
+      padding: 40px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .fpg-phero__band {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 48px;
+      padding: 56px;
+    }
+
+    .fpg-phero--image .fpg-phero__band {
+      padding-block: 40px;
+    }
+  }
+
+  .fpg-phero__text {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .fpg-phero__crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+    color: rgb(255 255 255 / 0.75);
+  }
+
+  .fpg-phero__crumbs li + li::before {
+    content: '›';
+    margin-inline-end: 6px;
+  }
+
+  .fpg-phero__crumbs a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .fpg-phero__crumbs a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .fpg-phero__eyebrow {
+    margin: 4px 0 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #a9c4b5;
+  }
+
+  .fpg-phero__title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .fpg-phero__copy {
+    max-width: 560px;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  .fpg-phero__copy p {
+    margin: 0;
+  }
+
+  .fpg-phero__copy a {
+    color: #fff;
+  }
+
+  .fpg-phero__points,
+  .fpg-phero__card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fpg-phero__points li,
+  .fpg-phero__card-list li {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    font-weight: 600;
+  }
+
+  .fpg-phero__points li::before,
+  .fpg-phero__card-list li::before {
+    content: '✓';
+    flex: 0 0 22px;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #5f7d6d;
+    color: #fff;
+    font-size: 0.75rem;
+    transform: translateY(3px);
+  }
+
+  .fpg-phero__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .fpg-phero__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 12px 22px;
+    border: 1px solid rgb(255 255 255 / 0.5);
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+
+  .fpg-phero__btn:hover {
+    border-color: #fff;
+    background: rgb(255 255 255 / 0.1);
+  }
+
+  .fpg-phero__btn--primary {
+    border-color: #fff;
+    background: #fff;
+    color: #002d37;
+  }
+
+  .fpg-phero__btn--primary:hover {
+    background: #e2e9e5;
+    color: #002d37;
+  }
+
+  .fpg-phero__media {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.06);
+  }
+
+  .fpg-phero__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--fpg-phero-pos, center);
+  }
+
+  .fpg-phero__card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.06);
+    backdrop-filter: blur(4px);
+  }
+
+  .fpg-phero__card-title {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #a9c4b5;
+  }
+
+  .fpg-phero__card-list li {
+    font-size: 1.0625rem;
+  }
+
+  .fpg-phero__card-note {
+    padding-top: 14px;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    font-size: 0.875rem;
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  .fpg-phero__card-note p {
+    margin: 0;
+  }
+
+  .fpg-phero__card-note a {
+    color: #fff;
+    font-weight: 700;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "FP&G page hero",
+  "tag": "section",
+  "class": "fpg-phero-section",
+  "settings": [
+    { "type": "checkbox", "id": "show_crumbs", "label": "Show breadcrumbs", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Small heading" },
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Leave blank to use the page or collection title." },
+    {
+      "type": "select",
+      "id": "heading_level",
+      "label": "Heading level",
+      "options": [
+        { "value": "h1", "label": "Main page heading (H1)" },
+        { "value": "h2", "label": "Section heading (H2)" }
+      ],
+      "default": "h1"
+    },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "checkbox", "id": "use_description", "label": "Use the collection description when Text is empty", "default": true },
+    { "type": "text", "id": "point_1", "label": "Selling point 1" },
+    { "type": "text", "id": "point_2", "label": "Selling point 2" },
+    { "type": "text", "id": "point_3", "label": "Selling point 3" },
+    { "type": "text", "id": "button_1_label", "label": "Button 1 label" },
+    { "type": "text", "id": "button_1_link", "label": "Button 1 link", "info": "A page address, #section, or tel: number." },
+    { "type": "text", "id": "button_2_label", "label": "Button 2 label" },
+    { "type": "text", "id": "button_2_link", "label": "Button 2 link" },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Landscape, at least 1600 px wide, no text in the picture. Without an image the selling points show as a card."
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Keep this part of the image in view",
+      "options": [
+        { "value": "left center", "label": "Left" },
+        { "value": "center", "label": "Centre" },
+        { "value": "right center", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    { "type": "text", "id": "card_heading", "label": "Card heading (no image)", "default": "Why buy from us" },
+    { "type": "richtext", "id": "card_note", "label": "Card note (no image)" },
+    { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 16 },
+    { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 16 }
+  ],
+  "presets": [{ "name": "FP&G page hero" }]
+}
+{% endschema %}

@@ -21,6 +21,8 @@ All new files start with `fpg-`. The only Horizon files that were changed are th
 | Product page blocks | `blocks/fpg-product-notices.liquid`, `fpg-cormorant.liquid` (Husqvarna/STIHL availability), `fpg-variant-pairs.liquid`, `fpg-spec-tabs.liquid`, `fpg-hire-rates.liquid`, `fpg-store-info.liquid`, `fpg-back-in-stock.liquid` (Notify me), `fpg-countdown.liquid`, `fpg-breadcrumbs.liquid` |
 | Collections | `blocks/fpg-promo-tile.liquid` (promo tiles in the product grid) |
 | Home page | `blocks/fpg-search-bar.liquid` (hero search with popular chips) |
+| Shopping tools | `sections/fpg-kit-builder.liquid` + `assets/fpg-kit-builder.js/.css` (climbing kit builder with minimum-kit checklist), `sections/fpg-service-finder.liquid` + `assets/fpg-service-finder.js/.css` (machine → brand → book a service, model and notes go with the order), `blocks/fpg-hire-calculator.liquid` + `assets/fpg-hire.js` (hire planner: cheapest mix of day, weekend and week rates, or a hire request), `sections/fpg-hire-centre.liquid` + `assets/fpg-hire.css` (hire landing page), `assets/fpg-cart.js` (shared add-to-basket helper that opens the cart drawer) |
+| Page tops | `sections/fpg-page-hero.liquid` (dark teal hero with breadcrumbs, selling points, buttons and a picture) |
 | Site-wide sections | `sections/fpg-recently-viewed.liquid`, `fpg-back-to-top.liquid`, `fpg-menu-promos.liquid` (picture cards in the menu dropdowns) |
 | Scripts and styles | `assets/fpg-design.css` (design layer), `assets/fpg-design.js` (back to top, countdown, recently viewed, menu promos, fade-up), `assets/fpg-variant-block.js` (refreshes FP&G blocks when the variant changes), `snippets/fpg-head-scripts.liquid` (loads the above, GA4, jQuery on the Part Finder page only), `snippets/fpg-mini-card.liquid` |
 
@@ -54,16 +56,18 @@ These collections and pages use their own template, so each one was rebuilt in H
 | --- | --- | --- |
 | `collection.petrol-chainsaws`, `top-handle-chainsaw`, `pole-saws`, `power-pruners`, `helmets`, `class-a-trousers`, `class-c-trousers` | Chainsaws - Petrol, Chainsaws - Top Handle, Pole Saws, Power Pruners, Helmets, Type A and Type C trousers | Products first, then the buying guide: intro, questions, price-range cards, picture rows and links |
 | `collection.tool-help` | Tool Help, Aldi & Lidl Products | Partner text and link under the products |
-| `collection.repair-page` | Servicing & Repair | Banner and "How it works" above the services |
+| `collection.repair-page` | Servicing & Repair | Hero, the service finder (machine pictures on the buttons), then all services |
 | `collection.combi-machines` | Combi Machines | Six brand carousels |
-| `collection.kit-creator` | Kit Creator | Banner, minimum kit lists and 14 carousels of climbing kit |
+| `collection.kit-creator` | Kit Creator | Hero, the kit builder (11 steps), the minimum climbing and rescue kit lists with pictures, and "Browse every range" |
 | `collection.forestry-arboriculture` | Forestry & Arboriculture Essentials | Nine carousels and "Daily uses". The old February offer was left out. |
 | `page.shipping-policy` | Shipping Policy | The full shipping text and the rates map |
 | `page.solutions-page`, `page.tall-hedges-solu` | Solutions, Tall Hedges | The filtered-collection AI block |
 | `page.test-page` | Test Page | The Recomma quiz app block |
 | `page.ymm-custom.liquid` | Product Result | The Year/Make/Model results page, using the app's `snippets/ymm-searchbox.liquid` and `ymm_fields.liquid` |
 
-`fpg-tools/make_alt_templates.py` generated these from the Dawn templates.
+`fpg-tools/make_alt_templates.py` generated these from the Dawn templates. `fpg-tools/make_shop_tools.py` and `make_page_refresh.py` then rebuilt the kit creator and servicing pages around the new tools and added `collection.hire` (the For Hire collection uses it) and the hire planner on product pages.
+
+The pictures on the kit creator, servicing, hire and home pages were made for FP&G in October 2026 and live in Content › Files under their ChatGPT names (for example `Arborist_Gear_Flat_Lay_in_Earthy_Tones.png`).
 
 ## Settings worth knowing
 
@@ -71,6 +75,7 @@ These collections and pages use their own template, so each one was rebuilt in H
 - **Countdowns** stay hidden until an end date (YYYY-MM-DD, UK time) is set. One is on the home page Offers heading and one is under the product price.
 - **The header menu** is `horizon-main-menu`, a copy of `main-menu` with shorter top-level labels. `main-menu` is left alone.
 - **The cart drawer** opens automatically after something is added, which matches the pop-up on the old theme.
+- **Hire products** (vendor FPG HIRE) show a "For hire" badge on product cards, and the hire planner replaces Add to cart on any product with Day / Extra Day / Week / Weekend variants.
 
 ## Working on the theme
 

@@ -1,63 +1,35 @@
 {
   "sections": {
-    "section": {
-      "type": "section",
-      "blocks": {
-        "text_tqQTNE": {
-          "type": "text",
-          "name": "t:names.title",
-          "settings": {
-            "text": "<h1>{{ closest.collection.title }}</h1>",
-            "width": "100%",
-            "type_preset": "h2",
-            "font_size": "",
-            "wrap": "pretty"
-          },
-          "blocks": {}
-        },
-        "text_twGGkJ": {
-          "type": "text",
-          "name": "t:names.description",
-          "settings": {
-            "text": "{{ closest.collection.description }}",
-            "width": "100%",
-            "font_size": "",
-            "wrap": "pretty"
-          },
-          "blocks": {}
-        },
-        "fpg_crumbs": {
-          "type": "fpg-breadcrumbs",
-          "settings": {
-            "menu": "horizon-main-menu"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "fpg_crumbs",
-        "text_tqQTNE",
-        "text_twGGkJ"
-      ],
-      "name": "t:names.heading",
-      "settings": {
-        "gap": 8,
-        "toggle_overlay": false,
-        "padding-block-start": 24,
-        "padding-block-end": 32,
-        "background_color": "#E2E9E5"
-      }
-    },
     "fpg_hire": {
       "type": "fpg-hire-centre",
       "settings": {
         "padding-block-start": 40,
-        "padding-block-end": 56
+        "padding-block-end": 56,
+        "eyebrow": "",
+        "heading": "",
+        "intro": ""
+      }
+    },
+    "fpg_hero": {
+      "type": "fpg-page-hero",
+      "settings": {
+        "eyebrow": "Machine hire",
+        "heading": "Hire professional machinery",
+        "text": "<p>Wood chippers, stump grinders, ride-on brush cutters and mowers, maintained by our own workshop. Collect from Treforest by the day, weekend or week.</p>",
+        "point_1": "Day, weekend and week prices up front",
+        "point_2": "Book online or send a quick request",
+        "point_3": "Every machine serviced in our own workshop",
+        "button_1_label": "See the machines",
+        "button_1_link": "#hire-machines",
+        "button_2_label": "Call about hire",
+        "button_2_link": "tel:01443230000",
+        "image": "shopify://shop_images/Wood_Chipping_Overlook.png",
+        "image_position": "right center"
       }
     }
   },
   "order": [
-    "section",
+    "fpg_hero",
     "fpg_hire"
   ]
 }

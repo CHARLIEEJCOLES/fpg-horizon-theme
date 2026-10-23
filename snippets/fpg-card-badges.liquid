@@ -1,6 +1,7 @@
 {%- doc -%}
   FP&G product card badges. Replaces Horizon's single sold-out / sale badge with:
   - a stock badge: "Sold out", "12 in stock", "Available to order" or "Dropship item"
+    ("For hire" on hire machines, vendor FPG HIRE)
   - a sale badge when the card is on sale or carries the clearance tag
   Turn this off with "Stock badges on product cards" in the FP&G theme settings
   to go back to Horizon's own badge. Rendered from blocks/_product-card-gallery.liquid.
@@ -25,7 +26,10 @@
   assign stock_class = 'fpg-card-badge--stock'
   assign stock_text = ''
 
-  if is_managed and total_stock <= 0 and variant.inventory_policy == 'deny'
+  if product.vendor == 'FPG HIRE'
+    assign stock_text = 'For hire'
+    assign stock_class = 'fpg-card-badge--hire'
+  elsif is_managed and total_stock <= 0 and variant.inventory_policy == 'deny'
     assign stock_text = 'content.product_badge_sold_out' | t
     assign stock_class = 'color-custom-badge-sold-out'
   elsif is_managed and total_stock > 0
@@ -52,7 +56,12 @@
   "
 >
   {%- if stock_text != blank -%}
-    <div class="product-badges__badge product-badges__badge--rectangle {{ stock_class }}">
+    <div
+      class="product-badges__badge product-badges__badge--rectangle {{ stock_class }}"
+      {% if stock_class == 'fpg-card-badge--hire' %}
+        style="background: #5f7d6d; color: #fff;"
+      {% endif %}
+    >
       {{- stock_text | escape -}}
     </div>
   {%- endif -%}

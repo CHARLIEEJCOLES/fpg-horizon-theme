@@ -217,7 +217,7 @@ class FpgKitBuilder extends HTMLElement {
 
   /** @param {string} mode */
   #setMode(mode) {
-    this.state.mode = mode === '2' && this.dataset.kitLabel2 ? '2' : '1';
+    this.state.mode = mode === '2' && this.getAttribute('data-kit-label-2') ? '2' : '1';
     for (const button of this.querySelectorAll('[data-mode]')) {
       button.setAttribute('aria-pressed', String(/** @type {HTMLElement} */ (button).dataset.mode === this.state.mode));
     }
@@ -333,7 +333,7 @@ class FpgKitBuilder extends HTMLElement {
   }
 
   #kitLabel() {
-    return (this.state.mode === '2' ? this.dataset.kitLabel2 : this.dataset.kitLabel1) || 'Kit';
+    return (this.state.mode === '2' ? this.getAttribute('data-kit-label-2') : this.getAttribute('data-kit-label-1')) || 'Kit';
   }
 
   /** @param {string} selector @param {string} value */

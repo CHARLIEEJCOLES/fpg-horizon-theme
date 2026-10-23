@@ -276,7 +276,7 @@
                 "help_head_eyebrow": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Parts · Servicing · Hire</p>",
+                    "text": "<p>Parts · Servicing · Hire · Kit</p>",
                     "width": "100%",
                     "type_preset": "h6",
                     "wrap": "pretty",
@@ -572,13 +572,79 @@
                 "help_3_text",
                 "help_3_more"
               ]
+            },
+            "help_4": {
+              "type": "group",
+              "settings": {
+                "vertical_alignment": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 10,
+                "height": "fill",
+                "background_color": "#F3F6F4",
+                "border_radius": 12,
+                "link": "shopify://collections/kit-creator",
+                "padding-block-start": 24,
+                "padding-block-end": 24,
+                "padding-inline-start": 24,
+                "padding-inline-end": 24
+              },
+              "blocks": {
+                "help_4_icon": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "check_box",
+                    "width": 32,
+                    "icon_color": "#002D37"
+                  },
+                  "blocks": {}
+                },
+                "help_4_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>Build a climbing kit</h3>",
+                    "width": "100%",
+                    "type_preset": "h4",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                },
+                "help_4_text": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Pick a harness, ropes and hardware, checked against the minimum kit.</p>",
+                    "width": "100%",
+                    "font_size": "0.875rem",
+                    "wrap": "pretty"
+                  },
+                  "blocks": {}
+                },
+                "help_4_more": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p><strong>Go →</strong></p>",
+                    "width": "100%",
+                    "type_preset": "paragraph",
+                    "font_size": "0.875rem",
+                    "wrap": "pretty",
+                    "text_color": "#5F7D6D"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "help_4_icon",
+                "help_4_title",
+                "help_4_text",
+                "help_4_more"
+              ]
             }
           },
           "block_order": [
             "help_0",
             "help_1",
             "help_2",
-            "help_3"
+            "help_3",
+            "help_4"
           ]
         }
       },
@@ -1109,7 +1175,7 @@
           "type": "_media-without-appearance",
           "static": true,
           "settings": {
-            "image": "shopify://shop_images/img_f544e3ea-5ad0-4650-b4a8-1b68c6f1fe14.jpg"
+            "image": "shopify://shop_images/Orange_Forestry_Equipment_Display.png"
           },
           "blocks": {}
         },
