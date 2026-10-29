@@ -570,6 +570,7 @@ class FpgPartsFinder extends HTMLElement {
     }
     this.renderMine();
     this.route(false);
+    this.searchFromLink();
     this.loadBasket();
     /* Saved machines are the likeliest clicks: fetch up to three of them when the page is idle. */
     const idle = /** @type {any} */ (window).requestIdleCallback || ((/** @type {() => void} */ fn) => setTimeout(fn, 1500));
@@ -584,6 +585,30 @@ class FpgPartsFinder extends HTMLElement {
         .catch(() => {})
         .finally(() => this.loadBasket());
     });
+  }
+
+  /**
+   * ?q=MS 261 (the menu's parts search): an exact model opens its parts, anything
+   * else fills the search box and shows the suggestions.
+   */
+  searchFromLink() {
+    const url = new URL(location.href);
+    const q = (url.searchParams.get('q') || '').trim();
+    if (!q) return;
+    url.searchParams.delete('q');
+    history.replaceState(history.state, '', url.pathname + url.search);
+    if (this.params().model) return;
+    const exact = this.matches(q).filter((m) => m.key === squash(q) || squash(m.type.brand.name) + m.key === squash(q));
+    if (exact.length === 1) {
+      const m = exact[0];
+      history.replaceState(null, '', `${location.pathname}?brand=${m.type.brand.id}&type=${m.type.id}&model=${m.id}`);
+      this.route(false);
+      return;
+    }
+    if (!this.input) return;
+    this.input.value = q;
+    this.input.focus({ preventScroll: true });
+    this.showSuggestions();
   }
 
   /* ---------- basket */

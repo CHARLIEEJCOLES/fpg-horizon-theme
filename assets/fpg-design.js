@@ -318,6 +318,46 @@ function ensureMenuPromo(item) {
     img.removeAttribute('data-fpg-src');
   }
   grid.append(card);
+  if (card.dataset.fpgReplaces) standIn(grid, card.dataset.fpgReplaces);
+}
+
+/**
+ * A parts panel stands in for one of the dropdown's columns on desktop ("Find a Part"),
+ * so its links aren't listed twice. The column is hidden and the grid loses its track.
+ * @param {Element} grid
+ * @param {string} title
+ */
+function standIn(grid, title) {
+  const column = [...grid.querySelectorAll('.mega-menu__column')].find(
+    (col) => col.querySelector('.mega-menu__link')?.textContent?.trim().toLowerCase() === title
+  );
+  if (!(column instanceof HTMLElement) || !(grid instanceof HTMLElement)) return;
+  const spanOf = (/** @type {Element} */ col) => Number(col.className.match(/mega-menu__column--span-(\d)/)?.[1] || 1);
+  const others = [...grid.querySelectorAll('.mega-menu__column')].filter((col) => col !== column);
+  if (!others.length) return;
+  const used = String(others.reduce((n, col) => n + spanOf(col), 0));
+  const list = column.closest('[data-menu-list-id]');
+  column.dataset.fpgStoodIn = '';
+  column.hidden = true;
+  /* The remaining columns and the panel share the width, with no empty tracks between them. */
+  for (const el of [grid, list]) {
+    if (!(el instanceof HTMLElement)) continue;
+    el.dataset.fpgStandIn = '';
+    el.style.setProperty('--menu-columns-desktop', used);
+  }
+}
+
+function undoStandIns() {
+  for (const column of document.querySelectorAll('[data-fpg-stood-in]')) {
+    if (!(column instanceof HTMLElement)) continue;
+    column.hidden = false;
+    delete column.dataset.fpgStoodIn;
+  }
+  for (const grid of document.querySelectorAll('[data-fpg-stand-in]')) {
+    if (!(grid instanceof HTMLElement)) continue;
+    grid.style.removeProperty('--menu-columns-desktop');
+    delete grid.dataset.fpgStandIn;
+  }
 }
 
 /*
@@ -329,6 +369,7 @@ const desktopMenu = window.matchMedia('(min-width: 990px)');
 
 function initMenuPromos() {
   for (const old of document.querySelectorAll('.fpg-menu-promo[data-fpg-injected]')) old.remove();
+  undoStandIns();
   if (!desktopMenu.matches || !window.Shopify?.designMode) return;
   for (const item of document.querySelectorAll('#header-component .menu-list__list-item')) ensureMenuPromo(item);
 }

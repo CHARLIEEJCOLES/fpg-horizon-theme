@@ -18,16 +18,28 @@
     "fpg_menu_promos": {
       "type": "fpg-menu-promos",
       "blocks": {
-        "promo_1": {
-          "type": "promo",
+        "parts_panel": {
+          "type": "parts_panel",
           "settings": {
             "menu_title": "Parts & Servicing",
-            "image": "shopify://shop_images/Chainsaw_Maintenance_in_a_Warm_Workshop.png",
-            "eyebrow": "Workshop",
-            "heading": "Find and book your service",
-            "text": "Pick your machine and brand, see the price and book it online.",
-            "label": "Book a service",
-            "link": "shopify://collections/servicing-repair"
+            "replaces_column": "Find a Part",
+            "eyebrow": "Spare parts",
+            "heading": "Find the right part for your machine",
+            "finder_url": "shopify://pages/fpg-part-finder",
+            "placeholder": "Your model, e.g. MS 261",
+            "button": "Find parts",
+            "tool_1_title": "Parts & diagrams by machine",
+            "tool_1_text": "Pick your machine for diagrams, prices and live stock",
+            "tool_1_url": "shopify://pages/fpg-part-finder",
+            "tool_2_title": "Common parts look up",
+            "tool_2_text": "Chains, bars, filters and plugs that fit your model",
+            "tool_2_url": "shopify://pages/bar-and-chain-finder",
+            "tool_3_title": "Parts ID request",
+            "tool_3_text": "Not sure what the part is? Ask us to identify it",
+            "tool_3_url": "https://parts.fpandg.com/",
+            "foot_text": "Machine needs a service?",
+            "foot_label": "Book a service",
+            "foot_url": "shopify://collections/servicing-repair"
           }
         },
         "promo_2": {
@@ -92,7 +104,7 @@
         }
       },
       "block_order": [
-        "promo_1",
+        "parts_panel",
         "promo_2",
         "promo_3",
         "promo_4",

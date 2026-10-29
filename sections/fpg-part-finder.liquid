@@ -80,6 +80,26 @@
         <li>Live stock, ours and the maker's</li>
         <li>Click &amp; collect in Treforest</li>
       </ul>
+      {%- if section.settings.common_url != blank or section.settings.id_url != blank -%}
+        <ul class="fpg-pf-hero__more" role="list" aria-label="More ways to find a part">
+          {%- if section.settings.common_url != blank -%}
+            <li>
+              <a href="{{ section.settings.common_url }}">
+                <strong>{{ section.settings.common_label | escape }}</strong>
+                <small>{{ section.settings.common_text | escape }}</small>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if section.settings.id_url != blank -%}
+            <li>
+              <a href="{{ section.settings.id_url }}"{% if section.settings.id_url contains '://' %} target="_blank" rel="noopener"{% endif %}>
+                <strong>{{ section.settings.id_label | escape }}</strong>
+                <small>{{ section.settings.id_text | escape }}</small>
+              </a>
+            </li>
+          {%- endif -%}
+        </ul>
+      {%- endif -%}
       <div class="fpg-pf-mine" data-mine hidden></div>
     </header>
 
@@ -109,6 +129,56 @@
 <script src="{{ 'fpg-cart.js' | asset_url }}" type="module" async></script>
 <script src="{{ 'fpg-parts.js' | asset_url }}" type="module" async></script>
 
+{% stylesheet %}
+/* The other parts tools, so every way to find a part is on this page. */
+.fpg-pf-hero__more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fpg-pf-hero__more a {
+  display: grid;
+  gap: 1px;
+  min-height: 48px;
+  padding: 9px 16px;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.06);
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.fpg-pf-hero__more a:hover,
+.fpg-pf-hero__more a:focus-visible {
+  border-color: rgb(255 255 255 / 0.5);
+  background: rgb(255 255 255 / 0.12);
+}
+
+.fpg-pf-hero__more strong {
+  font-size: 0.9375rem;
+}
+
+.fpg-pf-hero__more small {
+  font-size: 0.8125rem;
+  color: rgb(255 255 255 / 0.72);
+}
+
+@media (max-width: 599px) {
+  .fpg-pf-hero__more li {
+    flex: 1 1 100%;
+  }
+}
+
+.fpg-pf:not([data-step='brands']) .fpg-pf-hero__more {
+  display: none;
+}
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "FP&G parts finder",
@@ -124,6 +194,13 @@
     { "type": "text", "id": "dealer_label", "label": "Dealer badge", "default": "Approved dealer" },
     { "type": "text", "id": "dealer_brands", "label": "Brands that get the dealer badge", "info": "Comma separated. Only list brands FP&G is an approved dealer for.", "default": "STIHL" },
     { "type": "checkbox", "id": "maker_stock", "label": "Show live manufacturer stock", "info": "Uses the Cormorant server in Theme settings > FP&G, for parts we have none of.", "default": true },
+    { "type": "header", "content": "Other parts tools", "info": "Shown under the search box on the first step, so every way to find a part is in one place." },
+    { "type": "text", "id": "common_label", "label": "Common parts look up title", "default": "Common parts look up" },
+    { "type": "text", "id": "common_text", "label": "Common parts look up text", "default": "Chains, bars, filters and plugs that fit" },
+    { "type": "url", "id": "common_url", "label": "Common parts look up link" },
+    { "type": "text", "id": "id_label", "label": "Parts ID request title", "default": "Parts ID request" },
+    { "type": "text", "id": "id_text", "label": "Parts ID request text", "default": "Not sure what the part is? Ask us" },
+    { "type": "text", "id": "id_url", "label": "Parts ID request link", "default": "https://parts.fpandg.com/" },
     { "type": "header", "content": "Help panel" },
     { "type": "text", "id": "help_heading", "label": "Heading", "default": "Can't find your part?" },
     { "type": "textarea", "id": "help_text", "label": "Text", "default": "Send us the model and serial number from the machine's label, or the part number from your manual, and our parts team will find it." },
