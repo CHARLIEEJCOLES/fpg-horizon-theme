@@ -1,12 +1,12 @@
 batch,model,brand,dealer_portal_close_machines,suggested_pick,why,status
-1,FS 361,STIHL,2,Link: FS 361.0 C-EM (264 parts),same machine - suffix only,ready
-1,FS 411,STIHL,2,Link: FS 411.0 C-EM (260 parts),same machine - suffix only,ready
-1,FS 461,STIHL,4,Link: FS 461.0 C-EM (259 parts),same machine - suffix only,ready
-1,FS 491,STIHL,2,Link: FS 491.0 C-EM (231 parts),same machine - suffix only,ready
-1,FS 561,STIHL,2,Link: FS 561.0 C-EM (236 parts),same machine - suffix only,ready
-2,KM 56,STIHL,1,Link: KM 56 RC-E (243 parts),same machine - suffix only,ready
-2,KM 94,STIHL,1,Link: KM 94 RC-E (198 parts),same machine - suffix only,ready
-2,FR 131,STIHL,1,Link: FR 131 T (242 parts),same machine - suffix only,ready
+1,FS 361,STIHL,2,Link: FS 361.0 C-EM (264 parts),same machine - suffix only,linked 29/10 - 19 drawings live
+1,FS 411,STIHL,2,Link: FS 411.0 C-EM (260 parts),same machine - suffix only,linked 29/10 - 19 drawings live
+1,FS 461,STIHL,4,Link: FS 461.0 C-EM (259 parts),same machine - suffix only,linked 29/10 - 19 drawings live
+1,FS 491,STIHL,2,Link: FS 491.0 C-EM (231 parts),same machine - suffix only,linked 29/10 - 15 drawings live
+1,FS 561,STIHL,2,Link: FS 561.0 C-EM (236 parts),same machine - suffix only,linked 29/10 - 15 drawings live
+2,KM 56,STIHL,1,Link: KM 56 RC-E (243 parts),same machine - suffix only; duplicate finder model KM56 still unlinked,linked 29/10 - 18 drawings live
+2,KM 94,STIHL,1,Link: KM 94 RC-E (198 parts),same machine - suffix only; duplicate finder model KM94 still unlinked,linked 29/10 - 10 drawings live
+2,FR 131,STIHL,1,Link: FR 131 T (242 parts),same machine - suffix only,linked 29/10 - 14 drawings live
 2,R112C,Husqvarna,3,Link: R 112C (262 parts),same machine - spacing only,ready
 3,FS 490,STIHL,2,choose after run finishes,no saved list yet,wait
 3,FS 510,STIHL,1,choose after run finishes,no saved list yet,wait
