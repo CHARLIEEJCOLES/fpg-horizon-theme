@@ -83,6 +83,74 @@ function writeStore(/** @type {string} */ key, /** @type {any} */ value) {
   }
 }
 
+/* ---------------------------------------------------------------- model data cache */
+
+/*
+ * A model's parts (getProducts) and the maker's list (getDealerParts) are kept
+ * for 15 minutes: in memory, so a model is only asked for once per visit (and a
+ * hover can fetch it before the click), and in sessionStorage, so Back, reloads
+ * and the next page in the same tab show it at once. The maker's list can take
+ * several seconds on the server, so this is where most of the waiting goes.
+ */
+const MODEL_PREFIX = 'fpg-pf:';
+const MODEL_LIFETIME = 15 * 60 * 1000;
+/** @type {Map<string, { at: number, promise: Promise<any> }>} */
+const jsonRequests = new Map();
+
+function readSession(/** @type {string} */ url) {
+  try {
+    const raw = sessionStorage.getItem(MODEL_PREFIX + url);
+    if (!raw) return undefined;
+    const saved = JSON.parse(raw);
+    if (Date.now() - saved.t < MODEL_LIFETIME) return saved.d;
+    sessionStorage.removeItem(MODEL_PREFIX + url);
+  } catch {
+    /* storage blocked: fetch instead */
+  }
+  return undefined;
+}
+
+function writeSession(/** @type {string} */ url, /** @type {any} */ data) {
+  const value = JSON.stringify({ t: Date.now(), d: data });
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      sessionStorage.setItem(MODEL_PREFIX + url, value);
+      return;
+    } catch {
+      /* full: drop the older saved models and try once more */
+      try {
+        const keys = [];
+        for (let i = 0; i < sessionStorage.length; i++) {
+          const k = sessionStorage.key(i);
+          if (k?.startsWith(MODEL_PREFIX)) keys.push(k);
+        }
+        for (const k of keys) sessionStorage.removeItem(k);
+      } catch {
+        return;
+      }
+    }
+  }
+}
+
+/** GETs JSON once per 15 minutes per URL; failures are not kept. */
+function cachedJson(/** @type {string} */ url) {
+  const held = jsonRequests.get(url);
+  if (held && Date.now() - held.at < MODEL_LIFETIME) return held.promise;
+  const saved = readSession(url);
+  const promise =
+    saved !== undefined
+      ? Promise.resolve(saved)
+      : fetch(url)
+          .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+          .then((data) => {
+            writeSession(url, data);
+            return data;
+          });
+  promise.catch(() => jsonRequests.delete(url));
+  jsonRequests.set(url, { at: Date.now(), promise });
+  return promise;
+}
+
 /* ---------------------------------------------------------------- icons */
 
 /* Drawn for FP&G: simple 48px line icons, one per kind of machine. */
@@ -281,6 +349,12 @@ function sectionName(/** @type {string} */ raw) {
   return name.toLowerCase().replace(/(^|[\s/(-])([a-z])/g, (m, a, b) => a + b.toUpperCase());
 }
 
+/** STIHL letters its sections ("A - Crankcase, Cylinder"): the letter becomes a badge. */
+function sectionCode(/** @type {string} */ name) {
+  const m = String(name || '').match(/^([A-Z]{1,2}|\d{1,2})\s+-\s+(.+)$/);
+  return m ? { code: m[1], label: m[2] } : { code: '', label: String(name || '') };
+}
+
 /** Does a number box on a drawing point at this part? By part number first, else by its Ref. */
 function matchesPart(/** @type {any} */ box, /** @type {any} */ part) {
   if (!box || !part) return false;
@@ -411,6 +485,8 @@ class FpgPartsFinder extends HTMLElement {
   dealer = null;
   /** @type {HTMLDialogElement | null} */
   viewer = null;
+  /** The model on screen; answers for any other are dropped. @type {symbol | null} */
+  modelToken = null;
 
   get proxy() {
     return (this.dataset.proxy || '/apps/fpg-parts').replace(/\/+$/, '');
@@ -432,6 +508,14 @@ class FpgPartsFinder extends HTMLElement {
       if (!(e.target instanceof Node) || !this.querySelector('[data-searchbox]')?.contains(e.target)) this.hideSuggestions();
     });
     window.addEventListener('popstate', () => this.route(false));
+    this.addEventListener('pointerover', this.onHover);
+    this.addEventListener('focusin', this.onHover);
+    this.addEventListener('pointerout', this.onHoverEnd);
+    this.addEventListener('touchstart', this.onTouch, { passive: true });
+
+    /* A link straight to a model: ask for its parts while the index loads. */
+    const first = this.params().model;
+    if (first) this.prefetchModel(first);
 
     try {
       this.data = await loadIndex(this.dataset.index || '');
@@ -441,6 +525,58 @@ class FpgPartsFinder extends HTMLElement {
     }
     this.renderMine();
     this.route(false);
+  }
+
+  /* ---------- fetching ahead */
+
+  /** @param {string|number} id */
+  modelUrls(id) {
+    const m = encodeURIComponent(String(id));
+    return { parts: `${this.proxy}/getProducts?modelId=${m}`, dealer: `${this.proxy}/getDealerParts?modelId=${m}` };
+  }
+
+  /** Starts loading a model's parts and the maker's list (kept, so the click shows them sooner). */
+  prefetchModel(/** @type {string|number} */ id) {
+    const urls = this.modelUrls(id);
+    cachedJson(urls.parts).catch(() => {});
+    cachedJson(urls.dealer).catch(() => {});
+  }
+
+  /** Starts loading a section's full drawing. */
+  prefetchDrawing(/** @type {number} */ index) {
+    const view = this.dealer?.sections[index]?.diagrams?.[0]?.view;
+    if (!view) return;
+    const url = this.diagramUrl(view);
+    if (this.warmed.has(url)) return;
+    this.warmed.add(url);
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = url;
+  }
+
+  /** @type {Set<string>} */
+  warmed = new Set();
+  /** @type {number | undefined} */
+  hoverTimer;
+
+  /** Hovering (or tabbing to) a model or a diagram tile for a moment fetches it. */
+  onHover = (/** @type {Event} */ e) => {
+    const t = e.target instanceof Element ? e.target.closest('[data-go-model],[data-dsec]') : null;
+    if (!(t instanceof HTMLElement)) return;
+    clearTimeout(this.hoverTimer);
+    this.hoverTimer = window.setTimeout(() => this.warm(t), 120);
+  };
+
+  onHoverEnd = () => clearTimeout(this.hoverTimer);
+
+  onTouch = (/** @type {TouchEvent} */ e) => {
+    const t = e.target instanceof Element ? e.target.closest('[data-go-model],[data-dsec]') : null;
+    if (t instanceof HTMLElement) this.warm(t);
+  };
+
+  warm(/** @type {HTMLElement} */ el) {
+    if (el.dataset.goModel) this.prefetchModel(el.dataset.goModel);
+    else if (el.dataset.dsec) this.prefetchDrawing(Number(el.dataset.dsec));
   }
 
   /* ---------- routing */
@@ -493,6 +629,7 @@ class FpgPartsFinder extends HTMLElement {
     }
     this.request?.abort();
     this.observer?.disconnect();
+    this.modelToken = null;
     if (model) this.renderModel(model);
     else if (mId) this.renderUnknownModel(Number(mId));
     else if (type) this.renderModels(type);
@@ -699,6 +836,9 @@ class FpgPartsFinder extends HTMLElement {
   async renderModel(/** @type {Model} */ model) {
     const brand = model.type.brand;
     const saved = this.isSaved(model.id);
+    const supplier = this.supplierFor(brand.name);
+    /* STIHL and Husqvarna have the maker's diagrams; other brands rarely do, so they get no placeholder. */
+    const expectDiagrams = !!supplier || !model.type.id;
     this.view.innerHTML = `
       <div class="fpg-pf-machine">
         <span class="fpg-pf-machine__icon">${machineIcon(model.type.name, 56)}</span>
@@ -708,86 +848,132 @@ class FpgPartsFinder extends HTMLElement {
           <p class="fpg-pf-lead" data-summary aria-live="polite">Loading parts…</p>
         </div>
         <div class="fpg-pf-machine__actions">
-          ${model.type.id ? `<button type="button" class="fpg-pf-btn fpg-pf-btn--ghost" data-save="${model.id}" aria-pressed="${saved}">${saved ? 'Saved to my machines' : 'Save to my machines'}</button>` : ''}
-          ${model.type.id ? `<button type="button" class="fpg-pf-btn fpg-pf-btn--ghost" data-go-type="${model.type.id}">Change model</button>` : ''}
+          ${model.type.id ? `<button type="button" class="fpg-pf-btn fpg-pf-btn--ghost fpg-pf-btn--sm" data-save="${model.id}" aria-pressed="${saved}">${saved ? 'Saved to my machines' : 'Save to my machines'}</button>` : ''}
+          ${model.type.id ? `<button type="button" class="fpg-pf-btn fpg-pf-btn--ghost fpg-pf-btn--sm" data-go-type="${model.type.id}">Change model</button>` : ''}
         </div>
       </div>
-      <div class="fpg-pf-dealer" data-dealer hidden></div>
       <div class="fpg-pf-tools" data-tools hidden>
         <label class="fpg-pf-filter">${SEARCH_ICON}<span class="visually-hidden">Search these parts</span><input type="search" placeholder="Search by part name or number" data-part-filter autocomplete="off"></label>
         <label class="fpg-pf-toggle"><input type="checkbox" data-instock> <span>In stock with us</span></label>
       </div>
+      <div class="fpg-pf-dealer" data-dealer ${expectDiagrams ? '' : 'hidden'}>${expectDiagrams ? this.dealerLoadingHtml(brand.name) : ''}</div>
       <nav class="fpg-pf-sections" data-sections aria-label="Parts sections" hidden></nav>
       <div data-parts>${this.skeletonHtml()}</div>
       <p class="fpg-pf-empty" data-parts-none hidden>No parts match. Try fewer words, or ${this.contactHtml('ask us')}.</p>`;
 
+    /* Answers for a model the shopper has since left are dropped. */
+    const token = Symbol(String(model.id));
+    this.modelToken = token;
+    const current = () => this.modelToken === token && this.view.isConnected;
     this.request = new AbortController();
     this.dealer = null;
-    const dealerRequest = fetch(`${this.proxy}/getDealerParts?modelId=${encodeURIComponent(model.id)}`, { signal: this.request.signal })
-      .then((r) => (r.ok ? r.json() : null))
-      .catch(() => null);
-    /** @type {any[]} */
-    let groups;
-    try {
-      groups = await fetch(`${this.proxy}/getProducts?modelId=${encodeURIComponent(model.id)}`, { signal: this.request.signal }).then((r) => r.json());
-    } catch (error) {
-      if (/** @type {any} */ (error)?.name === 'AbortError') return;
-      /** @type {HTMLElement} */ (this.view.querySelector('[data-parts]')).innerHTML = this.errorHtml('The parts for this machine did not load.');
-      return;
-    }
-    if (!Array.isArray(groups)) groups = [];
-    groups = groups.filter((g) => g?.products?.length);
-    groups.sort((a, b) => Number(/service/i.test(b.categoryName)) - Number(/service/i.test(a.categoryName)));
 
-    const total = groups.reduce((n, g) => n + g.products.length, 0);
+    const urls = this.modelUrls(model.id);
+    const dealerRequest = cachedJson(urls.dealer).catch(() => null);
     const summary = /** @type {HTMLElement} */ (this.view.querySelector('[data-summary]'));
-    const dealer = await dealerRequest;
-    const diagrams = this.renderDealer(model, dealer);
-    if (!total && diagrams) {
-      summary.textContent = `${diagrams} diagram section${diagrams === 1 ? '' : 's'} from ${brand.name || 'the maker'}. Open one to see its parts.`;
-      /** @type {HTMLElement} */ (this.view.querySelector('[data-parts]')).innerHTML = '';
-      return;
-    }
-    if (!total) {
-      summary.textContent = 'No parts listed online for this machine yet.';
-      /** @type {HTMLElement} */ (this.view.querySelector('[data-parts]')).innerHTML = `
-        <div class="fpg-pf-help fpg-pf-help--inline">
-          <p><strong>We can still get the part.</strong> Send us the model and serial number, or the part number from your manual, and we'll check price and stock with ${esc(brand.name || 'the maker')}.</p>
-          ${this.contactHtml('Ask about a part', true)}
-        </div>`;
-      return;
-    }
-    const inStock = groups.reduce((n, g) => n + g.products.filter((/** @type {any} */ p) => p.inventoryQuantity > 0).length, 0);
-    summary.textContent = `${total} parts in ${groups.length} section${groups.length === 1 ? '' : 's'}, ${inStock} in stock with us now.${diagrams ? ' Exploded diagrams below.' : ''}`;
-
-    const supplier = this.supplierFor(brand.name);
-    const sectionsNav = /** @type {HTMLElement} */ (this.view.querySelector('[data-sections]'));
-    sectionsNav.innerHTML = `<ul role="list">${groups
-      .map((g, i) => `<li><a href="#fpg-pf-s${i}" data-jump="${i}">${esc(g.categoryName.replace(/\s+/g, ' '))} <span>${g.products.length}</span></a></li>`)
-      .join('')}</ul>`;
-    sectionsNav.hidden = groups.length < 2;
-    /** @type {HTMLElement} */ (this.view.querySelector('[data-tools]')).hidden = false;
-
-    /** @type {HTMLElement} */ (this.view.querySelector('[data-parts]')).innerHTML = groups
-      .map(
-        (g, i) => `
-        <section class="fpg-pf-group" id="fpg-pf-s${i}" data-group aria-labelledby="fpg-pf-s${i}-h">
-          <h3 class="fpg-pf-group__h" id="fpg-pf-s${i}-h">${esc(g.categoryName.replace(/\s+/g, ' '))} <span data-group-count>${g.products.length}</span></h3>
-          <ul class="fpg-pf-parts" role="list">${g.products.map((/** @type {any} */ p) => this.partHtml(p, brand.name, supplier)).join('')}</ul>
-        </section>`
-      )
-      .join('');
-
-    this.hideQuoteOnly();
-    window.addEventListener('load', () => this.hideQuoteOnly(), { once: true });
-
+    const partsBox = /** @type {HTMLElement} */ (this.view.querySelector('[data-parts]'));
+    const tools = /** @type {HTMLElement} */ (this.view.querySelector('[data-tools]'));
     const filter = /** @type {HTMLInputElement} */ (this.view.querySelector('[data-part-filter]'));
     const stockOnly = /** @type {HTMLInputElement} */ (this.view.querySelector('[data-instock]'));
     const apply = () => this.filterParts(filter.value, stockOnly.checked);
     filter.addEventListener('input', apply);
     stockOnly.addEventListener('change', apply);
 
+    const facts = { total: -1, sections: 0, inStock: 0, diagrams: -1, makerParts: 0 };
+    const tell = () => {
+      const s = (/** @type {number} */ n) => (n === 1 ? '' : 's');
+      const bits = [];
+      if (facts.total > 0) bits.push(`${facts.total} part${s(facts.total)} in ${facts.sections} section${s(facts.sections)}, ${facts.inStock} in stock with us now.`);
+      if (facts.diagrams > 0) {
+        bits.push(`${brand.name || 'The maker'}'s exploded diagrams: ${facts.diagrams} section${s(facts.diagrams)}${facts.makerParts ? `, ${facts.makerParts} parts` : ''}.`);
+      } else if (facts.diagrams < 0 && expectDiagrams) bits.push(facts.total < 0 ? '' : 'Loading the exploded diagrams…');
+      summary.textContent = bits.filter(Boolean).join(' ') || 'Loading parts…';
+    };
+
+    /* The maker's diagrams arrive on their own, often after our list. */
+    dealerRequest.then((dealer) => {
+      if (!current()) return;
+      facts.diagrams = this.renderDealer(model, dealer);
+      facts.makerParts = (this.dealer?.sections || []).reduce((n, sec) => n + (sec.parts?.length || 0), 0);
+      if (facts.diagrams) {
+        tools.hidden = false;
+        apply();
+      }
+      if (facts.total === 0 && !facts.diagrams) this.renderNoParts(partsBox, brand);
+      if (facts.total === 0 && facts.diagrams) partsBox.innerHTML = '';
+      tell();
+    });
+
+    /** @type {any[]} */
+    let groups;
+    try {
+      groups = await cachedJson(urls.parts);
+    } catch {
+      if (!current()) return;
+      partsBox.innerHTML = this.errorHtml('The parts for this machine did not load.');
+      return;
+    }
+    if (!current()) return;
+    if (!Array.isArray(groups)) groups = [];
+    groups = groups.filter((g) => g?.products?.length);
+    groups.sort((a, b) => Number(/service/i.test(b.categoryName)) - Number(/service/i.test(a.categoryName)));
+
+    facts.total = groups.reduce((n, g) => n + g.products.length, 0);
+    facts.sections = groups.length;
+    facts.inStock = groups.reduce((n, g) => n + g.products.filter((/** @type {any} */ p) => p.inventoryQuantity > 0).length, 0);
+
+    if (!facts.total) {
+      /* Nothing of ours listed: wait for the maker's list before saying so. */
+      if (facts.diagrams > 0) partsBox.innerHTML = '';
+      else if (facts.diagrams === 0 || !expectDiagrams) this.renderNoParts(partsBox, brand);
+      tell();
+      return;
+    }
+
+    const sectionsNav = /** @type {HTMLElement} */ (this.view.querySelector('[data-sections]'));
+    sectionsNav.innerHTML = `<ul role="list">${groups
+      .map((g, i) => `<li><a href="#fpg-pf-s${i}" data-jump="${i}">${esc(g.categoryName.replace(/\s+/g, ' '))} <span>${g.products.length}</span></a></li>`)
+      .join('')}</ul>`;
+    sectionsNav.hidden = groups.length < 2;
+    tools.hidden = false;
+
+    partsBox.innerHTML = `
+      ${facts.diagrams !== 0 || expectDiagrams ? `<h3 class="fpg-pf-listed">Parts we list for the ${esc(model.name)}</h3>` : ''}
+      ${groups
+        .map(
+          (g, i) => `
+        <section class="fpg-pf-group" id="fpg-pf-s${i}" data-group aria-labelledby="fpg-pf-s${i}-h">
+          <h3 class="fpg-pf-group__h" id="fpg-pf-s${i}-h">${esc(g.categoryName.replace(/\s+/g, ' '))} <span data-group-count>${g.products.length}</span></h3>
+          <ul class="fpg-pf-parts" role="list">${g.products.map((/** @type {any} */ p) => this.partHtml(p, brand.name, supplier)).join('')}</ul>
+        </section>`
+        )
+        .join('')}`;
+    tell();
+
+    this.hideQuoteOnly();
+    window.addEventListener('load', () => this.hideQuoteOnly(), { once: true });
+    apply();
+
     if (supplier && this.dataset.polly) this.watchMakerStock(supplier);
+  }
+
+  renderNoParts(/** @type {HTMLElement} */ box, /** @type {Brand} */ brand) {
+    box.innerHTML = `
+      <div class="fpg-pf-help fpg-pf-help--inline">
+        <p><strong>We can still get the part.</strong> Send us the model and serial number, or the part number from your manual, and we'll check price and stock with ${esc(brand.name || 'the maker')}.</p>
+        ${this.contactHtml('Ask about a part', true)}
+      </div>`;
+    const summary = this.view.querySelector('[data-summary]');
+    if (summary) summary.textContent = 'No parts listed online for this machine yet.';
+  }
+
+  dealerLoadingHtml(/** @type {string} */ brand) {
+    return `
+      <div class="fpg-pf-dealer__head">
+        <h3 class="fpg-pf-group__h">Exploded diagrams</h3>
+        <p class="fpg-pf-dealer__p">Loading ${esc(brand || 'the maker')}'s diagrams…</p>
+      </div>
+      <ul class="fpg-pf-dsecs fpg-pf-dsecs--loading" role="list" aria-hidden="true">${'<li><span class="fpg-pf-dsec fpg-pf-dsec--ghost"><span class="fpg-pf-dsec__pic"></span><span class="fpg-pf-skel"></span></span></li>'.repeat(4)}</ul>`;
   }
 
   partHtml(/** @type {any} */ p, /** @type {string} */ brand, /** @type {string} */ supplier) {
@@ -927,7 +1113,12 @@ class FpgPartsFinder extends HTMLElement {
   renderDealer(/** @type {Model} */ model, /** @type {any} */ dealer) {
     const box = /** @type {HTMLElement | null} */ (this.view.querySelector('[data-dealer]'));
     const sections = (dealer?.sections || []).filter((/** @type {any} */ s) => s?.parts?.length || s?.diagrams?.length);
-    if (!box || !sections.length) return 0;
+    if (!box) return 0;
+    if (!sections.length) {
+      box.hidden = true;
+      box.innerHTML = '';
+      return 0;
+    }
     this.dealer = { modelId: model.id, model, source: String(dealer.source || ''), sections };
     const brand = model.type.brand.name;
     box.innerHTML = `
@@ -945,13 +1136,14 @@ class FpgPartsFinder extends HTMLElement {
     const pics = sec.diagrams || [];
     const words = squash([sec.name, ...parts.map((/** @type {any} */ p) => `${p.title} ${p.sku || ''} ${p.partNumber || ''}`)].join(' '));
     const name = sectionName(sec.name);
+    const { code, label } = sectionCode(name);
     return `
       <li>
         <button type="button" class="fpg-pf-dsec" data-dsec="${i}" data-search="${esc(words)}" aria-label="${esc(name)}: diagram and ${parts.length} parts">
           <span class="fpg-pf-dsec__pic">${
-            pics.length ? `<img src="${esc(this.diagramUrl(pics[0].thumb))}" alt="" loading="lazy">` : `<span>No diagram</span>`
+            pics.length ? `<img src="${esc(this.diagramUrl(pics[0].thumb))}" alt="" loading="lazy" decoding="async">` : `<span>No diagram</span>`
           }</span>
-          <span class="fpg-pf-dsec__name">${esc(name)}</span>
+          <span class="fpg-pf-dsec__name">${code ? `<span class="fpg-pf-dsec__code" aria-hidden="true">${esc(code)}</span>` : ''}${esc(label)}</span>
           <span class="fpg-pf-dsec__count">${parts.length} part${parts.length === 1 ? '' : 's'}${pics.length > 1 ? ` · ${pics.length} drawings` : ''}</span>
         </button>
       </li>`;
@@ -978,6 +1170,16 @@ class FpgPartsFinder extends HTMLElement {
       '<p class="fpg-pf-v__note">No parts listed in this section.</p>';
 
     const state = { zoom: 1, maps: /** @type {any[]} */ ([]), run: 0, drag: /** @type {any} */ (null) };
+    const secs = this.dealer?.sections || [];
+    const secLabel = (/** @type {any} */ s) => sectionCode(sectionName(s?.name || '')).label;
+    const foot =
+      secs.length > 1
+        ? `<footer class="fpg-pf-v__foot">
+            <button type="button" class="fpg-pf-v__sec" data-v-sec="-1" ${index === 0 ? 'disabled' : ''}><span aria-hidden="true">‹</span> <span class="fpg-pf-v__sec-name">${index > 0 ? esc(secLabel(secs[index - 1])) : 'Previous'}</span><span class="visually-hidden"> (previous section)</span></button>
+            <span class="fpg-pf-v__pos">Section ${index + 1} of ${secs.length}</span>
+            <button type="button" class="fpg-pf-v__sec" data-v-sec="1" ${index === secs.length - 1 ? 'disabled' : ''}><span class="fpg-pf-v__sec-name">${index < secs.length - 1 ? esc(secLabel(secs[index + 1])) : 'Next'}</span><span class="visually-hidden"> (next section)</span> <span aria-hidden="true">›</span></button>
+          </footer>`
+        : '';
     const paint = () => {
       const pic = pics[at];
       dialog.innerHTML = `
@@ -990,16 +1192,26 @@ class FpgPartsFinder extends HTMLElement {
           </header>
           <p class="fpg-pf-v__hint" data-v-hint aria-live="polite">${pic ? '' : 'There is no drawing for this section.'}</p>
           <div class="fpg-pf-v__body${pic ? '' : ' fpg-pf-v__body--nopic'}">
-            ${pic ? `<div class="fpg-pf-v__scroll" data-v-scroll><div class="fpg-pf-v__stage" data-v-stage><img src="${esc(this.diagramUrl(pic.view))}" alt="${esc(sectionName(sec.name))} diagram" draggable="false"><div class="fpg-pf-v__hot" data-v-hot></div></div></div>` : ''}
+            ${pic ? `<div class="fpg-pf-v__scroll" data-v-scroll data-loading="true"><div class="fpg-pf-v__stage" data-v-stage><img src="${esc(this.diagramUrl(pic.view))}" alt="${esc(sectionName(sec.name))} diagram" draggable="false" fetchpriority="high"><div class="fpg-pf-v__hot" data-v-hot></div></div><p class="fpg-pf-v__loading" aria-hidden="true">Loading the drawing…</p></div>` : ''}
             <div class="fpg-pf-v__list">${rows}</div>
           </div>
+          ${foot}
         </div>`;
       state.zoom = 1;
       state.maps = [];
       if (!pic) return;
       const img = /** @type {HTMLImageElement} */ (dialog.querySelector('[data-v-stage] img'));
-      img.addEventListener('load', size);
+      const loaded = () => {
+        const box = dialog.querySelector('[data-v-scroll]');
+        if (box instanceof HTMLElement) delete box.dataset.loading;
+      };
+      if (img.complete && img.naturalWidth) loaded();
+      img.addEventListener('load', () => {
+        loaded();
+        size();
+      });
       img.addEventListener('error', () => {
+        loaded();
         const note = document.createElement('p');
         note.className = 'fpg-pf-v__note';
         note.textContent = 'This drawing did not load. Please try again shortly.';
@@ -1052,6 +1264,13 @@ class FpgPartsFinder extends HTMLElement {
       if (t === dialog || t.closest('[data-v-close]')) return shut();
       const hot = t.closest('[data-hot]');
       if (hot instanceof HTMLElement) return this.showNumber(dialog, sec, state.maps[Number(hot.dataset.hot)], state.maps, true, say);
+      const secStep = t.closest('[data-v-sec]');
+      if (secStep instanceof HTMLElement) {
+        const to = index + Number(secStep.dataset.vSec);
+        if (to < 0 || to >= secs.length) return;
+        shut();
+        return this.openSection(to);
+      }
       const step = t.closest('[data-v-step]');
       if (step instanceof HTMLElement) {
         at += Number(step.dataset.vStep);
@@ -1126,6 +1345,8 @@ class FpgPartsFinder extends HTMLElement {
     dialog.addEventListener('close', shut);
     dialog.showModal();
     paint();
+    /* The next section is the likeliest click: fetch its drawing now. */
+    this.prefetchDrawing(index + 1);
   }
 
   dealerRowHtml(/** @type {any} */ p, /** @type {number} */ i, /** @type {string} */ brand) {

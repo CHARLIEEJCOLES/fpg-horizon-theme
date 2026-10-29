@@ -7,16 +7,21 @@
   Replaces the FPG Part Finder app's block. The app stays installed: its proxy
   (Store URL /apps/fpg-parts) is where the parts lists and the maker's diagrams
   come from.
-  Behaviour: assets/fpg-parts.js. Styles: assets/fpg-parts.css and
-  assets/fpg-parts-diagrams.css.
+  Behaviour: assets/fpg-parts.js (loaded async at the end of the section).
+  Styles: assets/fpg-parts.css and assets/fpg-parts-diagrams.css.
   Brands, types and models snapshot: assets/fpg-parts-index.json
   (rebuild with fpg-tools/parts/build-parts-index.js).
 {%- endcomment -%}
 
 {{ 'fpg-parts.css' | asset_url | stylesheet_tag }}
 {{ 'fpg-parts-diagrams.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
-<script src="{{ 'fpg-parts.js' | asset_url }}" type="module"></script>
+{%- comment -%}
+  The brands and models list is fetched by the script; preloading it starts the
+  download with the page instead of after it. The scripts are at the end of the
+  section, async, so they run as soon as they arrive rather than after the rest
+  of the page (and its apps) has been read.
+{%- endcomment -%}
+{{ 'fpg-parts-index.json' | asset_url | preload_tag: as: 'fetch', crossorigin: 'anonymous' }}
 
 {%- liquid
   assign proxy = '/' | append: section.settings.proxy_prefix | append: '/' | append: section.settings.proxy_subpath
@@ -101,6 +106,8 @@
     </aside>
   </fpg-parts-finder>
 </div>
+<script src="{{ 'fpg-cart.js' | asset_url }}" type="module" async></script>
+<script src="{{ 'fpg-parts.js' | asset_url }}" type="module" async></script>
 
 {% schema %}
 {
@@ -122,7 +129,7 @@
     { "type": "textarea", "id": "help_text", "label": "Text", "default": "Send us the model and serial number from the machine's label, or the part number from your manual, and our parts team will find it." },
     { "type": "text", "id": "phone", "label": "Phone number", "default": "01443 230000" },
     { "type": "text", "id": "contact_url", "label": "Contact page", "default": "/pages/contact" },
-    { "type": "text", "id": "diagrams_url", "label": "Parts diagrams page", "default": "/pages/parts-finder" },
+    { "type": "text", "id": "diagrams_url", "label": "Parts diagrams page", "info": "Leave empty: the maker's diagrams now show inside the parts finder. The old diagrams page is hidden." },
     { "type": "header", "content": "Part Finder app" },
     { "type": "paragraph", "content": "The parts lists come from the FPG Part Finder app's proxy. Only change these if the app's proxy address changes." },
     { "type": "text", "id": "proxy_prefix", "label": "Proxy prefix", "default": "apps" },

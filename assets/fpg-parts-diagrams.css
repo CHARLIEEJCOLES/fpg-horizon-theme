@@ -79,6 +79,45 @@
   color: var(--fpg-teal, #002d37);
 }
 
+.fpg-pf-dsec__code {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.5em;
+  height: 1.5em;
+  margin-inline-end: 6px;
+  padding: 0 4px;
+  border-radius: 6px;
+  background: var(--fpg-teal, #002d37);
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 1;
+  vertical-align: 0.1em;
+}
+
+/* Placeholder tiles while the maker's list loads. */
+.fpg-pf-dsec--ghost {
+  cursor: default;
+}
+
+.fpg-pf-dsec--ghost:hover {
+  border-color: var(--fpg-line, #d6ded9);
+  box-shadow: none;
+  transform: none;
+}
+
+.fpg-pf-dsec--ghost .fpg-pf-dsec__pic,
+.fpg-pf-dsec--ghost .fpg-pf-skel {
+  background: linear-gradient(90deg, #eef2f0 25%, #f7f9f8 50%, #eef2f0 75%) 0 0 / 200% 100%;
+  animation: fpg-pf-shimmer 1.3s linear infinite;
+}
+
+.fpg-pf-dsec--ghost .fpg-pf-skel {
+  display: block;
+  width: 70%;
+  height: 16px;
+  border-radius: 6px;
+}
+
 .fpg-pf-dsec__count {
   align-self: end;
   font-size: 0.8125rem;
@@ -112,7 +151,8 @@
 
 .fpg-pf-v {
   display: grid;
-  grid-template-rows: auto auto 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   height: 100%;
 }
 
@@ -235,6 +275,95 @@
   margin: 8px auto;
 }
 
+/* Until the drawing arrives: a message instead of a blank panel. */
+.fpg-pf-v__loading {
+  display: none;
+  position: absolute;
+  inset: 0;
+  place-content: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--fpg-sage, #5f7d6d);
+  text-align: center;
+  pointer-events: none;
+}
+
+.fpg-pf-v__loading::before {
+  content: '';
+  justify-self: center;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--fpg-pale, #e2e9e5);
+  border-top-color: var(--fpg-teal, #002d37);
+  border-radius: 50%;
+  animation: fpg-pf-spin 0.8s linear infinite;
+}
+
+.fpg-pf-v__scroll[data-loading='true'] .fpg-pf-v__loading {
+  display: grid;
+}
+
+.fpg-pf-v__scroll[data-loading='true'] .fpg-pf-v__stage {
+  visibility: hidden;
+}
+
+@keyframes fpg-pf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Previous / next section, under the drawing and the list. */
+.fpg-pf-v__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--fpg-line, #d6ded9);
+  background: var(--fpg-mist, #f3f6f4);
+}
+
+.fpg-pf-viewer .fpg-pf-v__sec {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 40px;
+  max-width: 40%;
+  overflow: hidden;
+  padding: 6px 12px;
+  border: 1px solid var(--fpg-line, #d6ded9);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--fpg-teal, #002d37);
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.fpg-pf-viewer .fpg-pf-v__sec:hover:not(:disabled) {
+  border-color: var(--fpg-teal, #002d37);
+}
+
+.fpg-pf-viewer .fpg-pf-v__sec:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.fpg-pf-v__sec-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fpg-pf-v__pos {
+  font-size: 0.8125rem;
+  color: var(--fpg-sage, #5f7d6d);
+  white-space: nowrap;
+}
+
 .fpg-pf-v__stage img {
   display: block;
   max-width: none;
@@ -256,6 +385,13 @@
   background: rgb(95 125 109 / 0.12);
   cursor: pointer;
   transition: background-color 0.15s, border-color 0.15s;
+}
+
+/* A finger is bigger than a printed number: each box takes taps a little beyond its edge. */
+.fpg-pf-viewer .fpg-pf-v__num::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
 }
 
 .fpg-pf-viewer .fpg-pf-v__num:hover,
@@ -366,7 +502,24 @@ a.fpg-pf-vrow__name:hover {
 
   .fpg-pf-v__body {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+
+  .fpg-pf-v__head {
+    padding: 10px 10px 10px 16px;
+  }
+
+  .fpg-pf-v__hint {
+    padding: 6px 16px;
+    font-size: 0.8125rem;
+  }
+
+  .fpg-pf-v__pos {
+    display: none;
+  }
+
+  .fpg-pf-viewer .fpg-pf-v__sec {
+    max-width: 48%;
   }
 
   .fpg-pf-v__list {
@@ -379,10 +532,41 @@ a.fpg-pf-vrow__name:hover {
   }
 }
 
+/* Phones: two tiles a row, so 19 sections are a short scroll rather than a long one. */
+@media (max-width: 599px) {
+  .fpg-pf-dsecs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .fpg-pf-dsec {
+    padding: 8px 8px 10px;
+    border-radius: 10px;
+  }
+
+  .fpg-pf-dsec__pic {
+    margin-bottom: 4px;
+  }
+
+  .fpg-pf-dsec__name {
+    font-size: 0.875rem;
+  }
+
+  .fpg-pf-dsec__count {
+    font-size: 0.75rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fpg-pf-dsec,
   .fpg-pf-dsec:hover {
     transform: none;
     transition: none;
+  }
+
+  .fpg-pf-dsec--ghost .fpg-pf-dsec__pic,
+  .fpg-pf-dsec--ghost .fpg-pf-skel,
+  .fpg-pf-v__loading::before {
+    animation: none;
   }
 }
