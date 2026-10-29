@@ -1,0 +1,335 @@
+brand,polly_sku,polly_model,drawings,kind
+STIHL,00008818701,Pruning saw PR 24,1,Machine
+STIHL,00008818703,Pruning saw PR 27 C,1,Machine
+STIHL,00008818704,Pruning saw PR 33 C,1,Machine
+STIHL,11472000000,MS 500i,10,Machine
+STIHL,11472000004,MS 500i-W,10,Machine
+STIHL,42522000047,GS 461,13,Machine
+STIHL,48540117005,SGA 85,5,Machine
+STIHL,48590112930,HLA 86,7,Machine
+STIHL,48600114704,KGA 770,5,Machine
+STIHL,48640116620,TSA 230,7,Machine
+STIHL,48660115900,BGA 100,6,Machine
+STIHL,48690113560,HSA 130.0 R,8,Machine
+STIHL,48690113566,HSA 130.0 T,8,Machine
+STIHL,60070111192,GHE 105.0,6,Machine
+STIHL,60080111042,GHE 250.0,6,Machine
+STIHL,60080111132,GHE 150.0,6,Machine
+STIHL,60122000011,GH 460.0,8,Machine
+STIHL,61402000005,RT 4082.1,19,Machine
+STIHL,61602000023,RT 5097.1,20,Machine
+STIHL,61602000025,RT 5112.1 Z,20,Machine
+STIHL,61652000012,RT 4097.1 SX,18,Machine
+STIHL,61702000029,RT 6112.1 ZL,20,Machine
+STIHL,61702000030,RT 6127.1 ZL,20,Machine
+STIHL,62410113905,MH 445.1 R,8,Machine
+STIHL,62410113928,MH 585.0,8,Machine
+STIHL,62900113105,RL 540.0,8,Machine
+STIHL,62910116610,RLA 240.0,9,Machine
+STIHL,63110111415,RMA 235.1,9,Machine
+STIHL,63110112412,RME 235.0,7,Machine
+STIHL,63200111437,RMA 239.1 C,8,Machine
+STIHL,63200112407,RME 339.0,7,Machine
+STIHL,63380111405,RMA 443.2 C,8,Machine
+STIHL,63500111400,RMA 248.0,7,Machine
+STIHL,63640113401,RM 650.0 V,9,Machine
+STIHL,63710111400,RMA 253.0,7,Machine
+STIHL,63740113401,RM 655.0 V,9,Machine
+STIHL,63780113411,RM 756.0 GS,10,Machine
+STIHL,63830113411,RM 4.0 RTP,7,Machine
+STIHL,63920111400,RMA 765.0 V,9,Machine
+STIHL,70092000085,MS 194 T,11,Machine
+STIHL,BA010115900,BGA 200,4,Machine
+STIHL,BA020115900,BGA 86,3,Machine
+STIHL,BA030115910,BGA 300.1,4,Machine
+STIHL,BA040115900,BGA 60,2,Machine
+STIHL,BA050115900,BGA 50.0,2,Machine
+STIHL,BA060115900,BGA 250.0,4,Machine
+STIHL,BA070115900,BRA 500.0,7,Machine
+STIHL,BA070115910,BRA 600.0,7,Machine
+STIHL,BA080115900,BGA 30.0,2,Machine
+STIHL,BA090115900,BGA 160.0,3,Machine
+STIHL,FA012000027,FSA 135,3,Machine
+STIHL,FA012000029,FSA 135 R,3,Machine
+STIHL,FA020116810,KMA 135 R,3,Machine
+STIHL,FA022000006,RGA 140,4,Machine
+STIHL,FA030116800,KMA 200.0 R,4,Machine
+STIHL,FA032000002,FSA 200.0,4,Machine
+STIHL,FA032000007,FSA 200.0 R,4,Machine
+STIHL,FA032000043,FSA 250.0,7,Machine
+STIHL,FA040115700,FSA 60 R,2,Machine
+STIHL,FA050115700,FSA 86 R,3,Machine
+STIHL,FA070115700,FSA 70.0 R,4,Machine
+STIHL,FA070115720,FSA 110.0 R,4,Machine
+STIHL,FA080115700,FSA 80.0,5,Machine
+STIHL,FA080115720,FSA 80.0 R,4,Machine
+STIHL,FA080115740,FSA 120.0,4,Machine
+STIHL,FA080116800,KMA 80.0 R,5,Machine
+STIHL,FA080116820,KMA 120.0 R,4,Machine
+STIHL,FA092000000,FSA 400.0,9,Machine
+STIHL,FA100115700,FSA 30.0,3,Machine
+STIHL,FA110115700,FSA 50.0,3,Machine
+STIHL,GA040116900,GTA 40.0,4,Machine
+STIHL,GA050116917,GTA 30.0,3,Machine
+STIHL,HA020113500,HSA 140.0 R,5,Machine
+STIHL,HA020113520,HSA 150.0 R,4,Machine
+STIHL,HA030113500,HSA 26,3,Machine
+STIHL,HA042000016,HLA 135,5,Machine
+STIHL,HA042000018,HLA 135 K,5,Machine
+STIHL,HA080113500,HSA 30.0,3,Machine
+STIHL,HA080113520,HSA 40.0,3,Machine
+STIHL,HA100112900,HLA 40.0,3,Machine
+STIHL,IA010111401,iMOW 5.0 EVO,10,Robot mower / station
+STIHL,IA010111431,iMOW 6.0 EVO,10,Robot mower / station
+STIHL,IA010111461,iMOW 7.0 EVO,10,Robot mower / station
+STIHL,IA020111401,iMOW 3.0 EVO,9,Robot mower / station
+STIHL,IA020111431,iMOW 4.0 EVO,9,Robot mower / station
+STIHL,LA012000013,HTA 160.0,7,Machine
+STIHL,LA012000019,HTA 150.0,6,Machine
+STIHL,LA050116400,HTA 30.0,4,Machine
+STIHL,MA040115833,MSA 80.0 C-B,3,Machine
+STIHL,MA050115800,MSA 190.0 T,3,Machine
+STIHL,RA010117600,REA 60.0 PLUS,5,Machine
+STIHL,RA010117610,REA 100.0 PLUS,5,Machine
+STIHL,RA020117600,RCA 20.0,3,Machine
+STIHL,SA020117100,SHA 56,3,Machine
+STIHL,SA030117300,SEA 20.0,2,Machine
+STIHL,SA040117300,SEA 60.0 L,4,Machine
+STIHL,SA040117310,SEA 100.0 L,4,Machine
+STIHL,SA070117100,SHA 140.0,3,Machine
+STIHL,SA080117300,SEA 50.0 L,4,Machine
+STIHL,SA090117015,SGA 30.0,1,Machine
+STIHL,SA100117000,SGA 60.0,2,Machine
+STIHL,TA010116600,TSA 500.0-B,8,Machine
+STIHL,TA020116600,TSA 300.0,6,Machine
+STIHL,TB010112820,TS 910.0i,7,Machine
+STIHL,WA200111400,RMA 243.3,6,Machine
+STIHL,WA410111400,RMA 448.2 VC,8,Machine
+STIHL,WA420111400,RMA 453.3 PV,8,Machine
+STIHL,WA700111400,RMA 750.0 V,9,Machine
+STIHL,WA710111400,RMA 756.0 V,9,Machine
+Husqvarna,970568503,Husqvarna Automower® Aspire™ R4,7,Robot mower / station
+Husqvarna,967974003,Husqvarna Automower® 305,7,Robot mower / station
+Husqvarna,970819603,Husqvarna Automower® 305E NERA,9,Robot mower / station
+Husqvarna,970819703,Husqvarna Automower® 310E NERA with EPOS®,9,Robot mower / station
+Husqvarna,970819803,Husqvarna Automower® 320 NERA,9,Robot mower / station
+Husqvarna,970819903,Husqvarna Automower® 405VE NERA,8,Robot mower / station
+Husqvarna,970820003,Husqvarna Automower® 410VE NERA,8,Robot mower / station
+Husqvarna,970820103,Husqvarna Automower® 430V NERA,8,Robot mower / station
+Husqvarna,970745203,Husqvarna Automower® 435X AWD NERA with wire free technology,9,Robot mower / station
+Husqvarna,970820203,Husqvarna Automower® 450V NERA,8,Robot mower / station
+Husqvarna,970759803,Husqvarna EPOS® RS1 Reference Station,1,Robot mower / station
+Husqvarna,970800803,Husqvarna Automower® 520 EPOS®,9,Robot mower / station
+Husqvarna,970730303,Husqvarna Automower® 540 EPOS®,9,Robot mower / station
+Husqvarna,970730403,Husqvarna Automower® 560 EPOS®,9,Robot mower / station
+Husqvarna,970803803,Husqvarna Automower® 580 EPOS®,9,Robot mower / station
+Husqvarna,970730503,Husqvarna Automower® 580L EPOS®,9,Robot mower / station
+Husqvarna,970745503,Husqvarna Automower® 535 AWD EPOS®,9,Robot mower / station
+Husqvarna,970468203,Husqvarna EPOS™ RS5 Reference Station,2,Robot mower / station
+Husqvarna,970844003,Husqvarna EPOS® Reference station RS 4G,1,Robot mower / station
+Husqvarna,970549001,Husqvarna CEORA® 544 EPOS®,8,Robot mower / station
+Husqvarna,970749901,Husqvarna CEORA® 546 EPOS®,8,Robot mower / station
+Husqvarna,970614401,Husqvarna CEORA® RZ 43L,9,Robot mower / station
+Husqvarna,970468103,HUSQVARNA CHARGING STATION CEORA™ CS4,2,Robot mower / station
+Husqvarna,970468001,HUSQVARNA CEORA™ Razor 43M,9,Robot mower / station
+Husqvarna,590776703,Husqvarna Battery belt FLEXI,3,Battery / charger
+Husqvarna,970704802,Husqvarna 40-C1000X4,4,Battery / charger
+Husqvarna,970717202,Husqvarna 40-C750X,1,Battery / charger
+Husqvarna,536144302,Husqvarna 40-C80 Charging Rail without chargers,1,Battery / charger
+Husqvarna,970717102,Husqvarna 40-C500X,1,Battery / charger
+Husqvarna,970721301,Husqvarna 40-B540X,1,Battery / charger
+Husqvarna,970607901,Husqvarna 40-B140X,1,Battery / charger
+Husqvarna,970607801,Husqvarna 40-B220X,1,Battery / charger
+Husqvarna,970607701,Husqvarna 40-B330X,1,Battery / charger
+Husqvarna,967093201,Husqvarna BLi950X including harness,1,Battery / charger
+Husqvarna,970457103,Husqvarna 40-B70,1,Battery / charger
+Husqvarna,970620411,Husqvarna Aspire™ B8X-P4A,4,Machine
+Husqvarna,970827201,Husqvarna Aspire™ BVX-P4A,1,Machine
+Husqvarna,970827203,Husqvarna Aspire™ BVX-P4A with battery and charger,1,Machine
+Husqvarna,970620415,Husqvarna Aspire™ B8X-P4A with battery and charger,4,Machine
+Husqvarna,970827301,Husqvarna 122iB,1,Machine
+Husqvarna,970827303,Husqvarna 122iB with battery and charger,1,Machine
+Husqvarna,970744301,Husqvarna 230iB,5,Machine
+Husqvarna,970744403,Husqvarna 230iB with battery and charger,5,Machine
+Husqvarna,970656101,Husqvarna 530iB,4,Machine
+Husqvarna,970748203,Husqvarna 550iBTX,9,Machine
+Husqvarna,970720502,Husqvarna Aspire™ C15X-P4A,6,Machine
+Husqvarna,970838302,Husqvarna 230i,7,Machine
+Husqvarna,970838312,Husqvarna 230i with battery and charger,7,Machine
+Husqvarna,970838401,Husqvarna 242i,7,Machine
+Husqvarna,970838408,Husqvarna 242i with battery and charger,7,Machine
+Husqvarna,970718014,Husqvarna 435i,5,Machine
+Husqvarna,970647015,Husqvarna 542i XP®,4,Machine
+Husqvarna,970647115,Husqvarna 542i XP® G,4,Machine
+Husqvarna,970745818,Husqvarna 550i XP®,5,Machine
+Husqvarna,970746015,Husqvarna 550i XP® G,5,Machine
+Husqvarna,970646814,Husqvarna T542i XP®,5,Machine
+Husqvarna,970646914,Husqvarna T542i XP® G,5,Machine
+Husqvarna,970515907,Husqvarna 120iTK4-H with battery and charger,6,Machine
+Husqvarna,970515902,Husqvarna 120iTK4-H,6,Machine
+Husqvarna,970515909,Husqvarna 120iTK4-PH,6,Machine
+Husqvarna,970551602,Husqvarna 525iLK,6,Machine
+Husqvarna,970536503,Hedge Trimmer 215iHD45 with battery and charger,5,Machine
+Husqvarna,970536501,Husqvarna 215iHD45,5,Machine
+Husqvarna,970466401,Husqvarna 322iHD60,6,Machine
+Husqvarna,967915813,Husqvarna 520iHE3,8,Machine
+Husqvarna,967971203,Husqvarna 520iHT4,6,Machine
+Husqvarna,970466002,Husqvarna 522iHD60,6,Machine
+Husqvarna,970466102,Husqvarna 522iHD75,6,Machine
+Husqvarna,970466202,Husqvarna 522iHDR60,6,Machine
+Husqvarna,970704903,Husqvarna 525iHE3,7,Machine
+Husqvarna,970705003,Husqvarna 525iHE4,7,Machine
+Husqvarna,970705103,Husqvarna 525iHF3,7,Machine
+Husqvarna,970620315,Husqvarna Aspire™ H50-P4A with battery and charger,6,Machine
+Husqvarna,970620311,Husqvarna Aspire™ H50-P4A,6,Machine
+Husqvarna,970716606,Husqvarna Aspire™ S20-P4A with battery and charger,1,Machine
+Husqvarna,970716602,Husqvarna Aspire™ S20-P4A,1,Machine
+Husqvarna,970716706,Aspire™ S20-P4A + Aspire™ pole-P4A with battery and charger,2,Machine
+Husqvarna,970716702,Husqvarna Aspire™ S20-P4A + Aspire™ pole-P4A,2,Machine
+Husqvarna,970827003,Husqvarna Aspire™ PS30X-P4A with battery and charger,2,Machine
+Husqvarna,970827001,Husqvarna Aspire™ PS30X-P4A,2,Machine
+Husqvarna,970753701,Husqvarna Aspire™ P5-P4A,1,Machine
+Husqvarna,970753703,Husqvarna Aspire™ P5-P4A with battery and charger,1,Machine
+Husqvarna,970531204,Husqvarna 110iL with battery and charger,5,Machine
+Husqvarna,970566801,Husqvarna 325iL,6,Machine
+Husqvarna,970566901,Husqvarna 325iR,7,Machine
+Husqvarna,970567001,Husqvarna 325iRJ,6,Machine
+Husqvarna,970648203,Husqvarna LB 144i with battery and charger,3,Machine
+Husqvarna,970648201,Husqvarna LB 144i,3,Machine
+Husqvarna,970500906,Husqvarna LC137i with battery and charger,5,Machine
+Husqvarna,970541806,Husqvarna LC 142i with battery and charger,5,Machine
+Husqvarna,970541906,Husqvarna LC 142iS with battery and charger,5,Machine
+Husqvarna,970648308,Husqvarna Aspire™ LC34-P4A with battery and charger,3,Machine
+Husqvarna,970648301,Husqvarna Aspire™ LC34-P4A,3,Machine
+Husqvarna,967977301,Husqvarna LB 548i,5,Machine
+Husqvarna,970525701,Husqvarna LB 553iV,4,Machine
+Husqvarna,970500901,Husqvarna LC137i,5,Machine
+Husqvarna,970541801,Husqvarna LC 142i,5,Machine
+Husqvarna,970541901,Husqvarna LC 142iS,5,Machine
+Husqvarna,970722401,Husqvarna LC 251i,4,Machine
+Husqvarna,970722601,Husqvarna LC 251iS,4,Machine
+Husqvarna,967862301,Husqvarna LC 347iVX,4,Machine
+Husqvarna,967862001,Husqvarna LC 353iVX,4,Machine
+Husqvarna,970626001,Husqvarna LC 551iV,6,Machine
+Husqvarna,970650101,Husqvarna Cutting Deck - C103i,1,Attachment / accessory
+Husqvarna,970650001,Husqvarna Cutting deck - C94i,1,Attachment / accessory
+Husqvarna,537548002,Husqvarna Power Supply PS300C,1,Battery / charger
+Husqvarna,538899802,Husqvarna Power Supply PS900C,1,Battery / charger
+Husqvarna,967922203,Husqvarna S 138i with battery and charger,10,Machine
+Husqvarna,967922206,Husqvarna S 138i,10,Machine
+Husqvarna,970789201,Husqvarna GS 340is,1,Machine
+Husqvarna,970819201,Husqvarna WB 560i,11,Machine
+Husqvarna,970549301,HUSQVARNA CL400i,7,Machine
+Husqvarna,967144304,Husqvarna 360BT,16,Machine
+Husqvarna,966629401,Husqvarna 570BTS Petrol Backpack Leaf Blower,18,Machine
+Husqvarna,970551001,Husqvarna 590BTS,17,Machine
+Husqvarna,970793114,Husqvarna 540 XP® Mark III,14,Machine
+Husqvarna,970702618,Husqvarna 450S,15,Machine
+Husqvarna,970711418,Husqvarna 564 XP® Fuel Inject,16,Machine
+Husqvarna,970711620,Husqvarna 564 XP® G Fuel Inject,17,Machine
+Husqvarna,970737410,Husqvarna T525,12,Machine
+Husqvarna,967296701,HUSQVARNA Bristle brush attachment BR600,1,Attachment / accessory
+Husqvarna,967294201,Husqvarna Cultivator attachment CA230,1,Attachment / accessory
+Husqvarna,970703901,Husqvarna DB110 FLXi,1,Attachment / accessory
+Husqvarna,970704201,Husqvarna DH110 FLXi,1,Attachment / accessory
+Husqvarna,970703801,Husqvarna DP110 FLXi,1,Attachment / accessory
+Husqvarna,967925504,Husqvarna Edger Attachment ECA850,5,Attachment / accessory
+Husqvarna,967925604,Husqvarna Edger Attachment ESA850,5,Attachment / accessory
+Husqvarna,967297101,HUSQVARNA Extension attachment EX780,1,Attachment / accessory
+Husqvarna,596316503,Husqvarna Hedge Trimmer Attachment HA200,4,Attachment / accessory
+Husqvarna,596316603,HUSQVARNA Hedge trimmer attachment HA860,4,Attachment / accessory
+Husqvarna,537183327,HUSQVARNA Pole saw attachment PA1100,2,Attachment / accessory
+Husqvarna,967908501,HUSQVARNA Weed scissor attachment RA850,3,Attachment / accessory
+Husqvarna,537353503,HUSQVARNA Trimmer attachment TA850,2,Attachment / accessory
+Husqvarna,967688103,Husqvarna 535LK,18,Machine
+Husqvarna,970790801,Husqvarna R 214Ts,20,Machine
+Husqvarna,970841401,Husqvarna R 216Ts AWD,22,Machine
+Husqvarna,970519401,Husqvarna 214C,22,Machine
+Husqvarna,587024601,Broom - R300,3,Attachment / accessory
+Husqvarna,587024701,Broom - R200,3,Attachment / accessory
+Husqvarna,593024301,Husqvarna Broom Rider Collection,1,Attachment / accessory
+Husqvarna,596289201,Husqvarna Flail Mower R400,1,Attachment / accessory
+Husqvarna,596312801,HUSQVARNA Armrest kit R300,1,Attachment / accessory
+Husqvarna,966416101,R300 Flail Mower,3,Attachment / accessory
+Husqvarna,967978201,RC300 Cutting Deck - CombiClip® 112,5,Attachment / accessory
+Husqvarna,967648901,Husqvarna R400 Cutting Deck - CombiClip® 103,3,Attachment / accessory
+Husqvarna,967152401,Husqvarna R300 Cutting Deck - CombiClip® 103,2,Attachment / accessory
+Husqvarna,967649001,R400 Cutting Deck - CombiClip® 112,3,Attachment / accessory
+Husqvarna,967188501,R300 Cutting Deck - CombiClip® 112,2,Attachment / accessory
+Husqvarna,967152201,R200 Cutting Deck - Combi 94,2,Attachment / accessory
+Husqvarna,967152601,Cutting Deck R300 - Combi 94,2,Attachment / accessory
+Husqvarna,967649101,R400 Cutting Deck - Combi 122,3,Attachment / accessory
+Husqvarna,586636601,Moss Rake TRO003,1,Attachment / accessory
+Husqvarna,501008201,Trailer 275,1,Attachment / accessory
+Husqvarna,586636702,Scarifier Rider Attachment,1,Attachment / accessory
+Husqvarna,953512401,R100 Gravel Harrow,1,Attachment / accessory
+Husqvarna,586636801,Dethatcher,1,Attachment / accessory
+Husqvarna,586636901,Aerator,1,Attachment / accessory
+Husqvarna,588212701,HUSQVARNA Plug Aerator,1,Attachment / accessory
+Husqvarna,966532301,Husqvarna Lightweight Small Petrol Hedge Trimmer - 122HD45,13,Attachment / accessory
+Husqvarna,966532401,Husqvarna 122HD60,13,Machine
+Husqvarna,967658301,Husqvarna 522HDR60X,13,Machine
+Husqvarna,967658401,Husqvarna 522HDR75X,13,Machine
+Husqvarna,967944901,Husqvarna 525HE3,16,Machine
+Husqvarna,967945101,Husqvarna 525HE4,16,Machine
+Husqvarna,970726302,Husqvarna PW 360,4,Machine
+Husqvarna,970468302,Husqvarna PW 480,6,Machine
+Husqvarna,546072501,Warning light kit,1,Attachment / accessory
+Husqvarna,966791201,Front headlights,1,Attachment / accessory
+Husqvarna,537635902,Power outlet kit - Front,1,Attachment / accessory
+Husqvarna,537636001,Power outlet kit - Rear,1,Attachment / accessory
+Husqvarna,529958001,HYDRAULIC KIT P 500DX/HX,1,Attachment / accessory
+Husqvarna,547121502,Husqvarna Flail Mower,2,Attachment / accessory
+Husqvarna,967008401,Grammer Primo M Seat,1,Attachment / accessory
+Husqvarna,536902602,Husqvarna Broom,1,Attachment / accessory
+Husqvarna,529957901,HUSQVARNA Counterweight Kit P 500DX/HX,1,Attachment / accessory
+Husqvarna,590450001,Husqvarna Broom Attachment,1,Attachment / accessory
+Husqvarna,966790901,Position and turning lights rear,1,Attachment / accessory
+Husqvarna,953511703,Husqvarna Trailer Profi,1,Attachment / accessory
+Husqvarna,597750801,Husqvarna Weed brush,7,Attachment / accessory
+Husqvarna,970727001,Husqvarna Cutting deck - Combi 112X,3,Attachment / accessory
+Husqvarna,970626301,Husqvarna Cutting deck - Combi 122,3,Attachment / accessory
+Husqvarna,970727101,Husqvarna Cutting deck - Combi 122X,3,Attachment / accessory
+Husqvarna,967978501,132X Combi Cutting Deck,8,Attachment / accessory
+Husqvarna,967978601,155X Combi Cutting Deck,8,Attachment / accessory
+Husqvarna,970727201,Husqvarna Cutting deck - Rear 137X,3,Attachment / accessory
+Husqvarna,967985601,Cutting deck R180,6,Attachment / accessory
+Husqvarna,966488701,Operator Controlled Discharge Chute (OCDC),1,Attachment / accessory
+Husqvarna,970640901,Husqvarna Z560X,17,Machine
+Husqvarna,967322601,HUSQVARNA Collection system,3,Attachment / accessory
+Husqvarna,598390601,"Mulch Kit 60""",1,Attachment / accessory
+Husqvarna,970652801,HUSQVARNA TR 348,12,Machine
+Husqvarna,970727701,Husqvarna TC 215T,15,Machine
+Husqvarna,546080801,Husqvarna Attachment Kit,1,Attachment / accessory
+Husqvarna,546081001,Husqvarna Roller,1,Attachment / accessory
+Husqvarna,547289301,Collecting Bag,1,Attachment / accessory
+Husqvarna,967665704,HUSQVARNA Z242F,12,Machine
+Husqvarna,587412401,2 Bin Collector,4,Attachment / accessory
+Husqvarna,587412301,"Clear Cut Mulch Kit, 107cm",1,Attachment / accessory
+Husqvarna,964954002,Husqvarna HiCut 64,1,Machine
+Husqvarna,970541201,Husqvarna LC 247S,5,Machine
+Husqvarna,970842501,Husqvarna LC 356V,4,Machine
+Husqvarna,970617501,Husqvarna GX 560,1,Machine
+Husqvarna,970609001,Husqvarna KLIPPO LB 548SQe,4,Machine
+Husqvarna,970609101,Husqvarna KLIPPO LB 553SQe,3,Machine
+Husqvarna,970609401,Husqvarna LC 551VQ,4,Machine
+Husqvarna,970649901,Husqvarna R 200iX,16,Machine
+Husqvarna,586636501,Sweeper,1,Attachment / accessory
+Husqvarna,596288701,HUSQVARNA Broom - R400II,2,Attachment / accessory
+Husqvarna,596289801,Husqvarna Flail Mower RC,2,Attachment / accessory
+Husqvarna,967978101,RC300 Cutting Deck - CombiClip® 103,5,Attachment / accessory
+Husqvarna,967152301,Husqvarna R200 Cutting Deck - CombiClip® 103,2,Attachment / accessory
+Husqvarna,970727801,Husqvarna TC 220T,14,Machine
+Husqvarna,970728001,Husqvarna TS 215T,13,Machine
+Husqvarna,970728301,Husqvarna TS 220T,13,Machine
+STIHL,MB022000000,MS 300.0 C-M,13,Machine
+Husqvarna,967808601,Husqvarna K 770 I,19,Machine
+STIHL,48120113519,HSE 81,8,Machine
+STIHL,40067102126,Mowing head AutoCut C 6-2,1,Attachment / accessory
+STIHL,40027102170,Mowing head AutoCut 36-2,1,Attachment / accessory
+STIHL,40087102100,Mowing head AutoCut 2-2,1,Attachment / accessory
+STIHL,40097102104,Mowing head PolyCut 3-2,1,Attachment / accessory
+Husqvarna,578446301,Trimmer head T35,1,Attachment / accessory
+Husqvarna,578446101,Trimmer head T25,1,Attachment / accessory
+Husqvarna,578446801,Trimmer head T45X,1,Attachment / accessory
+STIHL,63600113420,MB 650.0 VM,13,Machine
