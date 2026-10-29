@@ -5,13 +5,16 @@
   and Add to basket. A search box at the top jumps straight to a model.
 
   Replaces the FPG Part Finder app's block. The app stays installed: its proxy
-  (Store URL /apps/parts-finder) is where the parts lists come from.
-  Behaviour: assets/fpg-parts.js. Styles: assets/fpg-parts.css.
+  (Store URL /apps/fpg-parts) is where the parts lists and the maker's diagrams
+  come from.
+  Behaviour: assets/fpg-parts.js. Styles: assets/fpg-parts.css and
+  assets/fpg-parts-diagrams.css.
   Brands, types and models snapshot: assets/fpg-parts-index.json
   (rebuild with fpg-tools/parts/build-parts-index.js).
 {%- endcomment -%}
 
 {{ 'fpg-parts.css' | asset_url | stylesheet_tag }}
+{{ 'fpg-parts-diagrams.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
 <script src="{{ 'fpg-parts.js' | asset_url }}" type="module"></script>
 
@@ -123,7 +126,7 @@
     { "type": "header", "content": "Part Finder app" },
     { "type": "paragraph", "content": "The parts lists come from the FPG Part Finder app's proxy. Only change these if the app's proxy address changes." },
     { "type": "text", "id": "proxy_prefix", "label": "Proxy prefix", "default": "apps" },
-    { "type": "text", "id": "proxy_subpath", "label": "Proxy subpath", "default": "parts-finder" },
+    { "type": "text", "id": "proxy_subpath", "label": "Proxy subpath", "default": "fpg-parts" },
     { "type": "range", "id": "padding-block-start", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 24 },
     { "type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 56 }
   ],

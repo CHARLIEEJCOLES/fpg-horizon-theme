@@ -10,6 +10,11 @@
  *   before the snapshot is rebuilt.
  * - Parts for a model: asked live of the app's proxy (getProducts), grouped
  *   in the app's sections (Carburettor, Engine, ...).
+ * - Diagrams: the app's getDealerParts lists the maker's own parts list for a
+ *   model (STIHL / Husqvarna, from Polly) in sections, each with its exploded
+ *   diagram. Shown as tiles above the sections; a tile opens the diagram with
+ *   clickable numbers (getDiagramNumbers) beside that section's parts. Models
+ *   without one keep the grouped list only.
  * - Manufacturer stock: the Cormorant server's /availability check, for parts
  *   of the brands in the section setting when we have none ourselves. Only
  *   parts on screen are checked, two at a time, and answers are kept for
@@ -54,6 +59,8 @@ function cleanTitle(/** @type {string} */ title, /** @type {string} */ sku, /** 
     const spaced = partNumber(sku).replace(/ /g, '\\s*');
     t = t.replace(new RegExp(`\\s*${sku}\\s*/\\s*${spaced}\\s*$`, 'i'), '');
     t = t.replace(new RegExp(`\\s+${sku}\\b`, 'i'), '');
+    /* Husqvarna: "VOLUTE CASE - 585612501 / 585 61 25-01" */
+    t = t.replace(/\s*-?\s*\/\s*\d[\d\s-]{6,}\d$/, '').replace(/\s+-\s*$/, '');
   }
   if (brand) t = t.replace(new RegExp(`^${brand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+`, 'i'), '');
   return t.trim() || String(title || '');
@@ -260,6 +267,136 @@ function makerStock(/** @type {string} */ base, /** @type {string} */ supplier, 
   return /** @type {Promise<any>} */ (stockRequests.get(key));
 }
 
+/* ---------------------------------------------------------------- diagrams */
+
+const ZOOM_STEPS = [1, 1.5, 2, 3, 4, 6, 8];
+const ZOOM_MAX = 8;
+/** @type {Map<string, any>} */
+const numbersCache = new Map();
+
+/** "CARBURETOR" -> "Carburetor"; names already in mixed case are kept. */
+function sectionName(/** @type {string} */ raw) {
+  const name = String(raw || '').trim();
+  if (name !== name.toUpperCase()) return name;
+  return name.toLowerCase().replace(/(^|[\s/(-])([a-z])/g, (m, a, b) => a + b.toUpperCase());
+}
+
+/** Does a number box on a drawing point at this part? By part number first, else by its Ref. */
+function matchesPart(/** @type {any} */ box, /** @type {any} */ part) {
+  if (!box || !part) return false;
+  const pid = squash(box.pid);
+  if (pid && (squash(part.partNumber) === pid || squash(part.sku) === pid)) return true;
+  return box.a !== '' && box.a != null && String(part.diagramRef || '') === String(box.a);
+}
+
+/**
+ * Husqvarna places its number boxes loosely, so each box is moved to centre on
+ * the digits printed inside it (the same rule as Cormorant's Find parts and the
+ * app's own viewer). A box moves only when exactly as many glyphs as the number
+ * has digits are found side by side near it.
+ */
+async function snapBoxesToDigits(/** @type {HTMLImageElement} */ img, /** @type {any} */ data) {
+  if (!img.complete || !img.naturalWidth) {
+    await new Promise((ok, fail) => {
+      img.addEventListener('load', ok, { once: true });
+      img.addEventListener('error', () => fail(new Error('image did not load')), { once: true });
+    });
+  }
+  const W = img.naturalWidth;
+  const H = img.naturalHeight;
+  if (Math.abs(W / H - data.w / data.h) > 0.02) return data.maps;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d', { willReadFrequently: true }));
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, W, H);
+  ctx.drawImage(img, 0, 0);
+  const px = ctx.getImageData(0, 0, W, H).data;
+  const sx = W / data.w;
+  const sy = H / data.h;
+  const dark = (/** @type {number} */ x, /** @type {number} */ y) => {
+    const k = (y * W + x) * 4;
+    return px[k] * 0.299 + px[k + 1] * 0.587 + px[k + 2] * 0.114 < 140;
+  };
+  return data.maps.map((/** @type {any} */ b) => {
+    const bw = (b.x2 - b.x1) * sx;
+    const bh = (b.y2 - b.y1) * sy;
+    const digits = String(b.a || '').replace(/[^0-9A-Za-z]/g, '').length;
+    if (!digits || bw < 8 || bh < 8) return b;
+    const rx1 = Math.max(0, Math.floor(b.x1 * sx - bw / 2));
+    const ry1 = Math.max(0, Math.floor(b.y1 * sy - bh / 2));
+    const rx2 = Math.min(W - 1, Math.ceil(b.x2 * sx + bw / 2));
+    const ry2 = Math.min(H - 1, Math.ceil(b.y2 * sy + bh / 2));
+    const rw = rx2 - rx1 + 1;
+    const seen = new Uint8Array(rw * (ry2 - ry1 + 1));
+    const glyphs = [];
+    for (let y = ry1; y <= ry2; y++) {
+      for (let x = rx1; x <= rx2; x++) {
+        const at = (y - ry1) * rw + (x - rx1);
+        if (seen[at] || !dark(x, y)) continue;
+        const stack = [[x, y]];
+        seen[at] = 1;
+        let minX = x, maxX = x, minY = y, maxY = y, count = 0, edge = false;
+        while (stack.length) {
+          const [cx, cy] = /** @type {number[]} */ (stack.pop());
+          count++;
+          if (cx < minX) minX = cx;
+          if (cx > maxX) maxX = cx;
+          if (cy < minY) minY = cy;
+          if (cy > maxY) maxY = cy;
+          if (cx === rx1 || cx === rx2 || cy === ry1 || cy === ry2) edge = true;
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              const nx = cx + dx;
+              const ny = cy + dy;
+              if (nx < rx1 || nx > rx2 || ny < ry1 || ny > ry2) continue;
+              const n = (ny - ry1) * rw + (nx - rx1);
+              if (!seen[n] && dark(nx, ny)) {
+                seen[n] = 1;
+                stack.push([nx, ny]);
+              }
+            }
+          }
+        }
+        const gw = maxX - minX + 1;
+        const gh = maxY - minY + 1;
+        if (!edge && count >= 6 && gh >= bh * 0.25 && gh <= bh * 0.9 && gw <= bw * 0.8) {
+          glyphs.push({ minX, maxX, minY, maxY, cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, gh });
+        }
+      }
+    }
+    if (!glyphs.length) return b;
+    const bcx = ((b.x1 + b.x2) / 2) * sx;
+    const bcy = ((b.y1 + b.y2) / 2) * sy;
+    glyphs.sort((p, q) => Math.hypot(p.cx - bcx, p.cy - bcy) - Math.hypot(q.cx - bcx, q.cy - bcy));
+    const group = [glyphs[0]];
+    let grew = true;
+    while (grew) {
+      grew = false;
+      for (const g of glyphs) {
+        if (group.includes(g)) continue;
+        const fits = group.some((o) => {
+          const overlap = Math.min(o.maxY, g.maxY) - Math.max(o.minY, g.minY);
+          const gap = Math.max(g.minX - o.maxX, o.minX - g.maxX);
+          return overlap >= 0.6 * Math.min(o.gh, g.gh) && gap <= 0.5 * Math.max(o.gh, g.gh) && Math.abs(g.gh - o.gh) <= 0.3 * Math.max(o.gh, g.gh);
+        });
+        if (fits) {
+          group.push(g);
+          grew = true;
+        }
+      }
+    }
+    if (group.length !== digits) return b;
+    const cx = (Math.min(...group.map((g) => g.minX)) + Math.max(...group.map((g) => g.maxX))) / 2;
+    const cy = (Math.min(...group.map((g) => g.minY)) + Math.max(...group.map((g) => g.maxY))) / 2;
+    const dx = cx / sx - (b.x1 + b.x2) / 2;
+    const dy = cy / sy - (b.y1 + b.y2) / 2;
+    if (Math.abs(dx) > (b.x2 - b.x1) * 0.6 || Math.abs(dy) > (b.y2 - b.y1) * 0.6) return b;
+    return { ...b, x1: b.x1 + dx, x2: b.x2 + dx, y1: b.y1 + dy, y2: b.y2 + dy };
+  });
+}
+
 /* ---------------------------------------------------------------- finder */
 
 class FpgPartsFinder extends HTMLElement {
@@ -270,9 +407,13 @@ class FpgPartsFinder extends HTMLElement {
   vat = 20;
   /** @type {AbortController | null} */
   request = null;
+  /** @type {{ modelId: number, model: Model, source: string, sections: any[] } | null} */
+  dealer = null;
+  /** @type {HTMLDialogElement | null} */
+  viewer = null;
 
   get proxy() {
-    return (this.dataset.proxy || '/apps/parts-finder').replace(/\/+$/, '');
+    return (this.dataset.proxy || '/apps/fpg-parts').replace(/\/+$/, '');
   }
 
   async connectedCallback() {
@@ -571,6 +712,7 @@ class FpgPartsFinder extends HTMLElement {
           ${model.type.id ? `<button type="button" class="fpg-pf-btn fpg-pf-btn--ghost" data-go-type="${model.type.id}">Change model</button>` : ''}
         </div>
       </div>
+      <div class="fpg-pf-dealer" data-dealer hidden></div>
       <div class="fpg-pf-tools" data-tools hidden>
         <label class="fpg-pf-filter">${SEARCH_ICON}<span class="visually-hidden">Search these parts</span><input type="search" placeholder="Search by part name or number" data-part-filter autocomplete="off"></label>
         <label class="fpg-pf-toggle"><input type="checkbox" data-instock> <span>In stock with us</span></label>
@@ -580,6 +722,10 @@ class FpgPartsFinder extends HTMLElement {
       <p class="fpg-pf-empty" data-parts-none hidden>No parts match. Try fewer words, or ${this.contactHtml('ask us')}.</p>`;
 
     this.request = new AbortController();
+    this.dealer = null;
+    const dealerRequest = fetch(`${this.proxy}/getDealerParts?modelId=${encodeURIComponent(model.id)}`, { signal: this.request.signal })
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null);
     /** @type {any[]} */
     let groups;
     try {
@@ -595,6 +741,13 @@ class FpgPartsFinder extends HTMLElement {
 
     const total = groups.reduce((n, g) => n + g.products.length, 0);
     const summary = /** @type {HTMLElement} */ (this.view.querySelector('[data-summary]'));
+    const dealer = await dealerRequest;
+    const diagrams = this.renderDealer(model, dealer);
+    if (!total && diagrams) {
+      summary.textContent = `${diagrams} diagram section${diagrams === 1 ? '' : 's'} from ${brand.name || 'the maker'}. Open one to see its parts.`;
+      /** @type {HTMLElement} */ (this.view.querySelector('[data-parts]')).innerHTML = '';
+      return;
+    }
     if (!total) {
       summary.textContent = 'No parts listed online for this machine yet.';
       /** @type {HTMLElement} */ (this.view.querySelector('[data-parts]')).innerHTML = `
@@ -605,7 +758,7 @@ class FpgPartsFinder extends HTMLElement {
       return;
     }
     const inStock = groups.reduce((n, g) => n + g.products.filter((/** @type {any} */ p) => p.inventoryQuantity > 0).length, 0);
-    summary.textContent = `${total} parts in ${groups.length} section${groups.length === 1 ? '' : 's'}, ${inStock} in stock with us now.`;
+    summary.textContent = `${total} parts in ${groups.length} section${groups.length === 1 ? '' : 's'}, ${inStock} in stock with us now.${diagrams ? ' Exploded diagrams below.' : ''}`;
 
     const supplier = this.supplierFor(brand.name);
     const sectionsNav = /** @type {HTMLElement} */ (this.view.querySelector('[data-sections]'));
@@ -691,6 +844,12 @@ class FpgPartsFinder extends HTMLElement {
       if (count) count.textContent = String(inGroup);
       shown += inGroup;
     }
+    for (const tile of this.view.querySelectorAll('[data-dsec]')) {
+      const el = /** @type {HTMLElement} */ (tile);
+      const hit = !q || (el.dataset.search || '').includes(q);
+      /** @type {HTMLElement} */ (el.closest('li') || el).hidden = !hit;
+      if (hit) shown++;
+    }
     /** @type {HTMLElement} */ (this.view.querySelector('[data-parts-none]')).hidden = shown > 0;
     const nav = /** @type {HTMLElement | null} */ (this.view.querySelector('[data-sections]'));
     if (nav) {
@@ -762,11 +921,323 @@ class FpgPartsFinder extends HTMLElement {
     for (const el of this.view.querySelectorAll('[data-sku]')) this.observer.observe(el);
   }
 
+  /* ---------- the maker's diagrams */
+
+  /** Tiles for the maker's parts list, one per section with its diagram. Returns how many. */
+  renderDealer(/** @type {Model} */ model, /** @type {any} */ dealer) {
+    const box = /** @type {HTMLElement | null} */ (this.view.querySelector('[data-dealer]'));
+    const sections = (dealer?.sections || []).filter((/** @type {any} */ s) => s?.parts?.length || s?.diagrams?.length);
+    if (!box || !sections.length) return 0;
+    this.dealer = { modelId: model.id, model, source: String(dealer.source || ''), sections };
+    const brand = model.type.brand.name;
+    box.innerHTML = `
+      <div class="fpg-pf-dealer__head">
+        <h3 class="fpg-pf-group__h">Exploded diagrams <span>${sections.length}</span></h3>
+        <p class="fpg-pf-dealer__p">${esc(brand || 'The maker')}'s own parts list for the ${esc(model.name)}. Open a section, then tap a number on the drawing to find the part.</p>
+      </div>
+      <ul class="fpg-pf-dsecs" role="list">${sections.map((/** @type {any} */ sec, /** @type {number} */ i) => this.dealerTileHtml(sec, i)).join('')}</ul>`;
+    box.hidden = false;
+    return sections.length;
+  }
+
+  dealerTileHtml(/** @type {any} */ sec, /** @type {number} */ i) {
+    const parts = sec.parts || [];
+    const pics = sec.diagrams || [];
+    const words = squash([sec.name, ...parts.map((/** @type {any} */ p) => `${p.title} ${p.sku || ''} ${p.partNumber || ''}`)].join(' '));
+    const name = sectionName(sec.name);
+    return `
+      <li>
+        <button type="button" class="fpg-pf-dsec" data-dsec="${i}" data-search="${esc(words)}" aria-label="${esc(name)}: diagram and ${parts.length} parts">
+          <span class="fpg-pf-dsec__pic">${
+            pics.length ? `<img src="${esc(this.diagramUrl(pics[0].thumb))}" alt="" loading="lazy">` : `<span>No diagram</span>`
+          }</span>
+          <span class="fpg-pf-dsec__name">${esc(name)}</span>
+          <span class="fpg-pf-dsec__count">${parts.length} part${parts.length === 1 ? '' : 's'}${pics.length > 1 ? ` · ${pics.length} drawings` : ''}</span>
+        </button>
+      </li>`;
+  }
+
+  diagramUrl(/** @type {string} */ name) {
+    return `${this.proxy}/diagram/${encodeURIComponent(name)}?modelId=${encodeURIComponent(this.dealer?.modelId ?? '')}`;
+  }
+
+  /** The viewer: the drawing (zoom, drag to pan, clickable numbers) beside the section's parts. */
+  openSection(/** @type {number} */ index, start = 0) {
+    const sec = this.dealer?.sections[index];
+    if (!sec) return;
+    const pics = sec.diagrams || [];
+    let at = Math.max(0, Math.min(pics.length - 1, start));
+    this.viewer?.remove();
+    const dialog = document.createElement('dialog');
+    dialog.className = 'fpg-pf-viewer';
+    dialog.setAttribute('aria-label', `${this.dealer?.model.name} ${sectionName(sec.name)} diagram`);
+    this.viewer = dialog;
+    this.append(dialog);
+    const brand = this.dealer?.model.type.brand.name || '';
+    const rows = (sec.parts || []).map((/** @type {any} */ p, /** @type {number} */ i) => this.dealerRowHtml(p, i, brand)).join('') ||
+      '<p class="fpg-pf-v__note">No parts listed in this section.</p>';
+
+    const state = { zoom: 1, maps: /** @type {any[]} */ ([]), run: 0, drag: /** @type {any} */ (null) };
+    const paint = () => {
+      const pic = pics[at];
+      dialog.innerHTML = `
+        <div class="fpg-pf-v">
+          <header class="fpg-pf-v__head">
+            <div class="fpg-pf-v__title"><span>${esc(this.dealer?.model.name || '')}</span> ${esc(sectionName(sec.name))}</div>
+            ${pics.length > 1 ? `<div class="fpg-pf-v__nav"><button type="button" class="fpg-pf-v__btn" data-v-step="-1" ${at === 0 ? 'disabled' : ''} aria-label="Previous drawing">‹</button><span>${at + 1} of ${pics.length}</span><button type="button" class="fpg-pf-v__btn" data-v-step="1" ${at === pics.length - 1 ? 'disabled' : ''} aria-label="Next drawing">›</button></div>` : ''}
+            ${pic ? `<div class="fpg-pf-v__zoom"><button type="button" class="fpg-pf-v__btn" data-v-zoom="-1" aria-label="Zoom out">−</button><span data-v-zoom-label></span><button type="button" class="fpg-pf-v__btn" data-v-zoom="1" aria-label="Zoom in">+</button><button type="button" class="fpg-pf-v__btn fpg-pf-v__btn--text" data-v-zoom="0">Fit</button></div>` : ''}
+            <button type="button" class="fpg-pf-v__close" data-v-close aria-label="Close">×</button>
+          </header>
+          <p class="fpg-pf-v__hint" data-v-hint aria-live="polite">${pic ? '' : 'There is no drawing for this section.'}</p>
+          <div class="fpg-pf-v__body${pic ? '' : ' fpg-pf-v__body--nopic'}">
+            ${pic ? `<div class="fpg-pf-v__scroll" data-v-scroll><div class="fpg-pf-v__stage" data-v-stage><img src="${esc(this.diagramUrl(pic.view))}" alt="${esc(sectionName(sec.name))} diagram" draggable="false"><div class="fpg-pf-v__hot" data-v-hot></div></div></div>` : ''}
+            <div class="fpg-pf-v__list">${rows}</div>
+          </div>
+        </div>`;
+      state.zoom = 1;
+      state.maps = [];
+      if (!pic) return;
+      const img = /** @type {HTMLImageElement} */ (dialog.querySelector('[data-v-stage] img'));
+      img.addEventListener('load', size);
+      img.addEventListener('error', () => {
+        const note = document.createElement('p');
+        note.className = 'fpg-pf-v__note';
+        note.textContent = 'This drawing did not load. Please try again shortly.';
+        img.replaceWith(note);
+      });
+      size();
+      const run = ++state.run;
+      if (pic.numbers) this.loadNumbers(sec, at, dialog, state, run, size);
+      else say('Match the numbers on the drawing to the Ref column.');
+    };
+    const say = (/** @type {string} */ text) => {
+      const hint = dialog.querySelector('[data-v-hint]');
+      if (hint) hint.textContent = text;
+    };
+    const size = () => {
+      const scroll = /** @type {HTMLElement | null} */ (dialog.querySelector('[data-v-scroll]'));
+      const img = /** @type {HTMLImageElement | null} */ (dialog.querySelector('[data-v-stage] img'));
+      if (!scroll || !img) return;
+      const w = Number(img.dataset.w) || img.naturalWidth;
+      const h = Number(img.dataset.h) || img.naturalHeight;
+      if (!w || !h) return;
+      const fit = Math.min((scroll.clientWidth - 16) / w, (scroll.clientHeight - 16) / h);
+      img.style.width = `${Math.max(40, Math.round(w * fit * state.zoom))}px`;
+      scroll.dataset.zoomed = String(state.zoom > 1);
+      const label = dialog.querySelector('[data-v-zoom-label]');
+      if (label) label.textContent = state.zoom <= 1 ? '' : `${Math.round(state.zoom * 100)}%`;
+      const out = /** @type {HTMLButtonElement | null} */ (dialog.querySelector('[data-v-zoom="-1"]'));
+      const inn = /** @type {HTMLButtonElement | null} */ (dialog.querySelector('[data-v-zoom="1"]'));
+      if (out) out.disabled = state.zoom <= 1;
+      if (inn) inn.disabled = state.zoom >= ZOOM_MAX;
+    };
+    const zoomTo = (/** @type {number} */ z, /** @type {{x:number,y:number}=} */ anchor) => {
+      const scroll = /** @type {HTMLElement | null} */ (dialog.querySelector('[data-v-scroll]'));
+      const stage = /** @type {HTMLElement | null} */ (dialog.querySelector('[data-v-stage]'));
+      if (!scroll || !stage) return;
+      const r = scroll.getBoundingClientRect();
+      const a = anchor || { x: r.left + scroll.clientWidth / 2, y: r.top + scroll.clientHeight / 2 };
+      const before = stage.getBoundingClientRect();
+      const fx = before.width ? (a.x - before.left) / before.width : 0.5;
+      const fy = before.height ? (a.y - before.top) / before.height : 0.5;
+      state.zoom = Math.max(1, Math.min(ZOOM_MAX, z));
+      size();
+      const after = stage.getBoundingClientRect();
+      scroll.scrollLeft += after.left + fx * after.width - a.x;
+      scroll.scrollTop += after.top + fy * after.height - a.y;
+    };
+
+    dialog.addEventListener('click', (e) => {
+      const t = /** @type {HTMLElement} */ (e.target);
+      if (t === dialog || t.closest('[data-v-close]')) return shut();
+      const hot = t.closest('[data-hot]');
+      if (hot instanceof HTMLElement) return this.showNumber(dialog, sec, state.maps[Number(hot.dataset.hot)], state.maps, true, say);
+      const step = t.closest('[data-v-step]');
+      if (step instanceof HTMLElement) {
+        at += Number(step.dataset.vStep);
+        return paint();
+      }
+      const zb = t.closest('[data-v-zoom]');
+      if (zb instanceof HTMLElement) {
+        const dir = Number(zb.dataset.vZoom);
+        if (!dir) return zoomTo(1);
+        const next = dir > 0 ? ZOOM_STEPS.find((z) => z > state.zoom + 0.01) || ZOOM_MAX : [...ZOOM_STEPS].reverse().find((z) => z < state.zoom - 0.01) || 1;
+        return zoomTo(next);
+      }
+      const row = t.closest('[data-v-row]');
+      if (row instanceof HTMLElement && !t.closest('a,button')) {
+        const part = (sec.parts || [])[Number(row.dataset.vRow)];
+        const box = state.maps.find((b) => matchesPart(b, part));
+        if (box) this.showNumber(dialog, sec, box, state.maps, false, say);
+      }
+    });
+    dialog.addEventListener('wheel', (e) => {
+      if (!e.ctrlKey || !(e.target instanceof Element) || !e.target.closest('[data-v-scroll]')) return;
+      e.preventDefault();
+      zoomTo(state.zoom * (e.deltaY < 0 ? 1.25 : 0.8), { x: e.clientX, y: e.clientY });
+    }, { passive: false });
+    dialog.addEventListener('pointerdown', (e) => {
+      const scroll = e.target instanceof Element ? e.target.closest('[data-v-scroll]') : null;
+      if (!(scroll instanceof HTMLElement) || e.button !== 0 || /** @type {Element} */ (e.target).closest('[data-hot]') || state.zoom <= 1) return;
+      state.drag = { scroll, x: e.clientX, y: e.clientY, left: scroll.scrollLeft, top: scroll.scrollTop };
+      scroll.setPointerCapture(e.pointerId);
+      scroll.dataset.dragging = 'true';
+    });
+    dialog.addEventListener('pointermove', (e) => {
+      const d = state.drag;
+      if (!d) return;
+      d.scroll.scrollLeft = d.left - (e.clientX - d.x);
+      d.scroll.scrollTop = d.top - (e.clientY - d.y);
+    });
+    const endDrag = () => {
+      if (state.drag) delete state.drag.scroll.dataset.dragging;
+      state.drag = null;
+    };
+    dialog.addEventListener('pointerup', endDrag);
+    dialog.addEventListener('pointercancel', endDrag);
+    dialog.addEventListener('keydown', (e) => {
+      if (e.target instanceof HTMLInputElement) return;
+      if (e.key === 'ArrowRight' && at < pics.length - 1) {
+        at++;
+        paint();
+      } else if (e.key === 'ArrowLeft' && at > 0) {
+        at--;
+        paint();
+      } else if (e.key === '+' || e.key === '=') zoomTo(state.zoom * 1.5);
+      else if (e.key === '-') zoomTo(state.zoom / 1.5);
+      else if (e.key === '0') zoomTo(1);
+    });
+    const onResize = () => size();
+    window.addEventListener('resize', onResize);
+    /* Closes and tidies up straight away rather than waiting for the dialog's close event. */
+    const shut = () => {
+      if (!dialog.isConnected) return;
+      window.removeEventListener('resize', onResize);
+      state.run++;
+      if (dialog.open) dialog.close();
+      dialog.remove();
+      if (this.viewer === dialog) this.viewer = null;
+      /** @type {HTMLElement | null} */ (this.view.querySelector(`[data-dsec="${index}"]`))?.focus();
+    };
+    dialog.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      shut();
+    });
+    dialog.addEventListener('close', shut);
+    dialog.showModal();
+    paint();
+  }
+
+  dealerRowHtml(/** @type {any} */ p, /** @type {number} */ i, /** @type {string} */ brand) {
+    const ref = p.diagramRef ? esc(p.diagramRef) : '–';
+    const qtyOn = Number(p.quantity) > 1 ? ` · ${Number(p.quantity)} on the machine` : '';
+    const no = partNumber(p.sku || p.partNumber || '');
+    if (p.unavailable || !p.variantId) {
+      return `
+        <div class="fpg-pf-vrow" data-v-row="${i}">
+          <span class="fpg-pf-vrow__ref">${ref}</span>
+          <div class="fpg-pf-vrow__body">
+            <span class="fpg-pf-vrow__name">${esc(cleanTitle(p.title, p.sku, brand))}</span>
+            <span class="fpg-pf-vrow__no">Part no. ${esc(no)}${qtyOn}</span>
+            <div class="fpg-pf-vrow__buy"><span class="fpg-pf-stock fpg-pf-stock--out">Not sold online</span>${this.contactHtml('Ask us')}</div>
+          </div>
+        </div>`;
+    }
+    const ex = Math.round(Number(p.price || 0) * 100);
+    const inc = Math.round(ex * (1 + this.vat / 100));
+    const qty = Number(p.inventoryQuantity || 0);
+    const orderable = qty > 0 || p.inventoryPolicy === 'CONTINUE';
+    const variant = String(p.variantId).replace('gid://shopify/ProductVariant/', '');
+    const stock = qty > 0
+      ? `<span class="fpg-pf-stock fpg-pf-stock--in">${qty} in stock</span>`
+      : orderable ? `<span class="fpg-pf-stock fpg-pf-stock--order">Order in</span>` : `<span class="fpg-pf-stock fpg-pf-stock--out">Out of stock</span>`;
+    return `
+      <div class="fpg-pf-vrow" data-v-row="${i}">
+        <span class="fpg-pf-vrow__ref">${ref}</span>
+        <div class="fpg-pf-vrow__body">
+          <a class="fpg-pf-vrow__name" href="/products/${encodeURIComponent(p.handle)}">${esc(cleanTitle(p.title, p.sku, brand))}</a>
+          <span class="fpg-pf-vrow__no">Part no. ${esc(no)}${qtyOn}</span>
+          <div class="fpg-pf-vrow__buy">
+            ${stock}
+            <span class="fpg-pf-part__price"><strong>${money(ex)}</strong> <span class="fpg-vat">+ VAT</span> <span class="fpg-vat fpg-vat--inc">(${money(inc)})</span></span>
+            ${orderable ? `<button type="button" class="fpg-pf-add" data-add="${esc(variant)}">Add to basket</button>` : `<button type="button" class="fpg-pf-add" disabled>Sold out</button>`}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /** The clickable number boxes for the drawing on screen. */
+  async loadNumbers(/** @type {any} */ sec, /** @type {number} */ at, /** @type {HTMLDialogElement} */ dialog, /** @type {any} */ state, /** @type {number} */ run, /** @type {() => void} */ size) {
+    const say = (/** @type {string} */ text) => {
+      const hint = dialog.querySelector('[data-v-hint]');
+      if (hint) hint.textContent = text;
+    };
+    const key = `${this.dealer?.modelId}|${sec.name}|${at}`;
+    let data = numbersCache.get(key);
+    if (!data) {
+      say('Loading the clickable numbers…');
+      try {
+        const r = await fetch(`${this.proxy}/getDiagramNumbers?modelId=${encodeURIComponent(this.dealer?.modelId ?? '')}&section=${encodeURIComponent(sec.name)}&i=${at}`);
+        data = r.ok ? await r.json() : null;
+      } catch {
+        data = null;
+      }
+      if (data?.ok) numbersCache.set(key, data);
+    }
+    if (run !== state.run) return;
+    if (!data?.ok || !Array.isArray(data.maps)) return say('Match the numbers on the drawing to the Ref column.');
+    const img = /** @type {HTMLImageElement | null} */ (dialog.querySelector('[data-v-stage] img'));
+    if (!img) return;
+    img.dataset.w = data.w;
+    img.dataset.h = data.h;
+    const want = this.diagramUrl(data.image);
+    if (img.getAttribute('src') !== want) img.setAttribute('src', want);
+    size();
+    if (this.dealer?.source === 'husqvarna' && !data.snapped) {
+      try {
+        data.maps = await snapBoxesToDigits(img, data);
+      } catch {
+        /* keep the maker's boxes */
+      }
+      data.snapped = true;
+      if (run !== state.run) return;
+    }
+    state.maps = data.maps;
+    const layer = dialog.querySelector('[data-v-hot]');
+    const pct = (/** @type {number} */ v, /** @type {number} */ of) => `${((100 * v) / of).toFixed(3)}%`;
+    if (layer) {
+      layer.innerHTML = data.maps
+        .map((/** @type {any} */ b, /** @type {number} */ i) =>
+          `<button type="button" class="fpg-pf-v__num" data-hot="${i}" aria-label="Number ${esc(b.a || '?')}" style="left:${pct(b.x1, data.w)};top:${pct(b.y1, data.h)};width:${pct(b.x2 - b.x1, data.w)};height:${pct(b.y2 - b.y1, data.h)}"></button>`)
+        .join('');
+    }
+    say('Tap a number on the drawing to find its part.');
+  }
+
+  showNumber(/** @type {HTMLDialogElement} */ dialog, /** @type {any} */ sec, /** @type {any} */ box, /** @type {any[]} */ maps, /** @type {boolean} */ scrollList, /** @type {(t: string) => void} */ say) {
+    if (!box) return;
+    dialog.querySelectorAll('[data-hot]').forEach((b) => {
+      const other = maps[Number(/** @type {HTMLElement} */ (b).dataset.hot)];
+      b.classList.toggle('is-on', !!other && other.a === box.a);
+    });
+    /** @type {HTMLElement | null} */
+    let first = null;
+    dialog.querySelectorAll('[data-v-row]').forEach((row) => {
+      const on = matchesPart(box, (sec.parts || [])[Number(/** @type {HTMLElement} */ (row).dataset.vRow)]);
+      row.classList.toggle('is-on', on);
+      if (on && !first) first = /** @type {HTMLElement} */ (row);
+    });
+    if (scrollList) {
+      /** @type {HTMLElement | null} */ (first)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      say(first ? `Number ${box.a}` : `Number ${box.a} isn't in this list. Ask us and we'll look it up.`);
+    }
+  }
+
   /* ---------- clicks */
 
   onClick = async (/** @type {MouseEvent} */ event) => {
     const t = /** @type {HTMLElement} */ (event.target);
-    const el = t.closest('[data-go-home],[data-go-brand],[data-go-type],[data-go-model],[data-add],[data-save],[data-forget],[data-jump],[data-retry],[data-suggest-go]');
+    const el = t.closest('[data-go-home],[data-go-brand],[data-go-type],[data-go-model],[data-add],[data-save],[data-forget],[data-jump],[data-retry],[data-suggest-go],[data-dsec]');
     if (!(el instanceof HTMLElement)) return;
     const d = el.dataset;
     if ('goHome' in d) return this.go({});
@@ -795,6 +1266,7 @@ class FpgPartsFinder extends HTMLElement {
     if (d.save) return this.toggleSave(Number(d.save), el);
     if (d.forget) return this.forget(Number(d.forget));
     if (d.add) return this.add(el, d.add);
+    if (d.dsec) return this.openSection(Number(d.dsec));
   };
 
   async add(/** @type {HTMLElement} */ button, /** @type {string} */ variant) {
