@@ -223,6 +223,8 @@ export function machineIcon(/** @type {string} */ typeName, size = 48) {
 
 const ARROW =
   '<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path d="M7 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const TRASH_ICON =
+  '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const SEARCH_ICON =
   '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 
@@ -339,8 +341,48 @@ function makerStock(/** @type {string} */ base, /** @type {string} */ supplier, 
 
 const ZOOM_STEPS = [1, 1.5, 2, 3, 4, 6, 8];
 const ZOOM_MAX = 8;
-/** @type {Map<string, any>} */
+/** Clickable numbers per drawing URL: the request in flight, and answers that have arrived. */
+/** @type {Map<string, Promise<any>>} */
 const numbersCache = new Map();
+/** @type {Map<string, any>} */
+const numbersReady = new Map();
+const wait = (/** @type {number} */ ms) => new Promise((ok) => setTimeout(ok, ms));
+
+/**
+ * The numbers for one drawing. Polly sometimes fails a first request (it may be
+ * fetching the positions from STIHL / Husqvarna), so a failure is retried twice
+ * before the viewer gives up; answers are kept for the visit and the tab.
+ */
+function fetchNumbers(/** @type {string} */ url) {
+  const held = numbersCache.get(url);
+  if (held) return held;
+  const promise = (async () => {
+    const saved = readSession(url);
+    if (saved?.ok) return saved;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const r = await fetch(url);
+        const data = r.ok ? await r.json() : null;
+        if (data?.ok && Array.isArray(data.maps)) {
+          writeSession(url, data);
+          return data;
+        }
+        /* The maker has no positions for this drawing: asking again won't help. */
+        if (data && /no such diagram|no clickable numbers/i.test(String(data.reason || ''))) return data;
+      } catch {
+        /* network hiccup: try again */
+      }
+      if (attempt < 2) await wait(attempt ? 2500 : 900);
+    }
+    return null;
+  })();
+  numbersCache.set(url, promise);
+  promise.then((data) => {
+    if (data?.ok) numbersReady.set(url, data);
+    else numbersCache.delete(url);
+  });
+  return promise;
+}
 
 /** "CARBURETOR" -> "Carburetor"; names already in mixed case are kept. */
 function sectionName(/** @type {string} */ raw) {
@@ -487,6 +529,9 @@ class FpgPartsFinder extends HTMLElement {
   viewer = null;
   /** The model on screen; answers for any other are dropped. @type {symbol | null} */
   modelToken = null;
+  /** What's in the basket, by variant id: the first line's key and the total quantity. */
+  /** @type {Map<string, { key: string, quantity: number }>} */
+  basket = new Map();
 
   get proxy() {
     return (this.dataset.proxy || '/apps/fpg-parts').replace(/\/+$/, '');
@@ -525,6 +570,89 @@ class FpgPartsFinder extends HTMLElement {
     }
     this.renderMine();
     this.route(false);
+    this.loadBasket();
+    /* Saved machines are the likeliest clicks: fetch up to three of them when the page is idle. */
+    const idle = /** @type {any} */ (window).requestIdleCallback || ((/** @type {() => void} */ fn) => setTimeout(fn, 1500));
+    idle(() => readStore(STORE_MACHINES, []).slice(0, 3).forEach((/** @type {number} */ id) => this.prefetchModel(id)));
+    window.addEventListener('pageshow', (e) => {
+      if (/** @type {PageTransitionEvent} */ (e).persisted) this.loadBasket();
+    });
+    /* Changes made in the cart drawer (or anywhere else on the page) show here too. */
+    document.addEventListener('shopify:cart:lines-update', (e) => {
+      if (e.target instanceof Node && this.contains(e.target)) return;
+      Promise.resolve(/** @type {any} */ (e).promise)
+        .catch(() => {})
+        .finally(() => this.loadBasket());
+    });
+  }
+
+  /* ---------- basket */
+
+  async loadBasket() {
+    try {
+      const cart = await fetch('/cart.js', { headers: { Accept: 'application/json' } }).then((r) => r.json());
+      this.setBasket(cart);
+    } catch {
+      /* the Add buttons still work */
+    }
+  }
+
+  setBasket(/** @type {any} */ cart) {
+    /** @type {Map<string, { key: string, quantity: number }>} */
+    const next = new Map();
+    for (const item of cart?.items || []) {
+      const id = String(item.variant_id);
+      const line = next.get(id);
+      if (line) line.quantity += Number(item.quantity) || 0;
+      else next.set(id, { key: String(item.key), quantity: Number(item.quantity) || 0 });
+    }
+    this.basket = next;
+    for (const el of this.querySelectorAll('[data-buy]')) {
+      const box = /** @type {HTMLElement} */ (el);
+      if (!box.dataset.busy) box.innerHTML = this.buyInner(box.dataset.buy || '');
+    }
+  }
+
+  /** Add to basket, or the quantity in the basket with − and +. */
+  buyHtml(/** @type {string} */ variant, /** @type {boolean} */ orderable) {
+    if (!orderable || !variant) return `<button type="button" class="fpg-pf-add" disabled>Sold out</button>`;
+    return `<div class="fpg-pf-buy" data-buy="${esc(variant)}">${this.buyInner(variant)}</div>`;
+  }
+
+  buyInner(/** @type {string} */ variant) {
+    const line = this.basket.get(variant);
+    if (!line) return `<button type="button" class="fpg-pf-add" data-add="${esc(variant)}">Add to basket</button>`;
+    return `<div class="fpg-pf-qty">
+        <button type="button" class="fpg-pf-qty__btn" data-qty-step="-1" aria-label="${line.quantity === 1 ? 'Remove from basket' : 'One fewer'}">${line.quantity === 1 ? TRASH_ICON : '−'}</button>
+        <span class="fpg-pf-qty__n" aria-live="polite"><strong>${line.quantity}</strong> in basket</span>
+        <button type="button" class="fpg-pf-qty__btn" data-qty-step="1" aria-label="One more">+</button>
+      </div>`;
+  }
+
+  async stepQuantity(/** @type {HTMLElement} */ button) {
+    const box = /** @type {HTMLElement | null} */ (button.closest('[data-buy]'));
+    const variant = box?.dataset.buy || '';
+    const line = this.basket.get(variant);
+    if (!box || !line || box.dataset.busy) return;
+    const quantity = Math.max(0, line.quantity + Number(button.dataset.qtyStep));
+    box.dataset.busy = 'true';
+    box.querySelectorAll('button').forEach((b) => (b.disabled = true));
+    try {
+      const tools = /** @type {any} */ (window).FPGTools;
+      const cart = tools?.setLineQuantity
+        ? await tools.setLineQuantity(line.key, quantity, box)
+        : await fetch('/cart/change.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: line.key, quantity }) }).then((r) => r.json());
+      delete box.dataset.busy;
+      this.setBasket(cart);
+      if (quantity > 0 && (this.basket.get(variant)?.quantity || 0) < quantity) {
+        const n = box.querySelector('.fpg-pf-qty__n');
+        if (n) n.innerHTML = `<strong>${this.basket.get(variant)?.quantity || 0}</strong> in basket (all we have)`;
+      }
+    } catch (error) {
+      delete box.dataset.busy;
+      box.innerHTML = this.buyInner(variant);
+      console.warn('[FP&G parts finder]', error);
+    }
   }
 
   /* ---------- fetching ahead */
@@ -542,16 +670,30 @@ class FpgPartsFinder extends HTMLElement {
     cachedJson(urls.dealer).catch(() => {});
   }
 
-  /** Starts loading a section's full drawing. */
+  /** Starts loading a section's drawings and their clickable numbers. */
   prefetchDrawing(/** @type {number} */ index) {
-    const view = this.dealer?.sections[index]?.diagrams?.[0]?.view;
-    if (!view) return;
-    const url = this.diagramUrl(view);
+    const sec = this.dealer?.sections[index];
+    (sec?.diagrams || []).forEach((/** @type {any} */ pic, /** @type {number} */ at) => {
+      if (at > 1) return;
+      if (pic.numbers) {
+        /* The numbers name the image they were measured on; that is the one shown. */
+        fetchNumbers(this.numbersUrl(sec, at)).then((data) => this.warmImage(data?.ok ? data.image : pic.view));
+      } else this.warmImage(pic.view);
+    });
+  }
+
+  warmImage(/** @type {string} */ name) {
+    if (!name) return;
+    const url = this.diagramUrl(name);
     if (this.warmed.has(url)) return;
     this.warmed.add(url);
     const img = new Image();
     img.decoding = 'async';
     img.src = url;
+  }
+
+  numbersUrl(/** @type {any} */ sec, /** @type {number} */ at) {
+    return `${this.proxy}/getDiagramNumbers?modelId=${encodeURIComponent(this.dealer?.modelId ?? '')}&section=${encodeURIComponent(sec.name)}&i=${at}`;
   }
 
   /** @type {Set<string>} */
@@ -1004,11 +1146,7 @@ class FpgPartsFinder extends HTMLElement {
         </div>
         <div class="fpg-pf-part__foot">
           <span class="fpg-pf-part__price"><strong>${money(ex)}</strong> <span class="fpg-vat">+ VAT</span> <span class="fpg-vat fpg-vat--inc">(${money(inc)})</span></span>
-          ${
-            orderable && variant
-              ? `<button type="button" class="fpg-pf-add" data-add="${esc(variant)}">Add to basket</button>`
-              : `<button type="button" class="fpg-pf-add" disabled>Sold out</button>`
-          }
+          ${this.buyHtml(variant, orderable)}
         </div>
       </li>`;
   }
@@ -1182,6 +1320,9 @@ class FpgPartsFinder extends HTMLElement {
         : '';
     const paint = () => {
       const pic = pics[at];
+      /* When the numbers are already here, show the image they were measured on straight away. */
+      const known = pic?.numbers ? numbersReady.get(this.numbersUrl(sec, at)) : null;
+      const first = known?.image || pic?.view;
       dialog.innerHTML = `
         <div class="fpg-pf-v">
           <header class="fpg-pf-v__head">
@@ -1192,7 +1333,7 @@ class FpgPartsFinder extends HTMLElement {
           </header>
           <p class="fpg-pf-v__hint" data-v-hint aria-live="polite">${pic ? '' : 'There is no drawing for this section.'}</p>
           <div class="fpg-pf-v__body${pic ? '' : ' fpg-pf-v__body--nopic'}">
-            ${pic ? `<div class="fpg-pf-v__scroll" data-v-scroll data-loading="true"><div class="fpg-pf-v__stage" data-v-stage><img src="${esc(this.diagramUrl(pic.view))}" alt="${esc(sectionName(sec.name))} diagram" draggable="false" fetchpriority="high"><div class="fpg-pf-v__hot" data-v-hot></div></div><p class="fpg-pf-v__loading" aria-hidden="true">Loading the drawing…</p></div>` : ''}
+            ${pic ? `<div class="fpg-pf-v__scroll" data-v-scroll data-loading="true"><div class="fpg-pf-v__stage" data-v-stage><img src="${esc(this.diagramUrl(first))}" alt="${esc(sectionName(sec.name))} diagram" draggable="false" fetchpriority="high"${known ? ` data-w="${esc(known.w)}" data-h="${esc(known.h)}"` : ''}><div class="fpg-pf-v__hot" data-v-hot></div></div><p class="fpg-pf-v__loading" aria-hidden="true">Loading the drawing…</p></div>` : ''}
             <div class="fpg-pf-v__list">${rows}</div>
           </div>
           ${foot}
@@ -1345,7 +1486,10 @@ class FpgPartsFinder extends HTMLElement {
     dialog.addEventListener('close', shut);
     dialog.showModal();
     paint();
-    /* The next section is the likeliest click: fetch its drawing now. */
+    /* This section's other drawings and the next section are the likeliest clicks. */
+    pics.forEach((/** @type {any} */ pic, /** @type {number} */ i) => {
+      if (i !== at && pic.numbers) fetchNumbers(this.numbersUrl(sec, i));
+    });
     this.prefetchDrawing(index + 1);
   }
 
@@ -1381,7 +1525,7 @@ class FpgPartsFinder extends HTMLElement {
           <div class="fpg-pf-vrow__buy">
             ${stock}
             <span class="fpg-pf-part__price"><strong>${money(ex)}</strong> <span class="fpg-vat">+ VAT</span> <span class="fpg-vat fpg-vat--inc">(${money(inc)})</span></span>
-            ${orderable ? `<button type="button" class="fpg-pf-add" data-add="${esc(variant)}">Add to basket</button>` : `<button type="button" class="fpg-pf-add" disabled>Sold out</button>`}
+            ${this.buyHtml(variant, orderable)}
           </div>
         </div>
       </div>`;
@@ -1393,18 +1537,9 @@ class FpgPartsFinder extends HTMLElement {
       const hint = dialog.querySelector('[data-v-hint]');
       if (hint) hint.textContent = text;
     };
-    const key = `${this.dealer?.modelId}|${sec.name}|${at}`;
-    let data = numbersCache.get(key);
-    if (!data) {
-      say('Loading the clickable numbers…');
-      try {
-        const r = await fetch(`${this.proxy}/getDiagramNumbers?modelId=${encodeURIComponent(this.dealer?.modelId ?? '')}&section=${encodeURIComponent(sec.name)}&i=${at}`);
-        data = r.ok ? await r.json() : null;
-      } catch {
-        data = null;
-      }
-      if (data?.ok) numbersCache.set(key, data);
-    }
+    const url = this.numbersUrl(sec, at);
+    if (!numbersReady.has(url)) say('Loading the clickable numbers…');
+    const data = await fetchNumbers(url);
     if (run !== state.run) return;
     if (!data?.ok || !Array.isArray(data.maps)) return say('Match the numbers on the drawing to the Ref column.');
     const img = /** @type {HTMLImageElement | null} */ (dialog.querySelector('[data-v-stage] img'));
@@ -1458,7 +1593,7 @@ class FpgPartsFinder extends HTMLElement {
 
   onClick = async (/** @type {MouseEvent} */ event) => {
     const t = /** @type {HTMLElement} */ (event.target);
-    const el = t.closest('[data-go-home],[data-go-brand],[data-go-type],[data-go-model],[data-add],[data-save],[data-forget],[data-jump],[data-retry],[data-suggest-go],[data-dsec]');
+    const el = t.closest('[data-go-home],[data-go-brand],[data-go-type],[data-go-model],[data-add],[data-qty-step],[data-save],[data-forget],[data-jump],[data-retry],[data-suggest-go],[data-dsec]');
     if (!(el instanceof HTMLElement)) return;
     const d = el.dataset;
     if ('goHome' in d) return this.go({});
@@ -1487,6 +1622,7 @@ class FpgPartsFinder extends HTMLElement {
     if (d.save) return this.toggleSave(Number(d.save), el);
     if (d.forget) return this.forget(Number(d.forget));
     if (d.add) return this.add(el, d.add);
+    if (d.qtyStep) return this.stepQuantity(el);
     if (d.dsec) return this.openSection(Number(d.dsec));
   };
 
@@ -1497,22 +1633,27 @@ class FpgPartsFinder extends HTMLElement {
     b.textContent = 'Adding…';
     try {
       const tools = /** @type {any} */ (window).FPGTools;
-      if (tools?.addItemsToCart) await tools.addItemsToCart([{ id: Number(variant), quantity: 1 }], b);
+      let cart = null;
+      if (tools?.addItemsToCart) cart = await tools.addItemsToCart([{ id: Number(variant), quantity: 1 }], b);
       else {
         const r = await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: Number(variant), quantity: 1 }) });
         if (!r.ok) throw new Error((await r.json()).description || 'Could not add');
       }
-      b.textContent = 'Added ✓';
-      b.dataset.state = 'added';
+      if (!cart) cart = await fetch('/cart.js', { headers: { Accept: 'application/json' } }).then((r) => r.json());
+      /* The button becomes the basket quantity with − and +, here and anywhere else this part shows. */
+      this.setBasket(cart);
+      if (b.isConnected) {
+        b.textContent = 'Added ✓';
+        b.dataset.state = 'added';
+      }
     } catch (error) {
       b.textContent = 'Could not add';
       console.warn('[FP&G parts finder]', error);
+      setTimeout(() => {
+        b.textContent = label;
+        b.disabled = false;
+      }, 2000);
     }
-    setTimeout(() => {
-      b.textContent = label;
-      b.disabled = false;
-      delete b.dataset.state;
-    }, 2000);
   }
 
   /* ---------- my machines */

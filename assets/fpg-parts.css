@@ -1148,6 +1148,64 @@ a.fpg-pf-mine__label:focus-visible {
   background: #1c6b34;
 }
 
+/* Once in the basket: the quantity with − and +. */
+.fpg-pf-buy {
+  display: grid;
+}
+
+.fpg-pf-qty {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: stretch;
+  min-height: 42px;
+  border: 1px solid var(--fpg-teal, #002d37);
+  border-radius: 9px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.fpg-pf-qty__btn {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: var(--fpg-mist, #f3f6f4);
+  color: var(--fpg-teal, #002d37) !important;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.fpg-pf-qty__btn:hover:not(:disabled) {
+  background: var(--fpg-pale, #e2e9e5);
+}
+
+.fpg-pf-qty__btn:disabled {
+  opacity: 0.45;
+  cursor: progress;
+}
+
+.fpg-pf-qty__n {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 8px;
+  font-size: 0.875rem;
+  color: var(--fpg-teal, #002d37);
+  white-space: nowrap;
+}
+
+.fpg-pf-qty__n strong {
+  font-size: 1rem;
+}
+
+.fpg-pf-vrow__buy .fpg-pf-buy {
+  margin-left: auto;
+  min-width: 190px;
+}
+
 /* loading cards */
 .fpg-pf-part--ghost {
   min-height: 300px;
