@@ -1,17 +1,17 @@
 {
- "checked_at": "29/10/2026 13:55-14:07",
- "run_read_at": "29/10/2026 13:55",
+ "checked_at": "29/10/2026 13:55-14:07 (clickable numbers 14:15-14:42)",
+ "run_read_at": "29/10/2026 14:40",
  "started": "29/10/2026 12:30",
  "by": "Daniel Shoemark",
  "run_total": 398,
- "run_done": 83,
- "run_minutes": 85,
+ "run_done": 94,
+ "run_minutes": 91,
  "baseline_live": 102,
  "counts": {
-  "added": 41,
-  "linked": 13,
+  "added": 43,
+  "linked": 16,
   "person_n": 21,
-  "notfound_n": 12,
+  "notfound_n": 14,
   "failed": 0
  },
  "person": [
@@ -148,6 +148,14 @@
   [
    "HLA 88",
    "Nothing on the STIHL portal for \"HLA 88\""
+  ],
+  [
+   "254XP",
+   "No \"254XP\" on the Husqvarna portal - its search found 120 machines, none with the number 254"
+  ],
+  [
+   "281XP",
+   "No \"281XP\" on the Husqvarna portal - its search found 124 machines, none with the number 281"
   ]
  ],
  "linked_by_hand": [
@@ -162,5 +170,6 @@
  ],
  "suggest": {
   "R112C": "Link by hand: HUSQVARNA Small Ride On Lawn Mower - R 112C (262 parts) - same machine, ready now"
- }
+ },
+ "status": "cancelled 14:01"
 }

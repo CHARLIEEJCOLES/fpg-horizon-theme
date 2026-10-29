@@ -19,6 +19,15 @@ ROOT = HERE.parents[2]
 index = json.loads((ROOT / 'assets/fpg-parts-index.json').read_text())
 links = {int(k): v for k, v in json.loads((HERE / 'live-links.json').read_text()).items()}
 run = json.loads((HERE / 'run-status.json').read_text())
+clk_path = HERE / 'clickable-first-drawing.json'
+clk = {int(k): v for k, v in json.loads(clk_path.read_text()).items()} if clk_path.exists() else {}
+def clickable(mid):
+    v = clk.get(mid)
+    if v is None: return ''
+    if v.startswith('yes'): return 'Yes'
+    return {'No such diagram.': 'No - maker has no positions',
+            'This diagram has no clickable numbers yet.': 'Not yet - open once in Polly Find parts',
+            'The numbers could not be loaded for this diagram.': 'Failed to load - retry later'}.get(v, v)
 out = HERE / sys.argv[1] if len(sys.argv) > 1 else HERE / 'parts-diagram-progress.xlsx'
 
 person = {n: c for n, c in run['person']}          # model name -> close machines
@@ -80,7 +89,7 @@ for b in index['b']:
             else:
                 nxt, note = '', 'Brand has no dealer parts portal'
             rows.append([mid, brand, t[1], name, status,
-                         (link[0] if link else ''), (link[2] if link else 0), note, nxt])
+                         (link[0] if link else ''), (link[2] if link else 0), note, nxt, clickable(mid)])
 
 wb = Workbook()
 
@@ -142,6 +151,12 @@ s.cell(r, 1, 'Added today').font = F
 s.cell(r, 5, f'=E{r-2}-E{r-1}').font = F
 s.cell(r, 5).alignment = Alignment(horizontal='center')
 r += 1
+s.cell(r, 1, 'Live models whose numbers are clickable (1st drawing tested)').font = F
+s.cell(r, 5, f'=COUNTIFS(\'All models\'!$J$2:$J${n},"Yes")').font = F
+s.cell(r, 6, f'=IF(E{r-3}=0,0,E{r}/E{r-3})').font = F
+s.cell(r, 6).number_format = '0.0%'
+s.cell(r, 5).alignment = s.cell(r, 6).alignment = Alignment(horizontal='center')
+r += 1
 s.cell(r, 1, 'Total drawings now on the website').font = F
 s.cell(r, 5, f"=SUM('All models'!$G$2:$G${n})").font = F
 s.cell(r, 5).number_format = '#,##0'; s.cell(r, 5).alignment = Alignment(horizontal='center')
@@ -153,8 +168,9 @@ r += 1
 runrows = [
     ('Started', run['started'], None),
     ('Started by', run['by'], None),
+    ('Status', run.get('status', 'running'), None),
     ('Models in the run', run['run_total'], '#,##0'),
-    ('Models done so far', run['run_done'], '#,##0'),
+    ('Models done (sum of results)', run['run_done'], '#,##0'),
 ]
 rs = r
 for label, val, fmt in runrows:
@@ -163,18 +179,18 @@ for label, val, fmt in runrows:
     if fmt: c.number_format = fmt
     r += 1
 s.cell(r, 1, 'Run progress').font = FB
-s.cell(r, 5, f'=IF(E{rs+2}=0,0,E{rs+3}/E{rs+2})').font = FB
+s.cell(r, 5, f'=IF(E{rs+3}=0,0,E{rs+4}/E{rs+3})').font = FB
 s.cell(r, 5).number_format = '0.0%'; s.cell(r, 5).alignment = Alignment(horizontal='center')
 r += 1
 s.cell(r, 1, 'Minutes running when read').font = F
 c = s.cell(r, 5, run['run_minutes']); c.font = FBLUE; c.alignment = Alignment(horizontal='center')
 r += 1
 s.cell(r, 1, 'Pace (minutes per model)').font = F
-s.cell(r, 5, f'=IF(E{rs+3}=0,0,E{r-1}/E{rs+3})').font = F
+s.cell(r, 5, f'=IF(E{rs+4}=0,0,E{r-1}/E{rs+4})').font = F
 s.cell(r, 5).number_format = '0.00'; s.cell(r, 5).alignment = Alignment(horizontal='center')
 r += 1
-s.cell(r, 1, 'Estimated minutes left at that pace').font = F
-s.cell(r, 5, f'=(E{rs+2}-E{rs+3})*E{r-1}').font = F
+s.cell(r, 1, 'Estimated minutes left at that pace (if restarted)').font = F
+s.cell(r, 5, f'=(E{rs+3}-E{rs+4})*E{r-1}').font = F
 s.cell(r, 5).number_format = '#,##0'; s.cell(r, 5).alignment = Alignment(horizontal='center')
 r += 1
 s.cell(r, 1, 'Run results so far').font = FB; r += 1
@@ -194,7 +210,7 @@ s.column_dimensions['G'].width = 60
 # ---------------- All models ----------------
 a = wb.create_sheet('All models')
 heads = ['Finder ID', 'Brand', 'Machine type', 'Model', 'Status', 'Dealer list on website',
-         'Drawings', 'Note', 'Next step']
+         'Drawings', 'Note', 'Next step', 'Numbers clickable (1st drawing)']
 a.append(heads)
 for row in sorted(rows, key=lambda x: (x[1] not in ('Stihl', 'Husqvarna'), x[1], x[2], x[3])):
     a.append(row)
@@ -203,11 +219,11 @@ for c in range(1, len(heads) + 1):
 for row in a.iter_rows(min_row=2):
     for cell in row:
         cell.font = F
-widths = [10, 12, 24, 22, 28, 40, 10, 50, 52]
+widths = [10, 12, 24, 22, 28, 40, 10, 50, 52, 34]
 for i, w in enumerate(widths, 1):
     a.column_dimensions[get_column_letter(i)].width = w
 a.freeze_panes = 'A2'
-a.auto_filter.ref = f'A1:I{n}'
+a.auto_filter.ref = f'A1:J{n}'
 for name, colour in STATUSES:
     a.conditional_formatting.add(f'E2:E{n}', FormulaRule(formula=[f'$E2="{name}"'], fill=PatternFill('solid', fgColor=colour)))
 
