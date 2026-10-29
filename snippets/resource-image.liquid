@@ -84,14 +84,28 @@
     case section_settings.layout_type
       when 'grid', 'carousel'
         assign calculated_width = 100 | divided_by: section_settings.columns | append: 'vw'
-        assign sizes = '(min-width: 750px) [calc-width], 100vw' | replace: '[calc-width]', calculated_width
+        # FP&G: phone width from the section's phone layout (carousel card width or
+        # phone columns) instead of the full screen.
+        assign mobile_vw = '100vw'
+        assign mobile_columns = section_settings.mobile_columns | append: ''
+        if section_settings.layout_type == 'carousel' or section_settings.carousel_on_mobile
+          if section_settings.mobile_card_size == '44cqw'
+            assign mobile_vw = '44vw'
+          else
+            assign mobile_vw = '60vw'
+          endif
+        elsif mobile_columns == '2'
+          assign mobile_vw = '50vw'
+        endif
+        assign sizes = '(min-width: 750px) [calc-width], [mobile-vw]' | replace: '[calc-width]', calculated_width | replace: '[mobile-vw]', mobile_vw
       when 'editorial', 'bento'
         assign loading = 'lazy'
         assign sizes = lazy_sizes
     endcase
   endif
 
-  assign widths = '240, 352, 832, 1200, 1600, 1920, 2560, 3840'
+  # FP&G: 480 and 640 added so small cards on phones don't jump from 352 to 832.
+  assign widths = '240, 352, 480, 640, 832, 1200, 1600, 1920, 2560, 3840'
 
   # Generate placeholder info based on content type
   if content_type == 'articles'

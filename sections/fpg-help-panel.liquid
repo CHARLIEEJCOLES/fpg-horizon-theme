@@ -24,6 +24,7 @@
 <div class="section section--page-width spacing-style fpg-helpp" style="{% render 'spacing-padding', settings: section.settings %}">
   {%- if is_search and search.performed -%}
     {%- comment -%} A machine model in the search ("MS 261 chain") gets a shortcut to the chains and bars that fit it (assets/fpg-fit.js). {%- endcomment -%}
+    {{ 'fpg-fit.css' | asset_url | stylesheet_tag }}
     <script src="{{ 'fpg-fit.js' | asset_url }}" type="module"></script>
     <fpg-fit-search
       hidden

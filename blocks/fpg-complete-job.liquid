@@ -125,6 +125,7 @@
 -%}
 
 {%- if count > 0 or wants_chain -%}
+  {{ 'fpg-fit.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
   <script src="{{ 'fpg-complete-job.js' | asset_url }}" type="module"></script>
   <fpg-complete-job

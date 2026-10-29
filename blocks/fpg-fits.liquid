@@ -5,7 +5,11 @@
     "check your machine" box.
   - On a chainsaw, pole saw or pruner: spare chains and bars listed as fitting
     it, matching the bar length of the chosen option when it has one.
-  Nothing shows for other products, or when no fit details are found.
+  Nothing shows for other products, or when no fit details are found, so the
+  block renders (and loads its script and data) only for machines and for
+  products that look like a chain, bar or kit. Every product in
+  fpg-fit-data.json passes that test (checked 29 Oct 2026); 102158 is listed by
+  handle because its title is only "'- MSA 200".
   Updates when the shopper changes variant (assets/fpg-variant-block.js).
 {%- enddoc -%}
 
@@ -21,8 +25,20 @@
   endfor
   assign variant = product.selected_or_first_available_variant
   assign finder_url = routes.collections_url | append: '/' | append: block.settings.finder_collection
+
+  assign may_fit = is_machine
+  assign fit_text = product.title | append: ' ' | append: product.type | downcase
+  if fit_text contains 'chain' or fit_text contains 'bar' or fit_text contains 'guide' or fit_text contains 'kit' or fit_text contains 'drive link'
+    assign may_fit = true
+  endif
+  if product.handle == '102158'
+    assign may_fit = true
+  endif
 -%}
 
+{%- if may_fit -%}
+
+{{ 'fpg-fit.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
 <script src="{{ 'fpg-fit.js' | asset_url }}" type="module"></script>
 <fpg-variant-block data-block-id="{{ block.id }}" data-product-id="{{ product.id }}" {{ block.shopify_attributes }}>
@@ -46,6 +62,7 @@
   </fpg-fit-product>
 </fpg-variant-block>
 <script src="{{ 'fpg-variant-block.js' | asset_url }}" type="module"></script>
+{%- endif -%}
 
 {% schema %}
 {

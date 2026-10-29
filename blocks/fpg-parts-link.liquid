@@ -3,16 +3,17 @@
   from the product's brand and title (the longest model name in the parts
   finder that appears in the title, e.g. "MS 261") and links to every part
   listed for it in the parts finder. Shows nothing when no machine matches.
-  Behaviour: assets/fpg-parts.js (fpg-parts-link). Styles: assets/fpg-parts.css.
+  Behaviour: assets/fpg-parts.js (fpg-parts-link) and assets/fpg-save-machine.js,
+  both loaded once the page has finished loading (they only reveal extras below
+  the buy buttons), so they never compete with the product itself.
 {%- enddoc -%}
 
 {%- assign product = closest.product -%}
-{{ 'fpg-parts.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'fpg-parts.js' | asset_url }}" type="module" fetchpriority="low"></script>
-{%- if block.settings.show_save -%}
-  <script src="{{ 'fpg-save-machine.js' | asset_url }}" type="module" fetchpriority="low"></script>
-{%- endif -%}
-<div class="fpg-machine-tools" {{ block.shopify_attributes }}>
+<div
+  class="fpg-machine-tools"
+  data-fpg-later="{{ 'fpg-parts.js' | asset_url }}{% if block.settings.show_save %} {{ 'fpg-save-machine.js' | asset_url }}{% endif %}"
+  {{ block.shopify_attributes }}
+>
 <fpg-parts-link
   class="fpg-parts-link"
   data-index="{{ 'fpg-parts-index.json' | asset_url }}"
@@ -48,8 +49,62 @@
   </fpg-save-machine>
 {%- endif -%}
 </div>
+<script type="module">
+  const start = () => {
+    for (const tools of document.querySelectorAll('[data-fpg-later]')) {
+      for (const src of tools.getAttribute('data-fpg-later').split(' ')) if (src) import(src);
+      tools.removeAttribute('data-fpg-later');
+    }
+  };
+  const idle = (fn) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 2500 }) : setTimeout(fn, 200));
+  if (document.readyState === 'complete') idle(start);
+  else window.addEventListener('load', () => idle(start), { once: true });
+</script>
 
 {% stylesheet %}
+  /* The link's own rules (the same as the end of assets/fpg-parts.css), so product pages don't need that file. */
+  .fpg-parts-link a {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--fpg-line, #d6ded9);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--fpg-teal, #002d37);
+    text-decoration: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .fpg-parts-link a:hover {
+    border-color: var(--fpg-teal, #002d37);
+    box-shadow: var(--fpg-shadow-sm);
+  }
+
+  .fpg-parts-link__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--fpg-mist, #f3f6f4);
+  }
+
+  .fpg-parts-link__text {
+    display: grid;
+    gap: 2px;
+  }
+
+  .fpg-parts-link__text strong {
+    font-size: 1rem;
+  }
+
+  .fpg-parts-link__text small {
+    font-size: 0.875rem;
+    color: rgb(18 38 43 / 0.65);
+  }
+
   .fpg-machine-tools {
     display: grid;
     gap: 10px;

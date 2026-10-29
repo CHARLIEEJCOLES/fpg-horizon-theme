@@ -15,6 +15,13 @@ const VIEWED_KEY = 'fpg:recently-viewed';
 const VIEWED_MAX = 20;
 
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Runs once the page has loaded and the browser has a quiet moment. @param {() => void} fn */
+const afterLoad = (fn) => {
+  const idle = () => ('requestIdleCallback' in window ? window.requestIdleCallback(fn, { timeout: 2500 }) : window.setTimeout(fn, 200));
+  if (document.readyState === 'complete') idle();
+  else window.addEventListener('load', idle, { once: true });
+};
 const pad2 = (/** @type {number} */ n) => String(n).padStart(2, '0');
 
 /* ------------------------------------------------------------------ */
@@ -210,7 +217,8 @@ class FpgRecentlyViewed extends HTMLElement {
     const others = viewed.filter((id) => id !== current).slice(0, limit);
 
     if (current && !window.Shopify?.designMode) writeViewed([current, ...viewed.filter((id) => id !== current)]);
-    if (others.length) this.#render(others);
+    // The row sits at the foot of the page, so its search waits until the page has loaded.
+    if (others.length) afterLoad(() => this.#render(others));
   }
 
   /** @param {string[]} ids */
@@ -290,7 +298,7 @@ function initReveal() {
 /**
  * Copies the matching promo card into a top-level menu item's desktop dropdown.
  * Horizon's header can redraw its menu after the page loads, so the card is
- * (re)added on page load and again whenever a menu item is hovered or focused.
+ * (re)added whenever a menu item is hovered or focused.
  * @param {Element} item - A top-level .menu-list__list-item
  */
 function ensureMenuPromo(item) {
@@ -303,16 +311,31 @@ function ensureMenuPromo(item) {
   const card = template.content.firstElementChild?.cloneNode(true);
   if (!(card instanceof HTMLElement)) return;
   card.dataset.fpgInjected = '';
+  for (const img of card.querySelectorAll('img[data-fpg-src]')) {
+    if (img.dataset.fpgSrcset) img.setAttribute('srcset', img.dataset.fpgSrcset);
+    img.setAttribute('src', img.dataset.fpgSrc || '');
+    img.removeAttribute('data-fpg-srcset');
+    img.removeAttribute('data-fpg-src');
+  }
   grid.append(card);
 }
 
+/*
+ * The cards only show in the desktop dropdowns (fpg-design.css), so phones never place them.
+ * Shoppers get a card when they first hover or tab to its menu item, so its picture isn't
+ * downloaded with the page; the theme editor places them all straight away for previewing.
+ */
+const desktopMenu = window.matchMedia('(min-width: 990px)');
+
 function initMenuPromos() {
   for (const old of document.querySelectorAll('.fpg-menu-promo[data-fpg-injected]')) old.remove();
+  if (!desktopMenu.matches || !window.Shopify?.designMode) return;
   for (const item of document.querySelectorAll('#header-component .menu-list__list-item')) ensureMenuPromo(item);
 }
 
 /** @param {Event} event */
 function onMenuIntent(event) {
+  if (!desktopMenu.matches) return;
   const item = event.target instanceof Element ? event.target.closest('#header-component .menu-list__list-item') : null;
   if (item) ensureMenuPromo(item);
 }
@@ -320,6 +343,7 @@ function onMenuIntent(event) {
 document.addEventListener('pointerover', onMenuIntent, { passive: true });
 document.addEventListener('focusin', onMenuIntent);
 window.addEventListener('load', initMenuPromos, { once: true });
+desktopMenu.addEventListener('change', initMenuPromos);
 
 /* ------------------------------------------------------------------ */
 

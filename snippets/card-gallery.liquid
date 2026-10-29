@@ -45,7 +45,21 @@
     assign image_sizes = sizes_attribute | strip
   elsif section.settings.columns and section.settings.layout_type != 'editorial'
     assign viewport_width = 100.0 | divided_by: section.settings.columns
-    assign sizes_attribute = '(min-width: 750px) [viewport_width]vw, 100vw' | replace: '[viewport_width]', viewport_width
+    # FP&G: on phones use the section's own phone layout (carousel card width or
+    # phone columns) instead of the full screen, so phones don't fetch 1600px photos
+    # for cards about 225px wide.
+    assign mobile_vw = '100vw'
+    assign mobile_columns = section.settings.mobile_columns | append: ''
+    if section.settings.layout_type == 'carousel' or section.settings.carousel_on_mobile
+      if section.settings.mobile_card_size == '44cqw'
+        assign mobile_vw = '44vw'
+      else
+        assign mobile_vw = '60vw'
+      endif
+    elsif mobile_columns == '2'
+      assign mobile_vw = '50vw'
+    endif
+    assign sizes_attribute = '(min-width: 750px) [viewport_width]vw, [mobile_vw]' | replace: '[viewport_width]', viewport_width | replace: '[mobile_vw]', mobile_vw
     assign image_sizes = sizes_attribute | strip
   endif
 

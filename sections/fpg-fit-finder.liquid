@@ -26,6 +26,7 @@
 -%}
 
 {%- if show -%}
+  {{ 'fpg-fit.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
   <script src="{{ 'fpg-fit.js' | asset_url }}" type="module"></script>
   <div class="section-background"></div>

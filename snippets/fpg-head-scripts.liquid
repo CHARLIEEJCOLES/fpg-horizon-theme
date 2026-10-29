@@ -2,7 +2,9 @@
   FP&G scripts for the page head, controlled from Theme settings > FP&G:
   - the FP&G design layer (assets/fpg-design.css and assets/fpg-design.js) on every page
   - the header and menu styling (assets/fpg-menu.css) and the round 3 look
-    (assets/fpg-look.css and assets/fpg-look.js), round 4 (assets/fpg-boost.css) and round 5 (assets/fpg-fit.css)
+    (assets/fpg-look.css and assets/fpg-look.js) and round 4 (assets/fpg-boost.css).
+    Round 5's assets/fpg-fit.css is loaded only by the four things that use it
+    (fpg-fit-finder, fpg-help-panel, fpg-fits, fpg-complete-job).
   - business details (Store structured data) on the home and contact pages
   - jQuery 3.7.1 for the FPG Part Finder app (the same file the current theme
     loads), only on the Part Finder page template (or site-wide if ticked)
@@ -27,7 +29,6 @@
 {{ 'fpg-menu.css' | asset_url | stylesheet_tag }}
 {{ 'fpg-look.css' | asset_url | stylesheet_tag }}
 {{ 'fpg-boost.css' | asset_url | stylesheet_tag }}
-{{ 'fpg-fit.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'fpg-design.js' | asset_url }}" type="module"></script>
 <script src="{{ 'fpg-look.js' | asset_url }}" type="module"></script>
 

@@ -23,11 +23,19 @@
           {%- endif -%}
           {%- if promo.image != blank -%}
             <span class="fpg-menu-promo__media">
-              {{
-                promo.image
-                | image_url: width: 640
-                | image_tag: loading: 'lazy', widths: '320, 480, 640', sizes: '280px', alt: ''
-              }}
+              {%- comment -%}
+                The picture's address is parked in data- attributes so nothing can download it
+                while the card waits in its <template>; fpg-design.js swaps it back when the card
+                is placed in a desktop dropdown.
+              {%- endcomment -%}
+              {%- capture promo_image -%}
+                {{
+                  promo.image
+                  | image_url: width: 640
+                  | image_tag: loading: 'lazy', widths: '320, 480, 640', sizes: '280px', alt: ''
+                }}
+              {%- endcapture -%}
+              {{ promo_image | replace: ' src=', ' data-fpg-src=' | replace: ' srcset=', ' data-fpg-srcset=' }}
             </span>
           {%- endif -%}
           <span class="fpg-menu-promo__body">
