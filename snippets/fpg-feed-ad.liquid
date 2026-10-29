@@ -96,7 +96,9 @@
         assign cta = 'See hire machines'
         assign url = '/collections/for-hire'
       when 'parts'
-        assign style = 'dark'
+        assign style = 'photo'
+        assign photo = 'fpg-ad-parts'
+        assign fallback_style = 'dark'
         assign icon = 'part'
         assign eyebrow = 'Spare parts'
         assign heading = 'Every part for your machine'
@@ -104,7 +106,9 @@
         assign cta = 'Open the parts finder'
         assign url = '/pages/fpg-part-finder'
       when 'barchain'
-        assign style = 'sage'
+        assign style = 'photo'
+        assign photo = 'fpg-ad-chains'
+        assign fallback_style = 'sage'
         assign icon = 'chain'
         assign eyebrow = 'Chains and bars'
         assign heading = 'What fits your saw?'
@@ -177,12 +181,28 @@
         assign url = '/collections/bulk-buy'
     endcase
 
+    # Photos are looked up in Content > Files by name; names given without an
+    # extension are tried as .png, .jpg and .webp. A missing photo falls back to
+    # a solid card (fallback_style) with the ad's icon.
     assign img = blank
     if style == 'photo'
-      assign img = images[photo]
+      if photo contains '.'
+        assign img = images[photo]
+      else
+        assign exts = 'png,jpg,jpeg,webp' | split: ','
+        for ext in exts
+          assign photo_name = photo | append: '.' | append: ext
+          assign img = images[photo_name]
+          if img != blank
+            break
+          endif
+        endfor
+      endif
       if img == blank
-        assign style = 'dark'
-        assign icon = 'arrow'
+        assign style = fallback_style | default: 'dark'
+        if icon == blank
+          assign icon = 'arrow'
+        endif
       endif
     endif
     assign external = false
