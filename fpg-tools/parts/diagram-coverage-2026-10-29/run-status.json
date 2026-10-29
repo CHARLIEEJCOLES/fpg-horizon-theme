@@ -1,0 +1,166 @@
+{
+ "checked_at": "29/10/2026 13:55-14:07",
+ "run_read_at": "29/10/2026 13:55",
+ "started": "29/10/2026 12:30",
+ "by": "Daniel Shoemark",
+ "run_total": 398,
+ "run_done": 83,
+ "run_minutes": 85,
+ "baseline_live": 102,
+ "counts": {
+  "added": 41,
+  "linked": 13,
+  "person_n": 21,
+  "notfound_n": 12,
+  "failed": 0
+ },
+ "person": [
+  [
+   "129L",
+   8
+  ],
+  [
+   "Z242E",
+   3
+  ],
+  [
+   "R316T",
+   13
+  ],
+  [
+   "R214C",
+   9
+  ],
+  [
+   "R216",
+   9
+  ],
+  [
+   "R215TX",
+   3
+  ],
+  [
+   "R112C",
+   3
+  ],
+  [
+   "LC 353VI",
+   4
+  ],
+  [
+   "LC 451S",
+   3
+  ],
+  [
+   "LC 347VI",
+   4
+  ],
+  [
+   "LC 140S",
+   2
+  ],
+  [
+   "KM 111",
+   1
+  ],
+  [
+   "FS 560",
+   1
+  ],
+  [
+   "FS 510",
+   1
+  ],
+  [
+   "FS 490",
+   2
+  ],
+  [
+   "TS 440",
+   1
+  ],
+  [
+   "BR 800",
+   1
+  ],
+  [
+   "HSA 100",
+   2
+  ],
+  [
+   "HSA 60",
+   2
+  ],
+  [
+   "HSA 50",
+   3
+  ],
+  [
+   "120",
+   22
+  ]
+ ],
+ "notfound": [
+  [
+   "Z146",
+   "No \"Z146\" on the Husqvarna portal - its search found 16 machines, none with the number 146"
+  ],
+  [
+   "LC 19AP",
+   "Nothing on the Husqvarna portal for \"LC 19AP\""
+  ],
+  [
+   "LC 19SP",
+   "No \"LC 19SP\" on the Husqvarna portal - its search found 5 machines, none with the number 19"
+  ],
+  [
+   "LC 19A",
+   "No \"LC 19A\" on the Husqvarna portal - its search found 3 machines, none with the number 19"
+  ],
+  [
+   "LC 19",
+   "Nothing on the Husqvarna portal for \"LC 19\""
+  ],
+  [
+   "LB 348SI",
+   "Nothing on the Husqvarna portal for \"LB 348SI\""
+  ],
+  [
+   "LB 248S",
+   "No \"LB 248S\" on the Husqvarna portal - its search found 13 machines, none with the number 248"
+  ],
+  [
+   "Comet S LB 253S",
+   "Nothing on the Husqvarna portal for \"Comet S LB 253S\""
+  ],
+  [
+   "CTH 19530",
+   "Nothing on the Husqvarna portal for \"CTH 19530\""
+  ],
+  [
+   "KM 91",
+   "Nothing on the STIHL portal for \"KM 91\""
+  ],
+  [
+   "FS 511",
+   "Nothing on the STIHL portal for \"FS 511\""
+  ],
+  [
+   "HLA 88",
+   "Nothing on the STIHL portal for \"HLA 88\""
+  ]
+ ],
+ "linked_by_hand": [
+  "FS 361",
+  "FS 411",
+  "FS 461",
+  "FS 491",
+  "FS 561",
+  "FR 131",
+  "KM 56",
+  "KM 94"
+ ],
+ "suggest": {
+  "R112C": "Link by hand: HUSQVARNA Small Ride On Lawn Mower - R 112C (262 parts) - same machine, ready now"
+ }
+}
