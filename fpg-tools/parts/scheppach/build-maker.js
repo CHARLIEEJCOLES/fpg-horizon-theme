@@ -232,7 +232,7 @@
 
   const STOCK = { online: 1, not_available_with_eta: 2, not_available: 0, no_longer_available: -1 };
 
-  function build({ version, per = 50 }) {
+  function build({ version, per = 100 }) {
     const rows = CRAWL.rows.filter((r) => r.lists.length);
     const lists = LCRAWL.lists;
     /* Our machines, to join rather than duplicate. */
@@ -240,6 +240,11 @@
     for (const [, raw, , types] of FPGIDX.b) for (const [, , list] of types) for (const [mid, mn] of list) ours.set(squash(raw.replace(/^\*/, '')) + '|' + squash(mn), mid);
     const models = new Map();
     for (const r of rows) {
+      /* Some page titles are only "Benzin Rasenmäher | Scheppach": take the model code from the address. */
+      if (!parse(r.title).model) {
+        const code = (r.path.split('/')[1] || '').match(/(?:^|-)([A-Z]{1,5}\d[A-Za-z0-9]*(?:-\d+[A-Za-z0-9]*)?)(?=-|$)/);
+        if (code) r.title = `${code[1]} ${r.title}`;
+      }
       const p = parse(r.title);
       let model = p.model;
       if (!model || model.length > 26) model = 'Art. ' + r.article;
