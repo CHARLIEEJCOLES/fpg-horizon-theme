@@ -15,5 +15,10 @@ FGM Claymore's dealer portal (fgm.ev-portal.com, "eVision") holds the parts cata
 - Drawings are in Shopify Files as `fgm-echo-{n}.png` (3,396 of them, copied from FGM's URLs with fileCreate).
 - The section's `data-maker` lists every maker file, separated by spaces.
 
+## FGM's other brands
+- One combined file: `assets/fpg-maker-fgm-more.json` + `-{0..29}.json` (Shindaiwa, Snapper, Masport, Orec, Morrison, Simplicity, Echo Robotics, Harry, Sunseeker, Apache, Fort, Lawnmaster). Built per brand with `buildFGM({nameStyle: 'plain', imgSlug: 'x', list0, bid, tid0, mid0, types})` and merged; the note uses `{brand}` so each machine names its own maker.
+- Drawings are `fgm-x-{n}.png`. Snapper/Simplicity/Orec drawings are often over Shopify's 20-megapixel limit, so fileCreate from FGM's URL fails; those are shrunk to 18 MP in the browser (canvas), staged as IMAGE and re-created with `duplicateResolutionMode: REPLACE` under the same name.
+- Tanaka, Shibaura, Murray, Jagger, Zomax, Adly and Turbo Cut only have PDF parts books, so they are not in the finder.
+
 ## Rebuilding
 `build-fgm.js` runs in the portal tab against what the crawl saved in IndexedDB (`fpg`/`kv`). The keys it reads are listed at the top of the file. Stock in the files is a snapshot taken when they were built. Keeping it live would mean a job (Polly, or a scheduled rebuild) that re-reads FGM's price list.
