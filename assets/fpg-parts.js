@@ -193,28 +193,75 @@ const ICON_PATHS = {
     '<circle cx="14" cy="36" r="7"/><path d="M8 30l12 12M20 30L8 42"/><rect x="18" y="20" width="14" height="11" rx="2"/><path d="M30 20L42 6"/><path d="M38 6h7"/>',
   wrench:
     '<path d="M31 6a9 9 0 0 0-8 12L7 34a4 4 0 0 0 6 6l16-16a9 9 0 0 0 12-8l-6 2-4-4z"/>',
+  saw:
+    '<circle cx="24" cy="24" r="13"/><circle cx="24" cy="24" r="3"/><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.6 10.6l4.2 4.2M33.2 33.2l4.2 4.2M37.4 10.6l-4.2 4.2M14.8 33.2l-4.2 4.2"/>',
+  compressor:
+    '<rect x="5" y="17" width="30" height="15" rx="7.5"/><path d="M14 17v-6h12v6"/><path d="M35 24h5v-6h3"/><circle cx="11" cy="38" r="3"/><circle cx="29" cy="38" r="3"/>',
+  generator:
+    '<rect x="5" y="12" width="38" height="24" rx="3"/><path d="M26 16l-6 9h7l-5 8"/><path d="M9 36v5M39 36v5"/>',
+  drill:
+    '<path d="M6 13h24v11H6z"/><path d="M30 16h8M38 18h5"/><path d="M12 24l-3 15h9l3-15"/>',
+  sander:
+    '<rect x="7" y="25" width="34" height="9" rx="2"/><path d="M14 25v-5a7 7 0 0 1 7-7h6a7 7 0 0 1 7 7v5"/><path d="M7 40h34" stroke-dasharray="2 3"/>',
+  splitter:
+    '<ellipse cx="14" cy="30" rx="8" ry="11"/><ellipse cx="14" cy="30" rx="3" ry="4.5"/><path d="M14 19h20v22H14"/><path d="M30 6l7 12H23z"/>',
+  welder:
+    '<rect x="5" y="14" width="22" height="20" rx="2"/><path d="M10 20h12M10 26h7"/><path d="M27 24h6l7 11"/><path d="M38 38l4 2M40 35l4-1"/>',
+  vacuum:
+    '<rect x="8" y="18" width="22" height="20" rx="5"/><path d="M30 25c8 0 11-6 11-14"/><path d="M38 11h6"/><circle cx="13" cy="41" r="2"/><circle cx="25" cy="41" r="2"/>',
+  mixer:
+    '<path d="M9 14l22-5 7 17-22 8z"/><path d="M15 33l-4 9M30 29l4 13M6 42h36"/>',
 };
 
+/* First match wins, so the narrower names come first ("Metal Band Saw" before "saw"). */
 const ICON_RULES = [
   [/chainsaw|chain saw/i, 'chainsaw'],
+  [/chain sharpener|stump/i, 'grinder'],
   [/pole|polesaw|pruner/i, 'pole'],
-  [/hedge/i, 'hedge'],
+  [/hedge|shears|lopper/i, 'hedge'],
   [/mist/i, 'mist'],
-  [/blower|vacuum/i, 'blower'],
-  [/brush|trimmer|strimmer/i, 'trimmer'],
+  [/blower/i, 'blower'],
+  [/sander|sharpening|finisher|bench grinder|dry grinder/i, 'sander'],
+  [/compressor|air spade/i, 'compressor'],
+  [/generator|power station/i, 'generator'],
+  [/splitter/i, 'splitter'],
+  [/weld|plasma|sandblast/i, 'welder'],
+  [/vacuum|extractor|cleaner|purifier/i, 'vacuum'],
+  [/mixer|compactor|rammer|dumper|digger|loader/i, 'mixer'],
+  [/brush|trimmer|strimmer|edger/i, 'trimmer'],
   [/kombi|multi/i, 'kombi'],
-  [/disc|cut-?off/i, 'cutter'],
-  [/auger|drill/i, 'auger'],
+  [/disc|cut-?off|angle grinder|tile cutter|stone cutter/i, 'cutter'],
+  [/auger/i, 'auger'],
+  [/drill|driver|impact|hammer|wrench/i, 'drill'],
+  [/saw|moulder|planer|router|lathe|woodworker|jointer|mortiser/i, 'saw'],
   [/pressure|washer/i, 'washer'],
-  [/pump/i, 'pump'],
-  [/remote/i, 'robot'],
+  [/pump|filter/i, 'pump'],
+  [/remote|robot/i, 'robot'],
   [/ride|tractor|zero/i, 'rideon'],
-  [/mower|lawn/i, 'mower'],
-  [/chipper/i, 'chipper'],
-  [/stump|grinder/i, 'grinder'],
+  [/mower|lawn|scarifier/i, 'mower'],
+  [/chipper|shredder/i, 'chipper'],
+  [/grinder/i, 'grinder'],
   [/engine/i, 'engine'],
   [/rotavator|tiller|cultivator/i, 'tiller'],
 ];
+
+/*
+ * Brands with many machine types (Scheppach makes 130) list them in groups. Each type
+ * goes in the first group whose rule matches, so the narrower rules come first; the
+ * groups are then shown in the order of GROUP_ORDER.
+ */
+const TYPE_GROUPS = [
+  ['Metalwork and welding', /metal|weld|plasma|sandblast|cut-off|hoist/i],
+  ['Building and construction', /cement|paddle|compactor|rammer|demolition|tile cutter|stone|dumper|digger|loader|pallet|conveyor|plasterboard|floor grinder|dehumidifier|heater/i],
+  ['Garden and lawn', /mower|scarifier|trimmer|brushcutter|edger|hedge|shears|blower|shredder|tiller|^(\d-in-1 )?multi.?tool$|spreader|sweeper|snow|sieve|garden|pruner|lopper|auger|kombi|weed|stump/i],
+  ['Air and power', /compressor|air spade|generator|power station/i],
+  ['Water and cleaning', /pressure washer|pump|pond|vacuum|cleaner|window|purifier/i],
+  ['Power tools', /drill|driver|impact|hammer|angle grinder|oscillating|rotary tool|heat gun|polisher|nailer|chaser|drywall|paint|wallpaper|tool case|trolley|workshop|work light|radio|jigsaw|reciprocating|circular saw/i],
+  ['Chainsaws and firewood', /chainsaw|chain sharpener|log|debarker/i],
+  ['Woodworking', /saw|planer|moulder|router|lathe|woodworker|extractor|sander|finisher|mortiser|jointer|feeder|carriage|stand|bench|sharpening|grinder/i],
+];
+const GROUP_ORDER = ['Garden and lawn', 'Chainsaws and firewood', 'Woodworking', 'Power tools', 'Air and power', 'Water and cleaning', 'Building and construction', 'Metalwork and welding', 'Other machines'];
+const typeGroup = (/** @type {string} */ name) => TYPE_GROUPS.find(([, re]) => re.test(name))?.[0] || 'Other machines';
 
 export function machineIcon(/** @type {string} */ typeName, size = 48) {
   const key = ICON_RULES.find(([re]) => /** @type {RegExp} */ (re).test(typeName))?.[1] || 'wrench';
@@ -279,8 +326,10 @@ const modelCount = (/** @type {Brand} */ b) => b.types.reduce((n, t) => n + t.mo
 
 /** Groups model names by their letters (MS, MSA, HS...), so long lists are easier to scan. */
 function seriesOf(/** @type {string} */ name) {
-  const m = name.match(/^([A-Za-z]+)[\s-]?\d/);
-  if (m) return m[1].toUpperCase();
+  /* "Air Force 4" and "Airforce 5" are one series; machines named by article number are another. */
+  if (/^Art\.\s*\d/.test(name)) return '#';
+  const m = squash(name).match(/^([A-Z]+)\d/);
+  if (m) return m[1];
   if (/^\d/.test(name)) return '';
   return name.split(/\s/)[0].toUpperCase();
 }
@@ -1022,6 +1071,7 @@ class FpgPartsFinder extends HTMLElement {
 
   renderTypes(/** @type {Brand} */ brand) {
     const types = brand.types.filter((t) => t.models.length);
+    if (types.length > 16) return this.renderTypeGroups(brand, types);
     this.view.innerHTML = `
       <div class="fpg-pf-head">
         ${brand.logo ? `<span class="fpg-pf-head__logo"><img src="${esc(brand.logo)}&width=240" alt="" width="120" height="60"></span>` : ''}
@@ -1046,6 +1096,67 @@ class FpgPartsFinder extends HTMLElement {
       }`;
   }
 
+  /** Many machine types: grouped (Garden and lawn, Woodworking...) as compact rows, with a filter and jump links. */
+  renderTypeGroups(/** @type {Brand} */ brand, /** @type {Type[]} */ types) {
+    /** @type {Map<string, Type[]>} */
+    const groups = new Map(GROUP_ORDER.map((g) => [g, []]));
+    for (const t of types) /** @type {Type[]} */ (groups.get(typeGroup(t.name))).push(t);
+    const shown = [...groups].filter(([, list]) => list.length);
+    const count = (/** @type {Type[]} */ list) => list.reduce((n, t) => n + t.models.length, 0);
+    const s = (/** @type {number} */ n) => (n === 1 ? '' : 's');
+    this.view.innerHTML = `
+      <div class="fpg-pf-head">
+        ${brand.logo ? `<span class="fpg-pf-head__logo"><img src="${esc(brand.logo)}&width=240" alt="" width="120" height="60"></span>` : ''}
+        <div>
+          <h2 class="fpg-pf-h" tabindex="-1" data-focus>${esc(brand.name)}: what kind of machine?</h2>
+          <p class="fpg-pf-lead">${modelCount(brand).toLocaleString('en-GB')} machines listed across ${types.length} types.</p>
+        </div>
+      </div>
+      <div class="fpg-pf-tbar">
+        <label class="fpg-pf-filter">${SEARCH_ICON}<span class="visually-hidden">Filter machine types</span><input type="search" placeholder="Filter ${types.length} machine types, e.g. mower" data-type-filter autocomplete="off"></label>
+        <ul class="fpg-pf-tjump" role="list">${shown
+          .map(([g, list], i) => `<li><button type="button" data-tjump="${i}">${esc(g)} <span>${list.length}</span></button></li>`)
+          .join('')}</ul>
+      </div>
+      ${shown
+        .map(
+          ([g, list], i) => `
+        <section class="fpg-pf-tgroup" data-tgroup="${i}">
+          <h3 class="fpg-pf-tgroup__h">${esc(g)} <span>${list.length} type${s(list.length)} · ${count(list).toLocaleString('en-GB')} machine${s(count(list))}</span></h3>
+          <ul class="fpg-pf-tlist" role="list">${list
+            .sort((a, b) => collator.compare(a.name, b.name))
+            .map(
+              (t) => `
+            <li data-type-name="${esc(t.name.toLowerCase())}"><button type="button" class="fpg-pf-trow" data-go-type="${t.id}">
+              <span class="fpg-pf-trow__icon">${machineIcon(t.name, 28)}</span>
+              <span class="fpg-pf-trow__name">${esc(t.name)}</span>
+              <span class="fpg-pf-trow__n">${t.models.length}</span>
+            </button></li>`
+            )
+            .join('')}</ul>
+        </section>`
+        )
+        .join('')}
+      <p class="fpg-pf-empty" data-type-none hidden>No machine type matches that. Try the search box above with your model number.</p>`;
+    this.view.querySelectorAll('[data-tjump]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const el = this.view.querySelector(`[data-tgroup="${/** @type {HTMLElement} */ (b).dataset.tjump}"]`);
+        if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
+      })
+    );
+    this.view.querySelector('[data-type-filter]')?.addEventListener('input', (e) => {
+      const q = /** @type {HTMLInputElement} */ (e.target).value.trim().toLowerCase();
+      let hits = 0;
+      for (const li of this.view.querySelectorAll('[data-type-name]')) {
+        const hit = !q || String(/** @type {HTMLElement} */ (li).dataset.typeName).includes(q);
+        /** @type {HTMLElement} */ (li).hidden = !hit;
+        if (hit) hits++;
+      }
+      for (const g of this.view.querySelectorAll('[data-tgroup]')) /** @type {HTMLElement} */ (g).hidden = !g.querySelector('[data-type-name]:not([hidden])');
+      /** @type {HTMLElement} */ (this.view.querySelector('[data-type-none]')).hidden = hits > 0;
+    });
+  }
+
   /* ---------- step 3: models */
 
   renderModels(/** @type {Type} */ type) {
@@ -1056,14 +1167,26 @@ class FpgPartsFinder extends HTMLElement {
         if (!groups.has(s)) groups.set(s, []);
         groups.get(s).push(m);
       }
-      const keys = [...groups.keys()].sort((a, b) => (a === '' ? 1 : b === '' ? -1 : collator.compare(a, b)));
+      /* Long lists with lots of one-off names: series of fewer than 3 go together under "Other models". */
+      const big = type.models.length > 40;
+      if (big) {
+        for (const [k, list] of [...groups]) {
+          if (k === '' || k === '#' || list.length >= 3) continue;
+          groups.delete(k);
+          if (!groups.has('')) groups.set('', []);
+          groups.get('').push(...list);
+        }
+        groups.get('')?.sort((/** @type {Model} */ a, /** @type {Model} */ b) => collator.compare(a.name, b.name));
+      }
+      const last = (/** @type {string} */ k) => (k === '#' ? 2 : k === '' ? 1 : 0);
+      const keys = [...groups.keys()].sort((a, b) => last(a) - last(b) || collator.compare(a, b));
       const many = keys.length > 1 && type.models.length > 12;
       const body = keys
         .map(
           (k) => `
           <div class="fpg-pf-series" data-series>
-            ${many ? `<h3 class="fpg-pf-series__h">${k ? esc(k) : 'Other models'}</h3>` : ''}
-            <ul class="fpg-pf-models" role="list">
+            ${many ? `<h3 class="fpg-pf-series__h">${k === '#' ? 'Listed by article number' : k ? esc(k) : 'Other models'} <span>${groups.get(k).length}</span></h3>` : ''}
+            <ul class="fpg-pf-models${big ? ' fpg-pf-models--chips' : ''}" role="list">
               ${groups
                 .get(k)
                 .map((/** @type {Model} */ m) =>

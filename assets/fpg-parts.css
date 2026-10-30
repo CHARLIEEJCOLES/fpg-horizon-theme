@@ -1327,3 +1327,146 @@ a.fpg-pf-mine__label:focus-visible {
   font-size: 0.875rem;
   color: rgb(18 38 43 / 0.65);
 }
+
+/* ---------- many machine types (e.g. Scheppach): grouped rows ---------- */
+.fpg-pf-tbar {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.fpg-pf-tjump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fpg-pf-tjump button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--fpg-line, #d6ded9);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--fpg-teal, #002d37);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fpg-pf-tjump button:hover {
+  border-color: var(--fpg-teal, #002d37);
+}
+
+.fpg-pf-tjump span,
+.fpg-pf-series__h span {
+  color: rgb(18 38 43 / 0.5);
+  font-weight: 600;
+}
+
+.fpg-pf-tgroup {
+  margin-bottom: 26px;
+}
+
+.fpg-pf-tgroup__h {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--fpg-pale, #e2e9e5);
+  font-size: 1.0625rem;
+  color: var(--fpg-teal, #002d37);
+}
+
+.fpg-pf-tgroup__h span {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgb(18 38 43 / 0.6);
+}
+
+.fpg-pf-tlist {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fpg-pf-trow {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  min-height: 52px;
+  padding: 6px 12px 6px 6px;
+  border: 1px solid var(--fpg-line, #d6ded9);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--fpg-teal, #002d37);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.fpg-pf-trow:hover,
+.fpg-pf-trow:focus-visible {
+  border-color: var(--fpg-sage, #5f7d6d);
+  box-shadow: var(--fpg-shadow-sm);
+}
+
+.fpg-pf-trow__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--fpg-mist, #f3f6f4);
+}
+
+.fpg-pf-trow:hover .fpg-pf-trow__icon {
+  background: var(--fpg-teal, #002d37);
+  color: #fff;
+}
+
+.fpg-pf-trow__name {
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.fpg-pf-trow__n {
+  min-width: 28px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--fpg-mist, #f3f6f4);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+  color: rgb(18 38 43 / 0.7);
+}
+
+/* ---------- long model lists: chips that fit their names ---------- */
+.fpg-pf-models--chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.fpg-pf-models--chips .fpg-pf-model {
+  width: auto;
+  min-height: 38px;
+  padding: 6px 12px;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+}
