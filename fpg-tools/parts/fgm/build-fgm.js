@@ -123,7 +123,7 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
     const several = m.versions.length > 1;
     const entry = [];
     for (const v of m.versions) {
-      if (v.photo && !mi[mid]) mi[mid] = v.photo;
+      if (v.photo && !mi[mid]) mi[mid] = v.photo.replace(/\.PNG$/i, '.png');
       for (const d of v.docs) {
         let rows = parseHS(d.hs);
         if (!rows.length && ipl[d.id]?.rows) rows = ipl[d.id].rows.map((r) => [r[0], r[2], r[3]]);
@@ -184,7 +184,8 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
     counts: { [brand]: parts.size },
     b: [[bid, brand, [...tree.entries()].map(([t, list]) => [typeIds.get(t), t, list])]],
     models: mmap,
-    pimg: 'https://fgm.ev-portal.com/Virtual_DataCatalogs/IFGM/FGM/Ressources/{p}',
+    /* Machine photos are copied into Shopify Files as fgm-photo-<n>.PNG (the CDN serves them as .png). */
+    pimg: 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/fgm-photo-{p}?width={s}',
     mi,
   };
   return { index, shards, stats: { models: sorted.length, lists: nextList, parts: parts.size, shards: Object.keys(shards).length } };
