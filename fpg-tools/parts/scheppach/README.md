@@ -83,16 +83,22 @@ the drawing image(s) and the parts table. That is exactly `drawings\<listId>-*.j
 plus `lists\<listId>.json` (or the rows of `parts.csv` for that list). Use
 `fpg-machines.csv` to see which list goes with which of our machines.
 
-### 3. Straight into the theme (quickest, our machines only)
+### 3. Straight into the theme (what the site uses now)
 
-For a handful of machines (the ones in `fpg-machines.csv`), Claude can:
+The parts finder reads Scheppach's lists from files in the Horizon theme, built by
+`build-maker.js` (in this folder) from a fresh crawl of shop.scheppach.com:
 
-1. Upload their drawings to Shopify (Content → Files).
-2. Save their parts lists into a data file in the Horizon theme.
-3. Match each part number to our Shopify SKUs so stocked parts get Add to basket.
+- `assets/fpg-maker-parts.json`: every Scheppach-made machine (Scheppach, Parkside,
+  Woodster, Ferrex, Gardenline, Workzone and the other brands Scheppach builds for),
+  grouped by brand and machine type, and which parts list(s) each one uses. Machines we
+  already list (CSP41, PBKS 53 A2, MFH3300-4P...) keep their own page and get the lists added.
+- `assets/fpg-maker-scheppach-<n>.json`: the parts lists themselves, 100 per file, with
+  English part names and Scheppach's stock status when crawled.
+- The drawings are Shopify Files named `<listId>-<n>.jpg` (the names in the
+  `drawings` folders of the download). Until a drawing is uploaded its tile says
+  "Drawing to follow"; the parts list still works.
 
-This needs an OK first because it uploads files to the live store. It is a snapshot:
-re-run it if Scheppach changes a list.
+It is a snapshot: re-run the crawl and `build-maker.js` to pick up Scheppach's changes.
 
 ### Clickable numbers
 
