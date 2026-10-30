@@ -330,6 +330,27 @@
       b: out.b,
       models: out.models,
     };
+    /* Section names: "CSP41 - ohne SDS - 14\"" -> "CSP41, without SDS, 14\"". A model's lists that end up
+       with the same name are told apart by market when the pages say, else "version 1, 2...". */
+    for (const s of Object.values(shards)) for (const l of Object.values(s.lists)) l.n = l.n.replace(/\s+-\s+/g, ', ').replace(/^-\s*|\s*-$/g, '').trim();
+    const nameOf = (id) => shards[Math.floor(id / per)].lists[id].n;
+    const unit = /^(PS|kW|V|Hz|W|mm|cm|-|–|\|)$/i;
+    for (const [mid, entry] of Object.entries(index.models)) {
+      if (!Array.isArray(entry) || entry.length < 2) continue;
+      const items = entry.map((e) => (Array.isArray(e) ? { id: e[0], h: e[1] } : { id: e, h: '' }));
+      items.forEach((it) => {
+        it.n = nameOf(it.id);
+        it.h = it.h.split(', ').map((x) => x.split(' ').filter((t) => !unit.test(t)).join(' ').trim()).filter(Boolean).join(', ');
+      });
+      const groups = new Map();
+      items.forEach((it) => (groups.has(it.n) ? groups.get(it.n).push(it) : groups.set(it.n, [it])));
+      for (const g of groups.values()) {
+        if (g.length < 2) { g[0].h = ''; continue; }
+        const distinct = new Set(g.map((x) => x.h)).size === g.length && g.every((x) => x.h);
+        g.forEach((x, k) => (x.h = distinct ? x.h : `version ${k + 1}`));
+      }
+      index.models[mid] = items.map((it) => (it.h ? [it.id, it.h] : it.id));
+    }
     return { index, shards, stats: { models: sorted.length, added: next - 800001, lists: usedLists.size, missingNames: missing } };
   }
 
