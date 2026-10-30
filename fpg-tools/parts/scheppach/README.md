@@ -20,6 +20,7 @@ and this guide. Unzip them all into one folder, for example
 | `machines.csv` | Every Scheppach machine page and the parts list(s) it uses. |
 | `lists.csv` | One row per parts list: how many parts and drawings, and which machines use it. |
 | `fpg-machines.csv` | The machines in our own parts finder and the Scheppach list(s) that match them. |
+| `run-log.json` | When it ran, counts, and any lists that could not be fetched. |
 
 ### parts.csv columns
 
@@ -66,6 +67,8 @@ same public addresses this download used:
   page data (`__NUXT_DATA__`).
 - Machine pages: the sitemap at `https://shop.scheppach.com/sitemap.xml`. Machine
   article numbers have a 9 as the third-last digit (e.g. 5910113**9**06); spare parts don't.
+- Live stock: the same parts-list address returns each part's availability and
+  delivery time, so Polly's maker stock check can use it for Scheppach too.
 - Be polite: one or two requests at a time with a short pause. robots.txt only
   blocks `/checkout/`.
 
@@ -98,6 +101,14 @@ Without positions, the viewer shows the drawing next to the parts list and custo
 match the ref by eye (as on some older Husqvarna drawings). The parts finder can find
 printed numbers on a drawing (it already does this to line up Husqvarna's), so
 clickable numbers can be added later from these same images.
+
+## Selling Scheppach parts we don't stock
+
+Scheppach parts can all be ordered in from Scheppach. A part gets Add to basket on
+our site only once it exists in Brightpearl / Shopify with Scheppach's part number
+as its SKU. Parts not set up yet still show on the drawing and in the list as
+"Ask us". To set parts up in bulk, use `parts.csv` (partNumber, name, ean) as the
+starting point for a Brightpearl import, with our own cost and selling price added.
 
 ## Matching to our stock
 
