@@ -1021,12 +1021,23 @@ class FpgPartsFinder extends HTMLElement {
     else if (brand) this.renderTypes(brand);
     else this.renderBrands(group === 'scheppach');
     this.renderCrumbs(brand, type, model);
+    this.setTitle(brand, type, model);
     this.dataset.step = model || mId ? 'model' : type ? 'models' : brand ? 'types' : 'brands';
     if (scroll) {
       const top = this.getBoundingClientRect().top + window.scrollY - 90;
       if (window.scrollY > top) window.scrollTo({ top, behavior: 'smooth' });
       /** @type {HTMLElement | null} */ (this.view.querySelector('[data-focus]'))?.focus({ preventScroll: true });
     }
+  }
+
+  /* The tab title (and a shared link's title) names the machine: "Snapper RPX210 parts & diagrams | Forest Park & Garden". */
+  setTitle(/** @type {Brand|null} */ brand, /** @type {Type|null} */ type, /** @type {Model|null} */ model) {
+    this.baseTitle ??= document.title;
+    const site = this.baseTitle.split(/\s[–|-]\s/).pop() || this.baseTitle;
+    const lead = model
+      ? `${model.name.startsWith(brand?.name || '\u0000') ? '' : `${brand?.name || ''} `}${model.name} parts & diagrams`
+      : type ? `${brand?.name || ''} ${type.name.toLowerCase()} parts` : brand ? `${brand.name} parts by machine` : '';
+    document.title = lead ? `${lead.trim()} | ${site}` : this.baseTitle;
   }
 
   renderCrumbs(/** @type {Brand|null} */ brand, /** @type {Type|null} */ type, /** @type {Model|null} */ model) {
