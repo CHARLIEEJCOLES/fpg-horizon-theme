@@ -5,6 +5,21 @@
  *   gt-lists-{brand}  "art|year|serial" -> {name, label, pages:[{name, img, rows:[pos, artno, name, qty, inStock, stockQty, replaced, replacedName, artnoClean]}]} or {none:true}
  * Drawing callouts on AL-KO's pages are the part number without "AK", so that is the ref.
  */
+/* A brand tile's picture when we have no logo: a photo from the brand's biggest machine type (index.bi: brand -> picture). */
+const brandPictures = (index) => {
+  const bi = {};
+  for (const [, name, types] of index.b) {
+    for (const [, , list] of [...types].sort((a, b) => b[2].length - a[2].length)) {
+      const m = list.find(([mid]) => index.mi[mid]);
+      if (m) {
+        bi[name] = index.mi[m[0]];
+        break;
+      }
+    }
+  }
+  return bi;
+};
+
 window.buildGT = async ({ brandNo = 1, brand = 'AL-KO', slug = 'alko', bid = 9601, tid0 = 96001, mid0 = 950001, per = 200, version = '1' } = {}) => {
   const tree = await KV.get('gt-tree-' + brandNo);
   const have = await KV.get('gt-lists-' + brandNo);
@@ -110,5 +125,6 @@ window.buildGT = async ({ brandNo = 1, brand = 'AL-KO', slug = 'alko', bid = 960
     pimg: `https://cdn.shopify.com/s/files/1/0734/1477/0982/files/${slug}-photo-{p}.jpg?width={s}`,
     mi: Object.fromEntries(Object.keys(mmap).filter((m) => photos[artOf[m]]).map((m) => [m, artOf[m].toLowerCase()])),
   };
+  index.bi = brandPictures(index);
   return { index, shards, pics: [...pics], stats: { models: Object.keys(mmap).length, lists: nextList, parts: parts.size, shards: Object.keys(shards).length, drawings: pics.size } };
 };

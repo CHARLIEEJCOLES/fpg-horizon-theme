@@ -11,6 +11,21 @@
  *   dims          drawing file -> [width, height]
  * Run in the portal tab (needs KV from the crawl helpers). Returns { index, shards }.
  */
+/* A brand tile's picture when we have no logo: a photo from the brand's biggest machine type (index.bi: brand -> picture). */
+const brandPictures = (index) => {
+  const bi = {};
+  for (const [, name, types] of index.b) {
+    for (const [, , list] of [...types].sort((a, b) => b[2].length - a[2].length)) {
+      const m = list.find(([mid]) => index.mi[mid]);
+      if (m) {
+        bi[name] = index.mi[m[0]];
+        break;
+      }
+    }
+  }
+  return bi;
+};
+
 window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501, types = null, nameStyle = 'echo', list0 = 0, imgSlug = '' } = {}) => {
   const nodes = await KV.get('tree-' + root);
   const prods = await KV.get('prods-' + root);
@@ -188,5 +203,6 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
     pimg: 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/fgm-photo-{p}?width={s}',
     mi,
   };
+  index.bi = brandPictures(index);
   return { index, shards, stats: { models: sorted.length, lists: nextList, parts: parts.size, shards: Object.keys(shards).length } };
 };
