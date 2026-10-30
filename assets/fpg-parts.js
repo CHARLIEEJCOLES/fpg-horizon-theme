@@ -384,11 +384,11 @@ function fetchNumbers(/** @type {string} */ url) {
   return promise;
 }
 
-/** "CARBURETOR" -> "Carburetor"; names already in mixed case are kept. */
+/** "CARBURETOR" -> "Carburetor"; names already in mixed case, and model codes ("CSP41"), are kept. */
 function sectionName(/** @type {string} */ raw) {
   const name = String(raw || '').trim();
   if (name !== name.toUpperCase()) return name;
-  return name.toLowerCase().replace(/(^|[\s/(-])([a-z])/g, (m, a, b) => a + b.toUpperCase());
+  return name.replace(/[A-Z0-9]+/g, (w) => (/\d/.test(w) ? w : w.charAt(0) + w.slice(1).toLowerCase()));
 }
 
 /** STIHL letters its sections ("A - Crankcase, Cylinder"): the letter becomes a badge. */
