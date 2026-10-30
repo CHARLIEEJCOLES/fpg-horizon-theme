@@ -272,6 +272,9 @@ const ARROW =
   '<svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true" focusable="false"><path d="M7 4l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const TRASH_ICON =
   '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+/* Which fpg-maker-pn-{n}.json holds a part number: a hash of it without leading letters, so "316913" finds "AK316913" (same as fpg-tools/parts/build-pn.js). */
+const pnFile = (/** @type {string} */ key, /** @type {number} */ files) => [...key.replace(/^[a-z]+/, '')].reduce((h, c) => (h * 33 + c.charCodeAt(0)) % 1000003, 7) % files;
+
 const SEARCH_ICON =
   '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 
@@ -2028,7 +2031,7 @@ class FpgPartsFinder extends HTMLElement {
 
   onClick = async (/** @type {MouseEvent} */ event) => {
     const t = /** @type {HTMLElement} */ (event.target);
-    const el = t.closest('[data-go-home],[data-go-group],[data-go-brand],[data-go-type],[data-go-model],[data-add],[data-qty-step],[data-save],[data-forget],[data-jump],[data-retry],[data-suggest-go],[data-dsec]');
+    const el = t.closest('[data-go-home],[data-go-group],[data-go-brand],[data-go-type],[data-go-model],[data-add],[data-qty-step],[data-save],[data-forget],[data-jump],[data-retry],[data-suggest-go],[data-dsec],[data-pn-hit]');
     if (!(el instanceof HTMLElement)) return;
     const d = el.dataset;
     if ('goHome' in d) return this.go({});
@@ -2045,6 +2048,11 @@ class FpgPartsFinder extends HTMLElement {
     }
     if (d.suggestGo) {
       location.href = d.suggestGo;
+      return;
+    }
+    if (d.pnHit) {
+      /* After this click has finished bubbling, so the outside-click check still finds the button. */
+      setTimeout(() => this.showPartMachines(Number(d.pnHit)));
       return;
     }
     if ('retry' in d) return this.route(false);
@@ -2179,6 +2187,64 @@ class FpgPartsFinder extends HTMLElement {
     this.suggest.innerHTML = items.join('');
     this.suggest.hidden = false;
     this.input.setAttribute('aria-expanded', 'true');
+    this.active = -1;
+    /* A maker's part number (Echo, AL-KO, Scheppach…): add which machines it fits, once its file is in. */
+    const token = ++this.pnToken;
+    this.makerPartHits(text).then((hits) => {
+      if (token !== this.pnToken || !hits.length || !this.suggest || this.suggest.hidden) return;
+      this.pnHits = hits;
+      const html = hits.map((h, i) => {
+        const fits = h.machines.length ? `Fits ${h.total} machine${h.total === 1 ? '' : 's'}` : 'In a maker’s parts list';
+        return `<li role="option" id="fpg-pf-op${i}"><button type="button" data-pn-hit="${i}" tabindex="-1">${SEARCH_ICON}<span><strong>${esc(h.pn)} · ${esc(h.name)}</strong><small>${fits}${h.stockText ? ` · ${h.stockText}` : ''}</small></span></button></li>`;
+      });
+      this.suggest.querySelector('#fpg-pf-oq')?.insertAdjacentHTML('beforebegin', html.join(''));
+    });
+  }
+
+  /* ---------- makers' part numbers: which machines a part fits (assets/fpg-maker-pn-{n}.json) */
+
+  pnToken = 0;
+  /** @type {Map<number, Promise<any>>} */
+  pnFiles = new Map();
+  /** @type {any[]} */
+  pnHits = [];
+
+  async makerPartHits(/** @type {string} */ text) {
+    const first = this.dataset.makerPn;
+    const q = squash(text).toLowerCase();
+    if (!first || !this.data || q.length < 5 || (q.match(/\d/g) || []).length < 4) return [];
+    const n = pnFile(q, Number(this.dataset.makerPnShards || 64));
+    if (!this.pnFiles.has(n)) {
+      this.pnFiles.set(n, fetch(first.replace('fpg-maker-pn-0.json', `fpg-maker-pn-${n}.json`)).then((r) => (r.ok ? r.json() : {})).catch(() => ({})));
+    }
+    const file = await this.pnFiles.get(n);
+    const byId = new Map(this.data.models.map((m) => [String(m.id), m]));
+    const hits = [];
+    for (const [key, list] of Object.entries(file || {})) {
+      const lead = key.length - q.length;
+      if (key !== q && !(lead > 0 && lead <= 3 && key.endsWith(q) && /^[a-z]+$/.test(key.slice(0, lead)))) continue;
+      for (const [pn, name, stock, rep, total, mids] of list) {
+        const machines = mids.map((id) => byId.get(String(id))).filter(Boolean);
+        const stockText =
+          stock === 1 ? 'We can order it in' : stock === 2 ? 'Can order in' : stock === 3 ? 'Out of stock at our supplier' : stock === -1 ? `Discontinued${rep ? ` · now ${rep}` : ''}` : '';
+        hits.push({ pn, name, stockText, rep, total: Math.max(total, machines.length), machines });
+      }
+    }
+    return hits.sort((a, b) => b.total - a.total).slice(0, 4);
+  }
+
+  /* The machines one part number fits, as suggestions to open. */
+  showPartMachines(/** @type {number} */ i) {
+    const h = this.pnHits[i];
+    if (!h || !this.suggest) return;
+    const items = h.machines.map(
+      (m) => `<li role="option" id="fpg-pf-o${m.id}"><button type="button" data-go-model="${m.id}" tabindex="-1">
+        ${machineIcon(m.type.name, 22)}<span><strong>${esc(m.type.brand.name)} ${esc(m.name)}</strong><small>${esc(m.type.name)}</small></span></button></li>`
+    );
+    const more = h.total > h.machines.length ? `<li class="fpg-pf-suggest__note">and ${h.total - h.machines.length} more</li>` : '';
+    this.suggest.innerHTML = `<li class="fpg-pf-suggest__note"><strong>${esc(h.pn)} · ${esc(h.name)}</strong> fits these machines. Open one to see where it goes${h.stockText ? ` (${esc(h.stockText.toLowerCase())})` : ''}:</li>${items.join('')}${more}`;
+    this.suggest.hidden = false;
+    this.input?.setAttribute('aria-expanded', 'true');
     this.active = -1;
   }
 

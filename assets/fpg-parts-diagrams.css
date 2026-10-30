@@ -599,3 +599,21 @@ a.fpg-pf-vrow__name:hover {
     animation: none;
   }
 }
+
+/* Search: the machines a maker's part number fits. */
+.fpg-pf-suggest__note {
+  padding: 10px 12px 6px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: rgb(18 38 43 / 0.72);
+}
+
+.fpg-pf-suggest__note strong {
+  color: var(--fpg-teal, #002d37);
+}
+
+.fpg-pf-suggest:has(.fpg-pf-suggest__note) li:last-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
