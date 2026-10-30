@@ -451,7 +451,9 @@ function matchesPart(/** @type {any} */ box, /** @type {any} */ part) {
   if (!box || !part) return false;
   const pid = squash(box.pid);
   if (pid && (squash(part.partNumber) === pid || squash(part.sku) === pid)) return true;
-  return box.a !== '' && box.a != null && String(part.diagramRef || '') === String(box.a);
+  if (box.a === '' || box.a == null) return false;
+  /* A maker's part can sit at several numbers on the drawing ("7, 8"). */
+  return String(part.diagramRef || '') === String(box.a) || (Array.isArray(part.refs) && part.refs.includes(String(box.a)));
 }
 
 /**
@@ -874,13 +876,20 @@ class FpgPartsFinder extends HTMLElement {
         .filter(([l]) => lists[String(l)])
         .map(([l, hint]) => {
           const list = lists[String(l)];
-          return { name: hint ? `${list.n} · ${hint}` : list.n, pics: (list.p || []).map(img), parts: list.r || [] };
+          return { name: hint ? `${list.n} · ${hint}` : list.n, pics: (list.p || []).map(img), parts: list.r || [], m: list.m, wh: list.wh };
         });
     }
     /* Parts as [ref, part number, name, maker's stock: 1 in stock, 2 due in, 3 out at the supplier, 0 not listed, -1 discontinued, the number that replaced it]. */
     const sections = secs.map((/** @type {any} */ sec) => ({
       name: sec.name,
-      diagrams: (sec.pics || []).map((/** @type {string} */ url) => ({ view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600` })),
+      diagrams: (sec.pics || []).map((/** @type {string} */ url, /** @type {number} */ i) => {
+        /* The maker's number boxes for its first drawing (m: [number, x1, y1, x2, y2] on a drawing of wh: [width, height]) make the numbers clickable. */
+        const inline =
+          i === 0 && Array.isArray(sec.m) && sec.m.length && Array.isArray(sec.wh)
+            ? { ok: true, image: url, w: sec.wh[0], h: sec.wh[1], maps: sec.m.map((/** @type {any[]} */ [a, x1, y1, x2, y2]) => ({ a: String(a), x1, y1, x2, y2 })) }
+            : null;
+        return { view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600`, numbers: !!inline, inline };
+      }),
       parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock, replacedBy]) => {
         /* "7, 8, 4": the first number is the part; the badge shows it and the line lists the rest. */
         const refs = String(ref || '').split(/[\s,]+/).filter(Boolean);
@@ -903,7 +912,7 @@ class FpgPartsFinder extends HTMLElement {
       if (at > 1) return;
       if (pic.numbers) {
         /* The numbers name the image they were measured on; that is the one shown. */
-        fetchNumbers(this.numbersUrl(sec, at)).then((data) => this.warmImage(data?.ok ? data.image : pic.view));
+        this.numbersFor(sec, at).then((data) => this.warmImage(data?.ok ? data.image : pic.view));
       } else this.warmImage(pic.view);
     });
   }
@@ -916,6 +925,12 @@ class FpgPartsFinder extends HTMLElement {
     const img = new Image();
     img.decoding = 'async';
     img.src = url;
+  }
+
+  /** A drawing's clickable numbers: the maker's own boxes when we host them, else Polly's. */
+  numbersFor(/** @type {any} */ sec, /** @type {number} */ at) {
+    const inline = sec?.diagrams?.[at]?.inline;
+    return inline ? Promise.resolve(inline) : fetchNumbers(this.numbersUrl(sec, at));
   }
 
   numbersUrl(/** @type {any} */ sec, /** @type {number} */ at) {
@@ -1717,7 +1732,7 @@ class FpgPartsFinder extends HTMLElement {
     const paint = () => {
       const pic = pics[at];
       /* When the numbers are already here, show the image they were measured on straight away. */
-      const known = pic?.numbers ? numbersReady.get(this.numbersUrl(sec, at)) : null;
+      const known = pic?.numbers ? pic.inline || numbersReady.get(this.numbersUrl(sec, at)) : null;
       const first = known?.image || pic?.view;
       dialog.innerHTML = `
         <div class="fpg-pf-v">
@@ -1884,7 +1899,7 @@ class FpgPartsFinder extends HTMLElement {
     paint();
     /* This section's other drawings and the next section are the likeliest clicks. */
     pics.forEach((/** @type {any} */ pic, /** @type {number} */ i) => {
-      if (i !== at && pic.numbers) fetchNumbers(this.numbersUrl(sec, i));
+      if (i !== at && pic.numbers) this.numbersFor(sec, i);
     });
     this.prefetchDrawing(index + 1);
   }
@@ -1946,8 +1961,8 @@ class FpgPartsFinder extends HTMLElement {
       if (hint) hint.textContent = text;
     };
     const url = this.numbersUrl(sec, at);
-    if (!numbersReady.has(url)) say('Loading the clickable numbers…');
-    const data = await fetchNumbers(url);
+    if (!sec?.diagrams?.[at]?.inline && !numbersReady.has(url)) say('Loading the clickable numbers…');
+    const data = await this.numbersFor(sec, at);
     if (run !== state.run) return;
     if (!data?.ok || !Array.isArray(data.maps)) return say('Match the numbers on the drawing to the Ref column.');
     const img = /** @type {HTMLImageElement | null} */ (dialog.querySelector('[data-v-stage] img'));

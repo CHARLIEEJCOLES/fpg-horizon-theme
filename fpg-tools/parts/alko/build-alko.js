@@ -8,6 +8,10 @@
 window.buildGT = async ({ brandNo = 1, brand = 'AL-KO', slug = 'alko', bid = 9601, tid0 = 96001, mid0 = 950001, per = 200, version = '1' } = {}) => {
   const tree = await KV.get('gt-tree-' + brandNo);
   const have = await KV.get('gt-lists-' + brandNo);
+  /* Drawing sizes (gt-dims: drawing URL -> [width, height], from the GIF header) and machine photos (gt-photo: AK number -> file). */
+  const dims = (await KV.get('gt-dims')) || {};
+  const photos = (await KV.get('gt-photo-' + brandNo)) || {};
+  const artOf = {};
   const tidy = (s) => {
     const t = String(s || '').replace(/\s+/g, ' ').replace(/\s*,\s*/g, ', ').trim();
     const low = t.toLowerCase().replace(/\b([a-z]*\d[a-z0-9-]*)\b/g, (w) => w.toUpperCase());
@@ -38,6 +42,7 @@ window.buildGT = async ({ brandNo = 1, brand = 'AL-KO', slug = 'alko', bid = 960
     if (!versions.length) continue;
     const type = typeName(r.cat);
     const mid = nextModel++;
+    artOf[mid] = r.art;
     if (!typeIds.has(type)) typeIds.set(type, nextType++);
     if (!tree2.has(type)) tree2.set(type, []);
     tree2.get(type).push([mid, r.name.replace(/\s*\[[^\]]+\]\s*$/, '').trim() + ` (${r.art})`]);
@@ -45,6 +50,8 @@ window.buildGT = async ({ brandNo = 1, brand = 'AL-KO', slug = 'alko', bid = 960
     const several = versions.length > 1;
     for (const { v, label } of versions) {
       for (const p of v.pages) {
+        /* AL-KO's "no drawing" placeholder is not a drawing. */
+        if (!/\.gif$/i.test(p.img || '')) continue;
         const byPn = new Map();
         for (const [pos, artno, name, qty, inStock, , replaced, replacedName, clean] of p.rows) {
           if (!artno) continue;
@@ -70,6 +77,8 @@ window.buildGT = async ({ brandNo = 1, brand = 'AL-KO', slug = 'alko', bid = 960
         const pic = picId(p.img);
         pics.add(p.img);
         lists[id] = { n: tidy(String(p.name || '').replace(/^Page\s*\d+\s*/i, '')) || 'Parts', p: [pic], r: r2 };
+        /* Clickable numbers: AL-KO's boxes name the part number without "AK", which is the ref. */
+        if (Array.isArray(p.map) && p.map.length && dims[p.img]) Object.assign(lists[id], { m: p.map, wh: dims[p.img] });
         entry.push(several && label ? [id, label] : id);
       }
     }
@@ -90,6 +99,8 @@ window.buildGT = async ({ brandNo = 1, brand = 'AL-KO', slug = 'alko', bid = 960
     counts: { [brand]: parts.size },
     b: [[bid, brand, [...tree2.entries()].map(([t, list]) => [typeIds.get(t), t, list])]],
     models: mmap,
+    pimg: `https://cdn.shopify.com/s/files/1/0734/1477/0982/files/${slug}-photo-{p}.jpg?width={s}`,
+    mi: Object.fromEntries(Object.keys(mmap).filter((m) => photos[artOf[m]]).map((m) => [m, artOf[m].toLowerCase()])),
   };
   return { index, shards, pics: [...pics], stats: { models: Object.keys(mmap).length, lists: nextList, parts: parts.size, shards: Object.keys(shards).length, drawings: pics.size } };
 };

@@ -8,6 +8,7 @@
  *   pricelist     FGM's price list: part number -> [desc, availability 1 normal / 2 low / 3 nil, ordered, superseded by, retail, ...]
  *   plx           single price-list rows fetched for parts missing from the bulk pull
  *   photo-{root}  machine node id -> photo file name in Ressources/
+ *   dims          drawing file -> [width, height]
  * Run in the portal tab (needs KV from the crawl helpers). Returns { index, shards }.
  */
 window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501, types = null } = {}) => {
@@ -19,6 +20,7 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
   const plx = (await KV.get('plx')) || {};
   /* Machine photos: the catalogue tile's picture, full size (photo-{root}: node id -> file name, checked to exist). */
   const photos = (await KV.get('photo-' + root)) || {};
+  const dims = (await KV.get('dims')) || {};
   const price = (pn) => pl[pn] || plx[pn];
 
   const squash = (s) => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -137,6 +139,18 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
         if (!r.length) continue;
         const id = nextList++;
         lists[id] = { n: tidy(d.d.replace(/^\s*\d+\s+/, '')), p: [d.ipl.replace(/\.[^.]+$/, '')], r };
+        /* Clickable numbers: each hotspot's box on the drawing (dims: drawing file -> [width, height], read from the PNG header). */
+        if (d.hs && dims[d.ipl]) {
+          const m = [...new DOMParser().parseFromString(d.hs, 'text/xml').querySelectorAll('map')]
+            .map((el) => {
+              const pts = String(el.getAttribute('coord') || '').split(';').map((xy) => xy.split(',').map(Number));
+              const xs = pts.map((q) => q[0]).filter(Number.isFinite);
+              const ys = pts.map((q) => q[1]).filter(Number.isFinite);
+              return xs.length ? [el.getAttribute('a') || '', Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)] : null;
+            })
+            .filter(Boolean);
+          if (m.length) Object.assign(lists[id], { m, wh: dims[d.ipl] });
+        }
         entry.push(several ? [id, v.range ? `serial ${v.range.replace('-', '–')}` : tidy(v.p ? nodes[v.p.id].d.split('_').slice(1).join(' ') : '')] : id);
       }
     }
