@@ -100,6 +100,10 @@ The parts finder reads Scheppach's lists from files in the Horizon theme, built 
 
 It is a snapshot: re-run the crawl and `build-maker.js` to pick up Scheppach's changes.
 
+The built files live in the theme only (they are ~5.6 MB). The copy of
+`assets/fpg-maker-parts.json` in git is the earlier one-machine pilot, so don't deploy
+this repo over the theme without first pulling those files down from the theme.
+
 ### Clickable numbers
 
 Scheppach gives the ref number of each part but not where it sits on the drawing.
