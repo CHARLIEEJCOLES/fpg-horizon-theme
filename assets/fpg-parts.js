@@ -532,6 +532,9 @@ class FpgPartsFinder extends HTMLElement {
   /** STIHL / Husqvarna models the maker publishes no parts list for (squashed names, from the section setting). */
   /** @type {Set<string>} */
   noDiagrams = new Set();
+  /** Rough number of parts listed per brand (squashed brand name -> count), from the section setting. */
+  /** @type {Map<string, number>} */
+  partCounts = new Map();
   /** What's in the basket, by variant id: the first line's key and the total quantity. */
   /** @type {Map<string, { key: string, quantity: number }>} */
   basket = new Map();
@@ -548,6 +551,11 @@ class FpgPartsFinder extends HTMLElement {
         .map((line) => squash(line))
         .filter(Boolean)
     );
+    for (const line of String(this.dataset.partCounts || '').split(/\r?\n/)) {
+      const m = line.match(/^(.+?)\s*[:=]\s*([\d,\s]+)$/);
+      const n = m ? Number(m[2].replace(/[^\d]/g, '')) : 0;
+      if (m && n > 0) this.partCounts.set(squash(brandName(m[1])), n);
+    }
     this.view = /** @type {HTMLElement} */ (this.querySelector('[data-view]'));
     this.crumbs = /** @type {HTMLElement} */ (this.querySelector('[data-crumbs]'));
     this.input = /** @type {HTMLInputElement} */ (this.querySelector('[data-search]'));
@@ -864,7 +872,7 @@ class FpgPartsFinder extends HTMLElement {
             <span class="fpg-pf-feature__text">
               ${dealer && dealerBrands.includes(squash(b.name)) ? `<span class="fpg-pf-badge">${esc(dealer)}</span>` : ''}
               <strong>${esc(b.name)} parts</strong>
-              <small>${modelCount(b)} machines listed</small>
+              <small>${modelCount(b)} machines listed${this.partsLabel(b)}</small>
             </span>
             <span class="fpg-pf-feature__go">${ARROW}</span>
           </button>
@@ -881,7 +889,7 @@ class FpgPartsFinder extends HTMLElement {
         <li><button type="button" class="fpg-pf-brand" data-go-brand="${b.id}">
           <span class="fpg-pf-brand__logo">${b.logo ? `<img src="${esc(b.logo)}&width=240" alt="" loading="lazy" width="120" height="60">` : ''}</span>
           <span class="fpg-pf-brand__name">${esc(b.name)}</span>
-          <small>${modelCount(b)} machine${modelCount(b) === 1 ? '' : 's'}</small>
+          <small>${modelCount(b)} machine${modelCount(b) === 1 ? '' : 's'}${this.partsLabel(b)}</small>
         </button></li>`
       )
       .join('');
@@ -897,6 +905,16 @@ class FpgPartsFinder extends HTMLElement {
           ? `<p class="fpg-pf-note">We can also order parts for ${unlistedNames}. These aren't listed online yet, so ${this.contactHtml('get in touch')} with your model and serial number.</p>`
           : ''
       }`;
+  }
+
+  /** " · 48,000+ parts": the brand's rough parts count, rounded down so it never overstates. */
+  partsLabel(/** @type {Brand} */ brand) {
+    const n = this.partCounts.get(squash(brand.name)) || 0;
+    if (n < 1) return '';
+    const digits = String(Math.floor(n)).length;
+    const step = n >= 1000 ? 10 ** (digits - 2) : n >= 100 ? 10 : 1;
+    const shown = Math.floor(n / step) * step;
+    return ` · ${shown.toLocaleString('en-GB')}${shown < n ? '+' : ''} part${shown === 1 ? '' : 's'}`;
   }
 
   /* ---------- step 2: machine types */

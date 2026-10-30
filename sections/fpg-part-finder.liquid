@@ -48,6 +48,7 @@
     data-search-url="{{ routes.search_url }}"
     data-machines-url="{{ section.settings.machines_url | default: '/pages/my-machines' }}"
     data-no-diagrams="{{ section.settings.no_diagrams | escape }}"
+    data-part-counts="{{ section.settings.part_counts | escape }}"
   >
     <header class="fpg-pf-hero">
       <div class="fpg-pf-hero__text">
@@ -264,6 +265,7 @@
     { "type": "text", "id": "dealer_label", "label": "Dealer badge", "default": "Approved dealer" },
     { "type": "text", "id": "dealer_brands", "label": "Brands that get the dealer badge", "info": "Comma separated. Only list brands FP&G is an approved dealer for.", "default": "STIHL" },
     { "type": "textarea", "id": "no_diagrams", "label": "Machines with no maker parts list", "info": "STIHL / Husqvarna models (one per line, as named in the Part Finder) that the maker publishes no parts list for. They're crossed out in the models grid and say the diagrams are unavailable; our own parts for them still show. Remove a line once the machine has a dealer list in Polly." },
+    { "type": "textarea", "id": "part_counts", "label": "Rough parts count per brand", "info": "One per line, e.g. STIHL: 48000. Shown on the brand cards, rounded down (48,000+ parts). Count our listed parts plus the maker's parts lists, each part once." },
     { "type": "checkbox", "id": "maker_stock", "label": "Show live manufacturer stock", "info": "Uses the Cormorant server in Theme settings > FP&G, for parts we have none of.", "default": true },
     { "type": "header", "content": "Other parts tools", "info": "Shown under the search box on the first step, so every way to find a part is in one place." },
     { "type": "text", "id": "common_label", "label": "Common parts look up title", "default": "Common parts look up" },
