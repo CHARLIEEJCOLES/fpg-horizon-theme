@@ -523,7 +523,7 @@ class FpgPartsFinder extends HTMLElement {
   vat = 20;
   /** @type {AbortController | null} */
   request = null;
-  /** @type {{ modelId: number, model: Model, source: string, sections: any[] } | null} */
+  /** @type {{ modelId: number, model: Model, source: string, sections: any[], plain?: boolean } | null} */
   dealer = null;
   /** @type {HTMLDialogElement | null} */
   viewer = null;
@@ -535,6 +535,9 @@ class FpgPartsFinder extends HTMLElement {
   /** Rough number of parts listed per brand (squashed brand name -> count), from the section setting. */
   /** @type {Map<string, number>} */
   partCounts = new Map();
+  /** Makers' parts lists we host ourselves (Scheppach): model id -> its list, or the file it's in. */
+  /** @type {{ source?: string, brand?: string, plain?: boolean, note?: string, models: Record<string, any> }} */
+  maker = { models: {} };
   /** What's in the basket, by variant id: the first line's key and the total quantity. */
   /** @type {Map<string, { key: string, quantity: number }>} */
   basket = new Map();
@@ -579,8 +582,18 @@ class FpgPartsFinder extends HTMLElement {
     const first = this.params().model;
     if (first) this.prefetchModel(first);
 
+    /* Our own copies of makers' parts lists load alongside the index (small: which file holds which model). */
+    /* Next to the index file unless the section names it. */
+    this.dataset.maker ||= String(this.dataset.index || '').replace(/[^/]*$/, 'fpg-maker-parts.json');
+    const maker = this.dataset.maker
+      ? fetch(this.dataset.maker)
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null)
+      : Promise.resolve(null);
     try {
       this.data = await loadIndex(this.dataset.index || '');
+      const m = await maker;
+      if (m && typeof m.models === 'object') this.maker = m;
     } catch {
       this.view.innerHTML = this.errorHtml('The parts list did not load.');
       return;
@@ -710,7 +723,34 @@ class FpgPartsFinder extends HTMLElement {
     const urls = this.modelUrls(id);
     cachedJson(urls.parts).catch(() => {});
     const model = this.data?.models.find((m) => String(m.id) === String(id));
-    if (!model || !this.isUnavailable(model)) cachedJson(urls.dealer).catch(() => {});
+    if (model && this.hasMaker(model)) this.makerList(model.id).catch(() => {});
+    else if (!model || !this.isUnavailable(model)) cachedJson(urls.dealer).catch(() => {});
+  }
+
+  /** True when we host the maker's parts list for this machine ourselves (Scheppach). */
+  hasMaker(/** @type {Model} */ model) {
+    return this.maker.models[String(model.id)] != null;
+  }
+
+  /**
+   * The maker's list for a model, in the same shape Polly sends for STIHL / Husqvarna.
+   * An entry is the list itself, or the name of the file it's in (next to the index file).
+   */
+  async makerList(/** @type {number} */ id) {
+    let entry = this.maker.models[String(id)];
+    if (typeof entry === 'string') {
+      const url = /^(https?:)?\/\//.test(entry) ? entry : String(this.dataset.maker || '').replace(/[^/]*$/, '') + entry;
+      const file = await cachedJson(url);
+      entry = file?.models?.[String(id)] || file;
+    }
+    const brand = this.maker.brand || '';
+    /* Parts as [ref, part number, name, maker's stock: 1 in stock, 2 due in, 0 out, -1 discontinued]. */
+    const sections = (entry?.sections || []).map((/** @type {any} */ sec) => ({
+      name: sec.name,
+      diagrams: (sec.pics || []).map((/** @type {string} */ url) => ({ view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600` })),
+      parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock]) => ({ diagramRef: ref, partNumber: no, title, unavailable: true, makerStock: Number(stock), maker: brand })),
+    }));
+    return { source: this.maker.source || '', sections, note: this.maker.note || '', plain: !!this.maker.plain };
   }
 
   /** True for a STIHL / Husqvarna machine the maker publishes no parts list (so no diagrams) for. */
@@ -1043,7 +1083,8 @@ class FpgPartsFinder extends HTMLElement {
     const supplier = this.supplierFor(brand.name);
     /* STIHL and Husqvarna have the maker's diagrams; other brands rarely do, so they get no placeholder. */
     const unavailable = this.isUnavailable(model);
-    const expectDiagrams = !unavailable && (!!supplier || !model.type.id);
+    const hosted = !unavailable && this.hasMaker(model);
+    const expectDiagrams = !unavailable && (hosted || !!supplier || !model.type.id);
     this.view.innerHTML = `
       <div class="fpg-pf-machine">
         <span class="fpg-pf-machine__icon">${machineIcon(model.type.name, 56)}</span>
@@ -1075,7 +1116,7 @@ class FpgPartsFinder extends HTMLElement {
 
     const urls = this.modelUrls(model.id);
     /* No maker's list for this machine: don't ask for one. */
-    const dealerRequest = unavailable ? null : cachedJson(urls.dealer).catch(() => null);
+    const dealerRequest = unavailable ? null : hosted ? this.makerList(model.id).catch(() => null) : cachedJson(urls.dealer).catch(() => null);
     const summary = /** @type {HTMLElement} */ (this.view.querySelector('[data-summary]'));
     const partsBox = /** @type {HTMLElement} */ (this.view.querySelector('[data-parts]'));
     const tools = /** @type {HTMLElement} */ (this.view.querySelector('[data-tools]'));
@@ -1336,12 +1377,15 @@ class FpgPartsFinder extends HTMLElement {
       box.innerHTML = '';
       return 0;
     }
-    this.dealer = { modelId: model.id, model, source: String(dealer.source || ''), sections };
+    this.dealer = { modelId: model.id, model, source: String(dealer.source || ''), sections, plain: !!dealer.plain };
     const brand = model.type.brand.name;
+    const note = dealer.note
+      ? esc(String(dealer.note)).replace('{model}', esc(model.name))
+      : `${esc(brand || 'The maker')}'s own parts list for the ${esc(model.name)}. Open a section, then tap a number on the drawing to find the part.`;
     box.innerHTML = `
       <div class="fpg-pf-dealer__head">
         <h3 class="fpg-pf-group__h">Exploded diagrams <span>${sections.length}</span></h3>
-        <p class="fpg-pf-dealer__p">${esc(brand || 'The maker')}'s own parts list for the ${esc(model.name)}. Open a section, then tap a number on the drawing to find the part.</p>
+        <p class="fpg-pf-dealer__p">${note}</p>
       </div>
       <ul class="fpg-pf-dsecs" role="list">${sections.map((/** @type {any} */ sec, /** @type {number} */ i) => this.dealerTileHtml(sec, i)).join('')}</ul>`;
     box.hidden = false;
@@ -1367,6 +1411,8 @@ class FpgPartsFinder extends HTMLElement {
   }
 
   diagramUrl(/** @type {string} */ name) {
+    /* Drawings we host (Shopify Files) come as full addresses. */
+    if (/^(https?:)?\/\//.test(name)) return name;
     return `${this.proxy}/diagram/${encodeURIComponent(name)}?modelId=${encodeURIComponent(this.dealer?.modelId ?? '')}`;
   }
 
@@ -1575,15 +1621,22 @@ class FpgPartsFinder extends HTMLElement {
   dealerRowHtml(/** @type {any} */ p, /** @type {number} */ i, /** @type {string} */ brand) {
     const ref = p.diagramRef ? esc(p.diagramRef) : '–';
     const qtyOn = Number(p.quantity) > 1 ? ` · ${Number(p.quantity)} on the machine` : '';
-    const no = partNumber(p.sku || p.partNumber || '');
+    const raw = p.sku || p.partNumber || '';
+    const no = this.dealer?.plain ? raw : partNumber(raw);
     if (p.unavailable || !p.variantId) {
+      /* A part we don't sell online yet; for makers we order from, say whether they have it. */
+      const status =
+        p.makerStock === 1 ? `<span class="fpg-pf-stock fpg-pf-stock--order">We can order it in</span>`
+        : p.makerStock === 2 ? `<span class="fpg-pf-stock fpg-pf-stock--order">Can order in · ${esc(p.maker || 'maker')} awaiting stock</span>`
+        : p.makerStock === -1 ? `<span class="fpg-pf-stock fpg-pf-stock--out">Discontinued by ${esc(p.maker || 'the maker')}</span>`
+        : `<span class="fpg-pf-stock fpg-pf-stock--out">Not sold online</span>`;
       return `
         <div class="fpg-pf-vrow" data-v-row="${i}">
           <span class="fpg-pf-vrow__ref">${ref}</span>
           <div class="fpg-pf-vrow__body">
             <span class="fpg-pf-vrow__name">${esc(cleanTitle(p.title, p.sku, brand))}</span>
             <span class="fpg-pf-vrow__no">Part no. ${esc(no)}${qtyOn}</span>
-            <div class="fpg-pf-vrow__buy"><span class="fpg-pf-stock fpg-pf-stock--out">Not sold online</span>${this.contactHtml('Ask us')}</div>
+            <div class="fpg-pf-vrow__buy">${status}${this.contactHtml(p.makerStock === 1 || p.makerStock === 2 ? 'Ask for a price' : 'Ask us')}</div>
           </div>
         </div>`;
     }
