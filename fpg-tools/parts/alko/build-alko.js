@@ -23,7 +23,7 @@ window.buildGT = async ({ brandNo = 1, brand = 'AL-KO', slug = 'alko', bid = 960
     const m = t.match(/^(.+?)\s*-\s+(.+)$/) || t.match(/^(.+?)\s+-\s*(.+)$/);
     if (m) t = `${m[2]} ${m[1].toLowerCase()}`;
     t = t.replace(/hedgetrimmer/i, 'hedge trimmer').replace(/\bride on\b/i, 'ride-on').replace(/\bzero turn\b/i, 'zero-turn').replace(/\bmulti tool\b/i, 'multi-tool');
-    t = t.replace(/^(Chainsaws|Cultivators|Rollers|Log Splitters|Cement Mixers|Engines|Sod Cutter|Edger)$/i, (w) => w.replace(/s$/i, ''));
+    t = t.replace(/^(Chainsaws|Cultivators|Rollers|Log Splitters|Cement Mixers|Engines|Sod Cutter|Edger|Chipper \/ shredders|Aerator \/ scarifiers|Wheeled vacuums)$/i, (w) => w.replace(/s$/i, ''));
     return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
   };
   const picId = (url) => String(url).replace(/^.*\/parts\/gif\//, '').replace(/\.gif$/i, '').replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
