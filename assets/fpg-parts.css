@@ -1486,7 +1486,7 @@ a.fpg-pf-mine__label:focus-visible {
   object-fit: contain;
 }
 
-.fpg-pf-vrow--img {
+.fpg-pf-vrow.fpg-pf-vrow--img {
   grid-template-columns: 40px minmax(0, 1fr) 72px;
 }
 
@@ -1510,7 +1510,7 @@ a.fpg-pf-mine__label:focus-visible {
 }
 
 @media (max-width: 599px) {
-  .fpg-pf-vrow--img {
+  .fpg-pf-vrow.fpg-pf-vrow--img {
     grid-template-columns: 36px minmax(0, 1fr) 56px;
   }
 
