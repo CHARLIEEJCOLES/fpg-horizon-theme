@@ -748,7 +748,11 @@ class FpgPartsFinder extends HTMLElement {
     const sections = (entry?.sections || []).map((/** @type {any} */ sec) => ({
       name: sec.name,
       diagrams: (sec.pics || []).map((/** @type {string} */ url) => ({ view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600` })),
-      parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock]) => ({ diagramRef: ref, partNumber: no, title, unavailable: true, makerStock: Number(stock), maker: brand })),
+      parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock]) => {
+        /* "7, 8, 4": the first number is the part; the badge shows it and the line lists the rest. */
+        const refs = String(ref || '').split(/[\s,]+/).filter(Boolean);
+        return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), maker: brand };
+      }),
     }));
     return { source: this.maker.source || '', sections, note: this.maker.note || '', plain: !!this.maker.plain };
   }
@@ -1620,7 +1624,9 @@ class FpgPartsFinder extends HTMLElement {
 
   dealerRowHtml(/** @type {any} */ p, /** @type {number} */ i, /** @type {string} */ brand) {
     const ref = p.diagramRef ? esc(p.diagramRef) : '–';
-    const qtyOn = Number(p.quantity) > 1 ? ` · ${Number(p.quantity)} on the machine` : '';
+    const qtyOn =
+      (Number(p.quantity) > 1 ? ` · ${Number(p.quantity)} on the machine` : '') +
+      (Array.isArray(p.refs) && p.refs.length > 1 ? ` · drawing nos. ${esc(p.refs.join(', '))}` : '');
     const raw = p.sku || p.partNumber || '';
     const no = this.dealer?.plain ? raw : partNumber(raw);
     if (p.unavailable || !p.variantId) {
