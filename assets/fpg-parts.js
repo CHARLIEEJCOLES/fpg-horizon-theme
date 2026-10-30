@@ -587,6 +587,10 @@ class FpgPartsFinder extends HTMLElement {
   /** Makers' parts lists we host ourselves (Scheppach): model id -> its list, or the file it's in. */
   /** @type {{ source?: string, brand?: string, plain?: boolean, note?: string, models: Record<string, any> }} */
   maker = { models: {} };
+  /** Every maker's file we host (Scheppach, FGM Claymore…), each with the address it came from (url). @type {any[]} */
+  makers = [];
+  /** Model id -> the maker's file that holds its list. @type {Map<string, any>} */
+  modelMaker = new Map();
   /** What's in the basket, by variant id: the first line's key and the total quantity. */
   /** @type {Map<string, { key: string, quantity: number }>} */
   basket = new Map();
@@ -633,16 +637,21 @@ class FpgPartsFinder extends HTMLElement {
 
     /* Our own copies of makers' parts lists load alongside the index (small: which file holds which model). */
     /* Next to the index file unless the section names it. */
+    /* The section can name several makers' files, separated by spaces. */
     this.dataset.maker ||= String(this.dataset.index || '').replace(/[^/]*$/, 'fpg-maker-parts.json');
-    const maker = this.dataset.maker
-      ? fetch(this.dataset.maker)
+    const makerUrls = String(this.dataset.maker || '').split(/\s+/).filter(Boolean);
+    const makers = Promise.all(
+      makerUrls.map((url) =>
+        fetch(url)
           .then((r) => (r.ok ? r.json() : null))
+          .then((m) => (m && typeof m.models === 'object' ? Object.assign(m, { url }) : null))
           .catch(() => null)
-      : Promise.resolve(null);
+      )
+    );
     try {
       this.data = await loadIndex(this.dataset.index || '');
-      const m = await maker;
-      if (m && typeof m.models === 'object') this.maker = m;
+      this.makers = (await makers).filter(Boolean);
+      if (this.makers[0]) this.maker = this.makers[0];
       this.mergeMaker();
     } catch {
       this.view.innerHTML = this.errorHtml('The parts list did not load.');
@@ -787,51 +796,54 @@ class FpgPartsFinder extends HTMLElement {
   mergeMaker() {
     const data = this.data;
     if (!data) return;
-    for (const [name, n] of Object.entries(this.maker.counts || {})) {
-      const k = squash(brandName(name));
-      if (Number(n) > (this.partCounts.get(k) || 0)) this.partCounts.set(k, Number(n));
-    }
-    if (!Array.isArray(this.maker.b)) return;
     let added = false;
-    for (const [bid, bname, types] of this.maker.b) {
-      let brand = data.brands.find((b) => squash(b.name) === squash(brandName(bname)));
-      if (!brand) {
-        /* Only known through Scheppach's lists: small ones are grouped on the brands page. */
-        brand = { id: bid, raw: bname, name: brandName(bname), logo: '', priority: false, types: [], makerOnly: true };
-        data.brands.push(brand);
-        added = true;
+    for (const maker of this.makers) {
+      for (const mid of Object.keys(maker.models || {})) this.modelMaker.set(mid, maker);
+      for (const [name, n] of Object.entries(maker.counts || {})) {
+        const k = squash(brandName(name));
+        if (Number(n) > (this.partCounts.get(k) || 0)) this.partCounts.set(k, Number(n));
       }
-      for (const [tid, tname, list] of types) {
-        /** @type {Type & { own?: boolean }} */
-        let type = brand.types.find((t) => t.name.toLowerCase() === String(tname).toLowerCase()) || { id: tid, name: tname, brand, models: [], own: true };
-        if (!brand.types.includes(type)) brand.types.push(type);
-        for (const [mid, mname] of list) {
-          if (type.models.some((x) => x.id === mid)) continue;
-          /** @type {Model & { own?: boolean }} */
-          const model = { id: mid, name: mname, type, key: squash(mname), own: true };
-          type.models.push(model);
-          data.models.push(model);
+      if (!Array.isArray(maker.b)) continue;
+      for (const [bid, bname, types] of maker.b) {
+        let brand = data.brands.find((b) => squash(b.name) === squash(brandName(bname)));
+        if (!brand) {
+          /* Brands only known through a maker's lists; Scheppach's small ones are grouped on the brands page (maker.groupSmall). */
+          brand = { id: bid, raw: bname, name: brandName(bname), logo: '', priority: false, types: [], makerOnly: maker.groupSmall !== false };
+          data.brands.push(brand);
+          added = true;
         }
-        type.models.sort((a, b) => collator.compare(a.name, b.name));
+        for (const [tid, tname, list] of types) {
+          /** @type {Type & { own?: boolean }} */
+          let type = brand.types.find((t) => t.name.toLowerCase() === String(tname).toLowerCase()) || { id: tid, name: tname, brand, models: [], own: true };
+          if (!brand.types.includes(type)) brand.types.push(type);
+          for (const [mid, mname] of list) {
+            if (type.models.some((x) => x.id === mid)) continue;
+            /** @type {Model & { own?: boolean }} */
+            const model = { id: mid, name: mname, type, key: squash(mname), own: true };
+            type.models.push(model);
+            data.models.push(model);
+          }
+          type.models.sort((a, b) => collator.compare(a.name, b.name));
+        }
+        brand.types.sort((a, b) => collator.compare(a.name, b.name));
       }
-      brand.types.sort((a, b) => collator.compare(a.name, b.name));
+      /* Brands with no logo of ours show a photo of one of their machines (maker.bi: brand -> picture). */
+      for (const b of data.brands) {
+        const pic = maker.bi?.[b.name];
+        if (!b.logo && !b.photo && pic) b.photo = this.makerImage(pic, 240, maker);
+      }
     }
     if (added) data.brands.sort((a, b) => Number(b.priority) - Number(a.priority) || (a.priority ? a.id - b.id : collator.compare(a.name, b.name)));
-    /* Brands with no logo of ours show a photo of one of their machines (maker.bi: brand -> picture). */
-    for (const b of data.brands) {
-      const pic = this.maker.bi?.[b.name];
-      if (!b.logo && pic) b.photo = this.makerImage(pic, 240);
-    }
   }
 
   /** A maker's photo at a given size (maker.pimg: an address with {s} for the size and {p} for the picture). */
-  makerImage(/** @type {string} */ path, /** @type {number} */ size) {
-    return path && this.maker.pimg ? String(this.maker.pimg).replace(/\{s\}/g, String(size)).replace('{p}', path) : '';
+  makerImage(/** @type {string} */ path, /** @type {number} */ size, /** @type {any} */ maker = this.maker) {
+    return path && maker?.pimg ? String(maker.pimg).replace(/\{s\}/g, String(size)).replace('{p}', path) : '';
   }
 
-  /** True when we host the maker's parts list for this machine ourselves (Scheppach). */
+  /** True when we host the maker's parts list for this machine ourselves (Scheppach, FGM Claymore…). */
   hasMaker(/** @type {Model} */ model) {
-    return this.maker.models[String(model.id)] != null;
+    return this.modelMaker.has(String(model.id));
   }
 
   /**
@@ -839,7 +851,7 @@ class FpgPartsFinder extends HTMLElement {
    * An entry is the list itself, or the name of the file it's in (next to the index file).
    */
   async makerList(/** @type {number} */ id) {
-    const maker = this.maker;
+    const maker = this.modelMaker.get(String(id)) || this.maker;
     const entry = maker.models[String(id)];
     const brand = maker.brand || '';
     /* An entry is the model's sections, or the ids of its parts lists (one section each), kept in shared files of maker.per lists. */
@@ -849,7 +861,7 @@ class FpgPartsFinder extends HTMLElement {
     if (Array.isArray(entry)) {
       /* Each list is its id, or [id, which machines it's for] when the model has several. */
       const ids = entry.map((e) => (Array.isArray(e) ? e : [e, '']));
-      const base = String(this.dataset.maker || '').replace(/[^/]*$/, '');
+      const base = String(maker.url || this.dataset.maker || '').replace(/[^/]*$/, '');
       const per = Number(maker.per) || 50;
       const files = [...new Set(ids.map(([l]) => Math.floor(Number(l) / per)))];
       const got = await Promise.all(files.map((n) => cachedJson(base + String(maker.shard || '').replace('{n}', String(n)))));
@@ -865,15 +877,15 @@ class FpgPartsFinder extends HTMLElement {
           return { name: hint ? `${list.n} · ${hint}` : list.n, pics: (list.p || []).map(img), parts: list.r || [] };
         });
     }
-    /* Parts as [ref, part number, name, maker's stock: 1 in stock, 2 due in, 0 out, -1 discontinued]. */
+    /* Parts as [ref, part number, name, maker's stock: 1 in stock, 2 due in, 3 out at the supplier, 0 not listed, -1 discontinued, the number that replaced it]. */
     const sections = secs.map((/** @type {any} */ sec) => ({
       name: sec.name,
       diagrams: (sec.pics || []).map((/** @type {string} */ url) => ({ view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600` })),
-      parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock]) => {
+      parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock, replacedBy]) => {
         /* "7, 8, 4": the first number is the part; the badge shows it and the line lists the rest. */
         const refs = String(ref || '').split(/[\s,]+/).filter(Boolean);
-        const pic = imgs[no] ? this.makerImage(imgs[no], 160) : '';
-        return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), maker: brand, image: pic, imageLarge: pic && this.makerImage(imgs[no], 900) };
+        const pic = imgs[no] ? this.makerImage(imgs[no], 160, maker) : '';
+        return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), replacedBy: replacedBy || '', maker: brand, image: pic, imageLarge: pic && this.makerImage(imgs[no], 900, maker) };
       }),
     }));
     return { source: maker.source || '', sections, note: maker.note || '', plain: !!maker.plain };
@@ -1335,8 +1347,8 @@ class FpgPartsFinder extends HTMLElement {
     this.view.innerHTML = `
       <div class="fpg-pf-machine">
         ${
-          this.maker.mi?.[String(model.id)]
-            ? `<span class="fpg-pf-machine__icon fpg-pf-machine__icon--photo"><img src="${esc(this.makerImage(this.maker.mi[String(model.id)], 300))}" alt="${esc(`${brand.name} ${model.name}`)}" width="84" height="84"></span>`
+          this.modelMaker.get(String(model.id))?.mi?.[String(model.id)]
+            ? `<span class="fpg-pf-machine__icon fpg-pf-machine__icon--photo"><img src="${esc(this.makerImage(this.modelMaker.get(String(model.id)).mi[String(model.id)], 300, this.modelMaker.get(String(model.id))))}" alt="${esc(`${brand.name} ${model.name}`)}" width="84" height="84"></span>`
             : `<span class="fpg-pf-machine__icon">${machineIcon(model.type.name, 56)}</span>`
         }
         <div class="fpg-pf-machine__text">
@@ -1881,7 +1893,8 @@ class FpgPartsFinder extends HTMLElement {
     const ref = p.diagramRef ? esc(p.diagramRef) : '–';
     const qtyOn =
       (Number(p.quantity) > 1 ? ` · ${Number(p.quantity)} on the machine` : '') +
-      (Array.isArray(p.refs) && p.refs.length > 1 ? ` · drawing nos. ${esc(p.refs.join(', '))}` : '');
+      (Array.isArray(p.refs) && p.refs.length > 1 ? ` · drawing nos. ${esc(p.refs.join(', '))}` : '') +
+      (p.replacedBy ? ` · now ${esc(p.replacedBy)}` : '');
     const raw = p.sku || p.partNumber || '';
     const no = this.dealer?.plain ? raw : partNumber(raw);
     if (p.unavailable || !p.variantId) {
@@ -1889,6 +1902,7 @@ class FpgPartsFinder extends HTMLElement {
       const status =
         p.makerStock === 1 ? `<span class="fpg-pf-stock fpg-pf-stock--order">We can order it in</span>`
         : p.makerStock === 2 ? `<span class="fpg-pf-stock fpg-pf-stock--order">Can order in · ${esc(p.maker || 'maker')} awaiting stock</span>`
+        : p.makerStock === 3 ? `<span class="fpg-pf-stock fpg-pf-stock--out">Out of stock at our supplier</span>`
         : p.makerStock === -1 ? `<span class="fpg-pf-stock fpg-pf-stock--out">Discontinued by ${esc(p.maker || 'the maker')}</span>`
         : `<span class="fpg-pf-stock fpg-pf-stock--out">Not sold online</span>`;
       return `

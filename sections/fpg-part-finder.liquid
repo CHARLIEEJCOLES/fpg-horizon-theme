@@ -36,7 +36,7 @@
   <fpg-parts-finder
     class="fpg-pf"
     data-index="{{ 'fpg-parts-index.json' | asset_url }}"
-    data-maker="{{ 'fpg-maker-parts.json' | asset_url }}"
+    data-maker="{{ 'fpg-maker-parts.json' | asset_url }} {{ 'fpg-maker-fgm-echo.json' | asset_url }}"
     data-proxy="{{ proxy | escape }}"
     data-vat="{{ settings.fpg_vat_rate | default: 20 }}"
     {% if section.settings.maker_stock %}
