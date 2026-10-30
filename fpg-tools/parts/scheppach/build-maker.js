@@ -8,6 +8,8 @@
  *   LCRAWL.lists { [listId]: { d: drawings, r: [[refs, partNumber, germanName, status]] } }
  *   ENGLISH      { [germanName]: englishName }  translated part names
  *   FPGIDX       the theme's assets/fpg-parts-index.json (our own machines)
+ *   PIMG         { [partNumber]: picture path } from the parts lists' covers (optional);
+ *                machine pictures are CRAWL.rows[].img (the page's og:image, after /media/)
  * Then: FPGBUILD.build({ version }) -> { index, shards: { [n]: json } }.
  */
 (() => {
@@ -249,8 +251,9 @@
       let model = p.model;
       if (!model || model.length > 26) model = 'Art. ' + r.article;
       const key = p.brand + '|' + p.type + '|' + squash(model);
-      if (!models.has(key)) models.set(key, { brand: p.brand, type: p.type, model, lists: new Map() });
+      if (!models.has(key)) models.set(key, { brand: p.brand, type: p.type, model, lists: new Map(), img: '' });
       const m = models.get(key);
+      if (!m.img && r.img) m.img = r.img;
       for (const l of r.lists) {
         if (!lists[l.listId]?.r?.length) continue;
         if (!m.lists.has(l.listId)) m.lists.set(l.listId, { label: l.label, rest: new Set() });
@@ -259,7 +262,7 @@
     }
     /* Our own Scheppach-listed PBKS53A2 is the Parkside one. */
     const extra = { 223: [1067] };
-    const out = { models: {}, b: [] };
+    const out = { models: {}, b: [], mi: {} };
     const brands = new Map();
     const usedLists = new Set();
     let next = 800001;
@@ -275,10 +278,12 @@
       const mine = ours.get(squash(m.brand) + '|' + squash(m.model));
       if (mine) {
         out.models[mine] = entry;
+        if (m.img) out.mi[mine] = m.img;
         continue;
       }
       const mid = next++;
       out.models[mid] = entry;
+      if (m.img) out.mi[mid] = m.img;
       if (!brands.has(m.brand)) brands.set(m.brand, new Map());
       const types = brands.get(m.brand);
       if (!types.has(m.type)) types.set(m.type, []);
@@ -315,7 +320,9 @@
         return [ref, no, en || name, STOCK[status] ?? 0];
       });
       const n = Math.floor(id / per);
-      (shards[n] ||= { lists: {} }).lists[id] = { n: labelName(label) || `Parts list ${id}`, p: Array.from({ length: l.d }, (_, i) => `${id}-${i + 1}`), r };
+      const shard = (shards[n] ||= { lists: {} });
+      for (const [, no] of l.r) if (window.PIMG?.[no]) (shard.img ||= {})[no] = window.PIMG[no];
+      shard.lists[id] = { n: labelName(label) || `Parts list ${id}`, p: Array.from({ length: l.d }, (_, i) => `${id}-${i + 1}`), r };
     }
     const index = {
       v: 2,
@@ -324,6 +331,9 @@
       plain: true,
       note: "Scheppach makes this machine. These are Scheppach's own parts lists for the {model}, one per version: open the one that matches your machine's rating plate, then match the numbers on the drawing to the Ref column.",
       img: 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/{id}.jpg',
+      /* Scheppach's own photos of machines (mi) and parts (img in the list files), at size {s}. */
+      pimg: 'https://shop.scheppach.com/imgproxy/s:{s}:{s}/media/{p}',
+      mi: out.mi,
       shard: `fpg-maker-scheppach-{n}.json?v=${version}`,
       per,
       counts,

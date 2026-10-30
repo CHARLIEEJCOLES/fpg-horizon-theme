@@ -818,6 +818,11 @@ class FpgPartsFinder extends HTMLElement {
     if (added) data.brands.sort((a, b) => Number(b.priority) - Number(a.priority) || (a.priority ? a.id - b.id : collator.compare(a.name, b.name)));
   }
 
+  /** A maker's photo at a given size (maker.pimg: an address with {s} for the size and {p} for the picture). */
+  makerImage(/** @type {string} */ path, /** @type {number} */ size) {
+    return path && this.maker.pimg ? String(this.maker.pimg).replace(/\{s\}/g, String(size)).replace('{p}', path) : '';
+  }
+
   /** True when we host the maker's parts list for this machine ourselves (Scheppach). */
   hasMaker(/** @type {Model} */ model) {
     return this.maker.models[String(model.id)] != null;
@@ -833,6 +838,8 @@ class FpgPartsFinder extends HTMLElement {
     const brand = maker.brand || '';
     /* An entry is the model's sections, or the ids of its parts lists (one section each), kept in shared files of maker.per lists. */
     let secs = entry?.sections || [];
+    /** @type {Record<string, string>} */
+    let imgs = {};
     if (Array.isArray(entry)) {
       /* Each list is its id, or [id, which machines it's for] when the model has several. */
       const ids = entry.map((e) => (Array.isArray(e) ? e : [e, '']));
@@ -842,6 +849,8 @@ class FpgPartsFinder extends HTMLElement {
       const got = await Promise.all(files.map((n) => cachedJson(base + String(maker.shard || '').replace('{n}', String(n)))));
       /** @type {Record<string, any>} */
       const lists = Object.assign({}, ...got.map((f) => f?.lists || {}));
+      /* The maker's photo of each part (part number -> picture), where it has one. */
+      imgs = Object.assign({}, ...got.map((f) => f?.img || {}));
       const img = (/** @type {string} */ pic) => (/^(https?:)?\/\//.test(pic) ? pic : String(maker.img || '').replace('{id}', pic));
       secs = ids
         .filter(([l]) => lists[String(l)])
@@ -857,7 +866,8 @@ class FpgPartsFinder extends HTMLElement {
       parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock]) => {
         /* "7, 8, 4": the first number is the part; the badge shows it and the line lists the rest. */
         const refs = String(ref || '').split(/[\s,]+/).filter(Boolean);
-        return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), maker: brand };
+        const pic = imgs[no] ? this.makerImage(imgs[no], 160) : '';
+        return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), maker: brand, image: pic, imageLarge: pic && this.makerImage(imgs[no], 900) };
       }),
     }));
     return { source: maker.source || '', sections, note: maker.note || '', plain: !!maker.plain };
@@ -1272,7 +1282,11 @@ class FpgPartsFinder extends HTMLElement {
     const expectDiagrams = !unavailable && (hosted || !!supplier || !model.type.id);
     this.view.innerHTML = `
       <div class="fpg-pf-machine">
-        <span class="fpg-pf-machine__icon">${machineIcon(model.type.name, 56)}</span>
+        ${
+          this.maker.mi?.[String(model.id)]
+            ? `<span class="fpg-pf-machine__icon fpg-pf-machine__icon--photo"><img src="${esc(this.makerImage(this.maker.mi[String(model.id)], 300))}" alt="${esc(`${brand.name} ${model.name}`)}" width="84" height="84"></span>`
+            : `<span class="fpg-pf-machine__icon">${machineIcon(model.type.name, 56)}</span>`
+        }
         <div class="fpg-pf-machine__text">
           <p class="fpg-pf-machine__kicker">${esc(brand.name)} ${esc(model.type.name)}</p>
           <h2 class="fpg-pf-h" tabindex="-1" data-focus>${esc(model.name)} parts</h2>
@@ -1826,13 +1840,14 @@ class FpgPartsFinder extends HTMLElement {
         : p.makerStock === -1 ? `<span class="fpg-pf-stock fpg-pf-stock--out">Discontinued by ${esc(p.maker || 'the maker')}</span>`
         : `<span class="fpg-pf-stock fpg-pf-stock--out">Not sold online</span>`;
       return `
-        <div class="fpg-pf-vrow" data-v-row="${i}">
+        <div class="fpg-pf-vrow${p.image ? ' fpg-pf-vrow--img' : ''}" data-v-row="${i}">
           <span class="fpg-pf-vrow__ref">${ref}</span>
           <div class="fpg-pf-vrow__body">
             <span class="fpg-pf-vrow__name">${esc(cleanTitle(p.title, p.sku, brand))}</span>
             <span class="fpg-pf-vrow__no">Part no. ${esc(no)}${qtyOn}</span>
             <div class="fpg-pf-vrow__buy">${status}${this.contactHtml(p.makerStock === 1 || p.makerStock === 2 ? 'Ask for a price' : 'Ask us')}</div>
           </div>
+          ${p.image ? `<a class="fpg-pf-vrow__img" href="${esc(p.imageLarge)}" target="_blank" rel="noopener" aria-label="Larger photo of this part"><img src="${esc(p.image)}" alt="" loading="lazy" width="72" height="72"></a>` : ''}
         </div>`;
     }
     const ex = Math.round(Number(p.price || 0) * 100);

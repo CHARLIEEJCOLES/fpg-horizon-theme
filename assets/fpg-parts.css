@@ -1470,3 +1470,52 @@ a.fpg-pf-mine__label:focus-visible {
   font-size: 0.9375rem;
   white-space: nowrap;
 }
+
+/* ---------- makers' photos (Scheppach): machine and parts ---------- */
+.fpg-pf-machine__icon--photo {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--fpg-line, #d6ded9);
+}
+
+.fpg-pf-machine__icon--photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  object-fit: contain;
+}
+
+.fpg-pf-vrow--img {
+  grid-template-columns: 40px minmax(0, 1fr) 72px;
+}
+
+.fpg-pf-vrow__img {
+  display: block;
+  align-self: start;
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  border: 1px solid var(--fpg-line, #d6ded9);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.fpg-pf-vrow__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  object-fit: contain;
+}
+
+@media (max-width: 599px) {
+  .fpg-pf-vrow--img {
+    grid-template-columns: 36px minmax(0, 1fr) 56px;
+  }
+
+  .fpg-pf-vrow__img {
+    width: 56px;
+    height: 56px;
+  }
+}
