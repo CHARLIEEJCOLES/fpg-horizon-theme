@@ -1539,3 +1539,17 @@ a.fpg-pf-mine__label:focus-visible {
   font-weight: 800;
   letter-spacing: 0.04em;
 }
+
+/* ---------- "Other Scheppach-made brands" tile: four machine photos ---------- */
+.fpg-pf-brand__logo--grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+
+.fpg-pf-brand__logo--grid img.is-photo {
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  object-fit: contain;
+}

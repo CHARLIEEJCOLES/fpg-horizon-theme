@@ -278,7 +278,7 @@ const SEARCH_ICON =
 /* ---------------------------------------------------------------- index */
 
 /**
- * @typedef {{ id: number, name: string, raw: string, logo: string, photo?: string, priority: boolean, types: Type[] }} Brand
+ * @typedef {{ id: number, name: string, raw: string, logo: string, photo?: string, priority: boolean, types: Type[], makerOnly?: boolean }} Brand
  * @typedef {{ id: number, name: string, brand: Brand, models: Model[] }} Type
  * @typedef {{ id: number, name: string, type: Type, key: string }} Model
  */
@@ -796,7 +796,8 @@ class FpgPartsFinder extends HTMLElement {
     for (const [bid, bname, types] of this.maker.b) {
       let brand = data.brands.find((b) => squash(b.name) === squash(brandName(bname)));
       if (!brand) {
-        brand = { id: bid, raw: bname, name: brandName(bname), logo: '', priority: false, types: [] };
+        /* Only known through Scheppach's lists: small ones are grouped on the brands page. */
+        brand = { id: bid, raw: bname, name: brandName(bname), logo: '', priority: false, types: [], makerOnly: true };
         data.brands.push(brand);
         added = true;
       }
@@ -945,12 +946,13 @@ class FpgPartsFinder extends HTMLElement {
       if (step === 'models') return { type: id };
       if (step === 'model') return { model: id };
     }
-    return { brand: p.get('brand'), type: p.get('type'), model: p.get('model') };
+    return { brand: p.get('brand'), type: p.get('type'), model: p.get('model'), group: p.get('group') };
   }
 
-  /** @param {{ brand?: number|null, type?: number|null, model?: number|null }} to */
+  /** @param {{ brand?: number|null, type?: number|null, model?: number|null, group?: string }} to */
   go(to, push = true) {
     const p = new URLSearchParams();
+    if (to.group) p.set('group', to.group);
     if (to.brand) p.set('brand', String(to.brand));
     if (to.type) p.set('type', String(to.type));
     if (to.model) p.set('model', String(to.model));
@@ -961,7 +963,7 @@ class FpgPartsFinder extends HTMLElement {
 
   route(scroll = true) {
     if (!this.data) return;
-    const { brand: bId, type: tId, model: mId } = this.params();
+    const { brand: bId, type: tId, model: mId, group } = this.params();
     const { brands } = this.data;
     let brand = brands.find((b) => String(b.id) === String(bId)) || null;
     let type = null;
@@ -989,7 +991,7 @@ class FpgPartsFinder extends HTMLElement {
     else if (mId) this.renderUnknownModel(Number(mId));
     else if (type) this.renderModels(type);
     else if (brand) this.renderTypes(brand);
-    else this.renderBrands();
+    else this.renderBrands(group === 'scheppach');
     this.renderCrumbs(brand, type, model);
     this.dataset.step = model || mId ? 'model' : type ? 'models' : brand ? 'types' : 'brands';
     if (scroll) {
@@ -1015,11 +1017,15 @@ class FpgPartsFinder extends HTMLElement {
 
   /* ---------- step 1: brands */
 
-  renderBrands() {
+  renderBrands(smallOnly = false) {
     const { brands } = /** @type {any} */ (this.data);
     const listed = brands.filter((/** @type {Brand} */ b) => modelCount(b) > 0);
     const featured = listed.filter((/** @type {Brand} */ b) => b.priority);
-    const others = listed.filter((/** @type {Brand} */ b) => !b.priority);
+    /* Brands only Scheppach's lists know, with under 500 parts, sit behind one "Other Scheppach-made brands" tile. */
+    const small = listed.filter((/** @type {Brand} */ b) => !b.priority && b.makerOnly && (this.partCounts.get(squash(b.name)) || 0) < 500);
+    const grouped = small.length > 1;
+    const others = listed.filter((/** @type {Brand} */ b) => !b.priority && !(grouped && small.includes(b)));
+    if (smallOnly && grouped) return this.renderSmallBrands(small);
     const unlisted = brands.filter((/** @type {Brand} */ b) => modelCount(b) === 0);
     const dealer = this.dataset.dealerLabel || 'Approved dealer';
     const dealerBrands = String(this.dataset.dealerBrands || 'STIHL')
@@ -1057,7 +1063,7 @@ class FpgPartsFinder extends HTMLElement {
           <small>${modelCount(b)} machine${modelCount(b) === 1 ? '' : 's'}${this.partsLabel(b)}</small>
         </button></li>`
       )
-      .join('');
+      .join('') + (grouped ? this.smallBrandsTile(small) : '');
 
     const unlistedNames = unlisted.map((/** @type {Brand} */ b) => esc(b.name)).join(', ');
 
@@ -1070,6 +1076,38 @@ class FpgPartsFinder extends HTMLElement {
           ? `<p class="fpg-pf-note">We can also order parts for ${unlistedNames}. These aren't listed online yet, so ${this.contactHtml('get in touch')} with your model and serial number.</p>`
           : ''
       }`;
+  }
+
+  /** The tile that opens the smaller Scheppach-made brands. */
+  smallBrandsTile(/** @type {Brand[]} */ small) {
+    const machines = small.reduce((n, b) => n + modelCount(b), 0);
+    const pics = small.filter((b) => b.photo).slice(0, 4);
+    return `
+        <li><button type="button" class="fpg-pf-brand fpg-pf-brand--group" data-go-group="scheppach">
+          <span class="fpg-pf-brand__logo fpg-pf-brand__logo--grid">${
+            pics.length >= 4 ? pics.map((b) => `<img class="is-photo" src="${esc(b.photo)}" alt="" loading="lazy" width="60" height="60">`).join('') : `<span class="fpg-pf-mono" aria-hidden="true">+${small.length}</span>`
+          }</span>
+          <span class="fpg-pf-brand__name">Other Scheppach-made brands</span>
+          <small>${small.length} brands · ${machines} machines</small>
+        </button></li>`;
+  }
+
+  /** The smaller Scheppach-made brands on their own page (?group=scheppach). */
+  renderSmallBrands(/** @type {Brand[]} */ small) {
+    this.view.innerHTML = `
+      <button type="button" class="fpg-pf-btn fpg-pf-btn--ghost fpg-pf-btn--sm" data-go-home>‹ All brands</button>
+      <h2 class="fpg-pf-h" tabindex="-1" data-focus>Other Scheppach-made brands</h2>
+      <p class="fpg-pf-lead">Scheppach builds machines for these brands too. We have Scheppach's own parts lists for them, so pick yours.</p>
+      <ul class="fpg-pf-brands" role="list">${small
+        .map(
+          (b) => `
+        <li><button type="button" class="fpg-pf-brand" data-go-brand="${b.id}">
+          <span class="fpg-pf-brand__logo">${this.brandPic(b)}</span>
+          <span class="fpg-pf-brand__name">${esc(b.name)}</span>
+          <small>${modelCount(b)} machine${modelCount(b) === 1 ? '' : 's'}${this.partsLabel(b)}</small>
+        </button></li>`
+        )
+        .join('')}</ul>`;
   }
 
   /** A brand's logo; else a photo of one of its machines; else its initials. */
@@ -1949,10 +1987,11 @@ class FpgPartsFinder extends HTMLElement {
 
   onClick = async (/** @type {MouseEvent} */ event) => {
     const t = /** @type {HTMLElement} */ (event.target);
-    const el = t.closest('[data-go-home],[data-go-brand],[data-go-type],[data-go-model],[data-add],[data-qty-step],[data-save],[data-forget],[data-jump],[data-retry],[data-suggest-go],[data-dsec]');
+    const el = t.closest('[data-go-home],[data-go-group],[data-go-brand],[data-go-type],[data-go-model],[data-add],[data-qty-step],[data-save],[data-forget],[data-jump],[data-retry],[data-suggest-go],[data-dsec]');
     if (!(el instanceof HTMLElement)) return;
     const d = el.dataset;
     if ('goHome' in d) return this.go({});
+    if (d.goGroup) return this.go({ group: d.goGroup });
     if (d.goBrand) return this.go({ brand: Number(d.goBrand) });
     if (d.goType) {
       const type = this.data?.brands.flatMap((b) => b.types).find((x) => String(x.id) === d.goType);
