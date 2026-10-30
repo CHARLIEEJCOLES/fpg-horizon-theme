@@ -10,7 +10,7 @@
  *   photo-{root}  machine node id -> photo file name in Ressources/
  * Run in the portal tab (needs KV from the crawl helpers). Returns { index, shards }.
  */
-window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501 } = {}) => {
+window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501, types = null } = {}) => {
   const nodes = await KV.get('tree-' + root);
   const prods = await KV.get('prods-' + root);
   const plo = (await KV.get('plo-' + root)) || {};
@@ -46,7 +46,12 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
     'Dusters / Mist Blowers': 'Mist blower', 'Earth Augers': 'Earth auger', 'Engine Drills': 'Engine drill',
     'Hedge Trimmer': 'Hedge trimmer', 'Multi Tool': 'Multi-tool', Lawnmower: 'Lawn mower', Sprayers: 'Sprayer',
   };
+  /* types: the brand's own folder -> type names ('Power Drive': 'Self-propelled mower'); OLDER PRODUCTS folders are skipped. */
   const typeOf = (fp) => {
+    if (types) {
+      const f = fp.filter((x) => !/^older products$/i.test(x));
+      return types[f.slice(0, 2).join(' > ')] || types[f[0] || ''] || tidy(f[0] || brand);
+    }
     if (fp[0] === 'Chain Saw' && fp[1] === 'Pole Pruner') return 'Pruner';
     if (fp[0] === 'Hedge Trimmer' && fp[1] === 'Pole') return 'Pole hedge trimmer';
     return TYPE[fp[0]] || tidy(fp[0]);
