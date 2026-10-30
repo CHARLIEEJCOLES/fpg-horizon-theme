@@ -11,7 +11,7 @@
  *   dims          drawing file -> [width, height]
  * Run in the portal tab (needs KV from the crawl helpers). Returns { index, shards }.
  */
-window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501, types = null } = {}) => {
+window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501, types = null, nameStyle = 'echo', list0 = 0, imgSlug = '' } = {}) => {
   const nodes = await KV.get('tree-' + root);
   const prods = await KV.get('prods-' + root);
   const plo = (await KV.get('plo-' + root)) || {};
@@ -75,13 +75,21 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
   for (const p of prods) {
     const node = nodes[p.id];
     if (!node) continue;
-    const docs = (p.docs || []).filter((d) => d.ipl);
+    const docs = (p.docs || []).filter((d) => /\.(png|jpe?g|gif)$/i.test(d.ipl || ''));
     if (!docs.length) continue;
     const fp = folders(p.id);
     const type = typeOf(fp);
     const info = plo[p.id] || {};
     /* "PB-2520_40_40000001", "CS-4510ES CHAIN SAWS (38000001-38999999)", "PAS-PE_999442-00875__35_35000001" */
     let code = node.d.split(/[_ ]/)[0];
+    let rest = '';
+    /* Brands without Echo's "CODE_xx_serial" names: the model is the words before the first year, long number or code ("575AL SP 2020 Aug 465839", "X7 GEN 2 - 2026 - 16800294", "NX90V 2691242-00"). */
+    if (nameStyle === 'plain' && !/_\d+_\d{6,}$/.test(node.d)) {
+      const words = node.d.replace(/\s+/g, ' ').trim().split(' ');
+      const at = words.findIndex((w, i) => i > 0 && (/^\(?(19|20)\d\d\)?$/.test(w) || /^\d{6,}/.test(w) || /^-$/.test(w) || /^EE-/.test(w) || /^pre$/i.test(w) || /^\d{7}-\d+$/.test(w)));
+      code = (at > 0 ? words.slice(0, at) : words).join(' ').replace(/[_\s]+$/, '');
+      rest = at > 0 ? words.slice(at).join(' ').replace(/^-\s*/, '') : '';
+    }
     if (/^\d+$/.test(code) || /^E[AH]-/.test(code)) {
       const t = (info.title || node.d).replace(/\s*\(.*$/, '').trim();
       const [first, ...rest] = t.split(' ');
@@ -90,7 +98,8 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
     const range =
       (info.title || '').match(/\(([^)]+)\)\s*$/)?.[1] ||
       node.d.match(/\(([^)]+)\)\s*$/)?.[1] ||
-      (node.d.match(/_(\d{6,})$/)?.[1] && !/^0+$/.test(node.d.match(/_(\d{6,})$/)[1]) ? `${node.d.match(/_(\d{6,})$/)[1]} on` : '');
+      (node.d.match(/_(\d{6,})$/)?.[1] && !/^0+$/.test(node.d.match(/_(\d{6,})$/)[1]) ? `${node.d.match(/_(\d{6,})$/)[1]} on` : '') ||
+      rest;
     const key = type + '|' + squash(code);
     if (!models.has(key)) models.set(key, { type, name: code.trim(), versions: [] });
     models.get(key).versions.push({ p, docs, range, photo: photos[p.id] || '' });
@@ -102,7 +111,7 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
   const typeIds = new Map();
   const tree = new Map();
   const parts = new Set();
-  let nextList = 0;
+  let nextList = list0;
   let nextModel = mid0;
   let nextType = tid0;
   const sorted = [...models.values()].sort((a, b) => a.type.localeCompare(b.type) || a.name.localeCompare(b.name, 'en', { numeric: true }));
@@ -151,7 +160,7 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
             .filter(Boolean);
           if (m.length) Object.assign(lists[id], { m, wh: dims[d.ipl] });
         }
-        entry.push(several ? [id, v.range ? `serial ${v.range.replace('-', '–')}` : tidy(v.p ? nodes[v.p.id].d.split('_').slice(1).join(' ') : '')] : id);
+        entry.push(several ? [id, v.range ? (nameStyle === 'echo' || /^\(?[A-Z]?\d{6,}-[A-Z]?\d{6,}\)?$/.test(v.range) ? `serial ${v.range.replace('-', '–')}` : v.range) : tidy(v.p ? nodes[v.p.id].d.split('_').slice(1).join(' ') : '')] : id);
       }
     }
     if (entry.length) mmap[mid] = entry;
@@ -169,7 +178,7 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
     plain: true,
     groupSmall: false,
     note: `These are ${brand}'s own parts lists for the {model}, from ${brand}'s UK distributor FGM Claymore. Where there's one per serial range, open the one that matches your machine's rating plate, then match the numbers on the drawing to the Ref column. Stock is our supplier's when this list was last updated.`,
-    img: `https://cdn.shopify.com/s/files/1/0734/1477/0982/files/fgm-${slug}-{id}.png`,
+    img: `https://cdn.shopify.com/s/files/1/0734/1477/0982/files/fgm-${imgSlug || slug}-{id}.png`,
     shard: `fpg-maker-fgm-${slug}-{n}.json?v=${version}`,
     per,
     counts: { [brand]: parts.size },
