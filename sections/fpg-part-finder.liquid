@@ -47,6 +47,7 @@
     data-contact-url="{{ section.settings.contact_url | default: '/pages/contact' }}"
     data-search-url="{{ routes.search_url }}"
     data-machines-url="{{ section.settings.machines_url | default: '/pages/my-machines' }}"
+    data-no-diagrams="{{ section.settings.no_diagrams | escape }}"
   >
     <header class="fpg-pf-hero">
       <div class="fpg-pf-hero__text">
@@ -177,6 +178,75 @@
 .fpg-pf:not([data-step='brands']) .fpg-pf-hero__more {
   display: none;
 }
+
+/* Machines the maker publishes no parts list for: crossed out in the models grid. */
+.fpg-pf-model--none {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-style: dashed;
+  background: #f6f7f6;
+  color: rgb(18 38 43 / 0.55);
+  font-weight: 600;
+}
+
+.fpg-pf-model__x {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border-radius: 50%;
+  background: #e9ecea;
+  color: #8a3b2e;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.fpg-pf-model--none:hover .fpg-pf-model__x,
+.fpg-pf-model--none:focus-visible .fpg-pf-model__x {
+  background: rgb(255 255 255 / 0.2);
+  color: #fff;
+}
+
+/* In place of the diagrams on that machine's page. */
+.fpg-pf-unavail {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 18px 20px;
+  border: 1px dashed var(--fpg-line, #d6ded9);
+  border-radius: 14px;
+  background: #fbfcfb;
+}
+
+.fpg-pf-unavail__x {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f6e9e6;
+  color: #8a3b2e;
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.fpg-pf-unavail__h {
+  margin: 0 0 4px;
+  font-size: 1.0625rem;
+  color: var(--fpg-teal, #002d37);
+}
+
+.fpg-pf-unavail p {
+  margin: 0 0 8px;
+  line-height: 1.5;
+  color: rgb(18 38 43 / 0.78);
+}
 {% endstylesheet %}
 
 {% schema %}
@@ -193,6 +263,7 @@
     { "type": "text", "id": "machines_url", "label": "My machines page", "default": "/pages/my-machines" },
     { "type": "text", "id": "dealer_label", "label": "Dealer badge", "default": "Approved dealer" },
     { "type": "text", "id": "dealer_brands", "label": "Brands that get the dealer badge", "info": "Comma separated. Only list brands FP&G is an approved dealer for.", "default": "STIHL" },
+    { "type": "textarea", "id": "no_diagrams", "label": "Machines with no maker parts list", "info": "STIHL / Husqvarna models (one per line, as named in the Part Finder) that the maker publishes no parts list for. They're crossed out in the models grid and say the diagrams are unavailable; our own parts for them still show. Remove a line once the machine has a dealer list in Polly." },
     { "type": "checkbox", "id": "maker_stock", "label": "Show live manufacturer stock", "info": "Uses the Cormorant server in Theme settings > FP&G, for parts we have none of.", "default": true },
     { "type": "header", "content": "Other parts tools", "info": "Shown under the search box on the first step, so every way to find a part is in one place." },
     { "type": "text", "id": "common_label", "label": "Common parts look up title", "default": "Common parts look up" },

@@ -529,6 +529,9 @@ class FpgPartsFinder extends HTMLElement {
   viewer = null;
   /** The model on screen; answers for any other are dropped. @type {symbol | null} */
   modelToken = null;
+  /** STIHL / Husqvarna models the maker publishes no parts list for (squashed names, from the section setting). */
+  /** @type {Set<string>} */
+  noDiagrams = new Set();
   /** What's in the basket, by variant id: the first line's key and the total quantity. */
   /** @type {Map<string, { key: string, quantity: number }>} */
   basket = new Map();
@@ -539,6 +542,12 @@ class FpgPartsFinder extends HTMLElement {
 
   async connectedCallback() {
     this.vat = Number(this.dataset.vat || 20);
+    this.noDiagrams = new Set(
+      String(this.dataset.noDiagrams || '')
+        .split(/\r?\n/)
+        .map((line) => squash(line))
+        .filter(Boolean)
+    );
     this.view = /** @type {HTMLElement} */ (this.querySelector('[data-view]'));
     this.crumbs = /** @type {HTMLElement} */ (this.querySelector('[data-crumbs]'));
     this.input = /** @type {HTMLInputElement} */ (this.querySelector('[data-search]'));
@@ -692,7 +701,13 @@ class FpgPartsFinder extends HTMLElement {
   prefetchModel(/** @type {string|number} */ id) {
     const urls = this.modelUrls(id);
     cachedJson(urls.parts).catch(() => {});
-    cachedJson(urls.dealer).catch(() => {});
+    const model = this.data?.models.find((m) => String(m.id) === String(id));
+    if (!model || !this.isUnavailable(model)) cachedJson(urls.dealer).catch(() => {});
+  }
+
+  /** True for a STIHL / Husqvarna machine the maker publishes no parts list (so no diagrams) for. */
+  isUnavailable(/** @type {Model} */ model) {
+    return this.noDiagrams.size > 0 && !!this.supplierFor(model.type.brand.name) && this.noDiagrams.has(model.key);
   }
 
   /** Starts loading a section's drawings and their clickable numbers. */
@@ -932,7 +947,11 @@ class FpgPartsFinder extends HTMLElement {
             <ul class="fpg-pf-models" role="list">
               ${groups
                 .get(k)
-                .map((/** @type {Model} */ m) => `<li data-model-name="${esc(m.key)}"><button type="button" class="fpg-pf-model" data-go-model="${m.id}">${esc(m.name)}</button></li>`)
+                .map((/** @type {Model} */ m) =>
+                  this.isUnavailable(m)
+                    ? `<li data-model-name="${esc(m.key)}"><button type="button" class="fpg-pf-model fpg-pf-model--none" data-go-model="${m.id}" title="No parts diagrams from ${esc(type.brand.name)} for this machine"><span class="fpg-pf-model__x" aria-hidden="true">×</span>${esc(m.name)}<span class="visually-hidden"> (no parts diagrams)</span></button></li>`
+                    : `<li data-model-name="${esc(m.key)}"><button type="button" class="fpg-pf-model" data-go-model="${m.id}">${esc(m.name)}</button></li>`
+                )
                 .join('')}
             </ul>
           </div>`
@@ -1005,7 +1024,8 @@ class FpgPartsFinder extends HTMLElement {
     const saved = this.isSaved(model.id);
     const supplier = this.supplierFor(brand.name);
     /* STIHL and Husqvarna have the maker's diagrams; other brands rarely do, so they get no placeholder. */
-    const expectDiagrams = !!supplier || !model.type.id;
+    const unavailable = this.isUnavailable(model);
+    const expectDiagrams = !unavailable && (!!supplier || !model.type.id);
     this.view.innerHTML = `
       <div class="fpg-pf-machine">
         <span class="fpg-pf-machine__icon">${machineIcon(model.type.name, 56)}</span>
@@ -1023,7 +1043,7 @@ class FpgPartsFinder extends HTMLElement {
         <label class="fpg-pf-filter">${SEARCH_ICON}<span class="visually-hidden">Search these parts</span><input type="search" placeholder="Search by part name or number" data-part-filter autocomplete="off"></label>
         <label class="fpg-pf-toggle"><input type="checkbox" data-instock> <span>In stock with us</span></label>
       </div>
-      <div class="fpg-pf-dealer" data-dealer ${expectDiagrams ? '' : 'hidden'}>${expectDiagrams ? this.dealerLoadingHtml(brand.name) : ''}</div>
+      <div class="fpg-pf-dealer" data-dealer ${expectDiagrams || unavailable ? '' : 'hidden'}>${unavailable ? this.unavailableHtml(model) : expectDiagrams ? this.dealerLoadingHtml(brand.name) : ''}</div>
       <nav class="fpg-pf-sections" data-sections aria-label="Parts sections" hidden></nav>
       <div data-parts>${this.skeletonHtml()}</div>
       <p class="fpg-pf-empty" data-parts-none hidden>No parts match. Try fewer words, or ${this.contactHtml('ask us')}.</p>`;
@@ -1036,7 +1056,8 @@ class FpgPartsFinder extends HTMLElement {
     this.dealer = null;
 
     const urls = this.modelUrls(model.id);
-    const dealerRequest = cachedJson(urls.dealer).catch(() => null);
+    /* No maker's list for this machine: don't ask for one. */
+    const dealerRequest = unavailable ? null : cachedJson(urls.dealer).catch(() => null);
     const summary = /** @type {HTMLElement} */ (this.view.querySelector('[data-summary]'));
     const partsBox = /** @type {HTMLElement} */ (this.view.querySelector('[data-parts]'));
     const tools = /** @type {HTMLElement} */ (this.view.querySelector('[data-tools]'));
@@ -1058,7 +1079,8 @@ class FpgPartsFinder extends HTMLElement {
     };
 
     /* The maker's diagrams arrive on their own, often after our list. */
-    dealerRequest.then((dealer) => {
+    if (!dealerRequest) facts.diagrams = 0;
+    dealerRequest?.then((dealer) => {
       if (!current()) return;
       facts.diagrams = this.renderDealer(model, dealer);
       facts.makerParts = (this.dealer?.sections || []).reduce((n, sec) => n + (sec.parts?.length || 0), 0);
@@ -1132,6 +1154,20 @@ class FpgPartsFinder extends HTMLElement {
       </div>`;
     const summary = this.view.querySelector('[data-summary]');
     if (summary) summary.textContent = 'No parts listed online for this machine yet.';
+  }
+
+  /** In place of the diagrams, for a machine the maker publishes no parts list for. */
+  unavailableHtml(/** @type {Model} */ model) {
+    const brand = model.type.brand.name || 'The maker';
+    return `
+      <div class="fpg-pf-unavail" role="note">
+        <span class="fpg-pf-unavail__x" aria-hidden="true">×</span>
+        <div>
+          <h3 class="fpg-pf-unavail__h">Parts diagrams unavailable</h3>
+          <p>${esc(brand)} doesn't publish a parts list for the ${esc(model.name)}, so there are no exploded diagrams for it at the moment. The parts we list for it are below; for anything else, send us the model and serial number and we'll track it down.</p>
+          ${this.contactHtml('Ask about a part')}
+        </div>
+      </div>`;
   }
 
   dealerLoadingHtml(/** @type {string} */ brand) {
@@ -1758,7 +1794,7 @@ class FpgPartsFinder extends HTMLElement {
     const searchUrl = `${this.dataset.searchUrl || '/search'}?q=${encodeURIComponent(query)}`;
     const items = found.map(
       (m) => `<li role="option" id="fpg-pf-o${m.id}"><button type="button" data-go-model="${m.id}" tabindex="-1">
-        ${machineIcon(m.type.name, 22)}<span><strong>${esc(m.type.brand.name)} ${esc(m.name)}</strong><small>${esc(m.type.name)}</small></span></button></li>`
+        ${machineIcon(m.type.name, 22)}<span><strong>${esc(m.type.brand.name)} ${esc(m.name)}</strong><small>${esc(m.type.name)}${this.isUnavailable(m) ? ' · no parts diagrams' : ''}</small></span></button></li>`
     );
     items.push(
       `<li role="option" id="fpg-pf-oq"><button type="button" data-suggest-go="${esc(searchUrl)}" tabindex="-1">${SEARCH_ICON}<span><strong>${
