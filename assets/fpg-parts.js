@@ -855,7 +855,8 @@ class FpgPartsFinder extends HTMLElement {
   async makerList(/** @type {number} */ id) {
     const maker = this.modelMaker.get(String(id)) || this.maker;
     const entry = maker.models[String(id)];
-    const brand = maker.brand || '';
+    /* One file can hold several brands (FGM Claymore's): name the machine's own. */
+    const brand = this.data?.models.find((m) => String(m.id) === String(id))?.type.brand.name || maker.brand || '';
     /* An entry is the model's sections, or the ids of its parts lists (one section each), kept in shared files of maker.per lists. */
     let secs = entry?.sections || [];
     /** @type {Record<string, string>} */
@@ -1658,7 +1659,7 @@ class FpgPartsFinder extends HTMLElement {
     this.dealer = { modelId: model.id, model, source: String(dealer.source || ''), sections, plain: !!dealer.plain };
     const brand = model.type.brand.name;
     const note = dealer.note
-      ? esc(String(dealer.note)).replace('{model}', esc(model.name))
+      ? esc(String(dealer.note)).replace('{model}', esc(model.name)).replace(/\{brand\}/g, esc(brand || 'The maker'))
       : `${esc(brand || 'The maker')}'s own parts list for the ${esc(model.name)}. Open a section, then tap a number on the drawing to find the part.`;
     box.innerHTML = `
       <div class="fpg-pf-dealer__head">

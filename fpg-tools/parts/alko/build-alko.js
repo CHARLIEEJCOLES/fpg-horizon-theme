@@ -17,7 +17,15 @@ window.buildGT = async ({ brandNo = 1, brand = 'AL-KO', slug = 'alko', bid = 960
     const low = t.toLowerCase().replace(/\b([a-z]*\d[a-z0-9-]*)\b/g, (w) => w.toUpperCase());
     return low.charAt(0).toUpperCase() + low.slice(1);
   };
-  const typeName = (cat) => String(cat).replace(/\s*-\s+|\s+-\s*/g, ' - ').replace(/\s+/g, ' ').trim();
+  /* AL-KO's "Mower- Petrol Rotary" -> "Petrol rotary mower"; "Chainsaws" -> "Chainsaw". */
+  const typeName = (cat) => {
+    let t = String(cat).replace(/\s+/g, ' ').trim();
+    const m = t.match(/^(.+?)\s*-\s+(.+)$/) || t.match(/^(.+?)\s+-\s*(.+)$/);
+    if (m) t = `${m[2]} ${m[1].toLowerCase()}`;
+    t = t.replace(/hedgetrimmer/i, 'hedge trimmer').replace(/\bride on\b/i, 'ride-on').replace(/\bzero turn\b/i, 'zero-turn').replace(/\bmulti tool\b/i, 'multi-tool');
+    t = t.replace(/^(Chainsaws|Cultivators|Rollers|Log Splitters|Cement Mixers|Engines|Sod Cutter|Edger)$/i, (w) => w.replace(/s$/i, ''));
+    return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
+  };
   const picId = (url) => String(url).replace(/^.*\/parts\/gif\//, '').replace(/\.gif$/i, '').replace(/[^A-Za-z0-9]+/g, '-').toLowerCase();
   const num = (s) => parseFloat(String(s).replace(/[^\d.]/g, '')) || 9e9;
 
