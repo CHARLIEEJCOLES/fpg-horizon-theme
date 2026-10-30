@@ -334,6 +334,16 @@
       /* Scheppach's own photos of machines (mi) and parts (img in the list files), at size {s}. */
       pimg: 'https://shop.scheppach.com/imgproxy/s:{s}:{s}/media/{p}',
       mi: out.mi,
+      /* A photo for each brand's tile: a machine from its biggest machine type that has one. */
+      bi: Object.fromEntries(
+        out.b
+          .map(([, name, types]) => {
+            const mids = [...types].sort((a, b) => b[2].length - a[2].length).flatMap(([, , list]) => list.map(([mid]) => mid));
+            const pic = mids.map((mid) => out.mi[mid]).find(Boolean);
+            return [name, pic];
+          })
+          .filter(([, pic]) => pic)
+      ),
       shard: `fpg-maker-scheppach-{n}.json?v=${version}`,
       per,
       counts,

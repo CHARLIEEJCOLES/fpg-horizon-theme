@@ -278,7 +278,7 @@ const SEARCH_ICON =
 /* ---------------------------------------------------------------- index */
 
 /**
- * @typedef {{ id: number, name: string, raw: string, logo: string, priority: boolean, types: Type[] }} Brand
+ * @typedef {{ id: number, name: string, raw: string, logo: string, photo?: string, priority: boolean, types: Type[] }} Brand
  * @typedef {{ id: number, name: string, brand: Brand, models: Model[] }} Type
  * @typedef {{ id: number, name: string, type: Type, key: string }} Model
  */
@@ -816,6 +816,11 @@ class FpgPartsFinder extends HTMLElement {
       brand.types.sort((a, b) => collator.compare(a.name, b.name));
     }
     if (added) data.brands.sort((a, b) => Number(b.priority) - Number(a.priority) || (a.priority ? a.id - b.id : collator.compare(a.name, b.name)));
+    /* Brands with no logo of ours show a photo of one of their machines (maker.bi: brand -> picture). */
+    for (const b of data.brands) {
+      const pic = this.maker.bi?.[b.name];
+      if (!b.logo && pic) b.photo = this.makerImage(pic, 240);
+    }
   }
 
   /** A maker's photo at a given size (maker.pimg: an address with {s} for the size and {p} for the picture). */
@@ -1047,7 +1052,7 @@ class FpgPartsFinder extends HTMLElement {
       .map(
         (/** @type {Brand} */ b) => `
         <li><button type="button" class="fpg-pf-brand" data-go-brand="${b.id}">
-          <span class="fpg-pf-brand__logo">${b.logo ? `<img src="${esc(b.logo)}&width=240" alt="" loading="lazy" width="120" height="60">` : ''}</span>
+          <span class="fpg-pf-brand__logo">${this.brandPic(b)}</span>
           <span class="fpg-pf-brand__name">${esc(b.name)}</span>
           <small>${modelCount(b)} machine${modelCount(b) === 1 ? '' : 's'}${this.partsLabel(b)}</small>
         </button></li>`
@@ -1067,6 +1072,15 @@ class FpgPartsFinder extends HTMLElement {
       }`;
   }
 
+  /** A brand's logo; else a photo of one of its machines; else its initials. */
+  brandPic(/** @type {Brand} */ b) {
+    if (b.logo) return `<img src="${esc(b.logo)}&width=240" alt="" loading="lazy" width="120" height="60">`;
+    if (b.photo) return `<img class="is-photo" src="${esc(b.photo)}" alt="" loading="lazy" width="120" height="120">`;
+    const words = b.name.split(/[\s&-]+/).filter(Boolean);
+    const initials = (words.length > 1 ? words.slice(0, 2).map((w) => w[0]).join('') : b.name.slice(0, 1)).toUpperCase();
+    return `<span class="fpg-pf-mono" aria-hidden="true">${esc(initials)}</span>`;
+  }
+
   /** " · 48,000+ parts": the brand's rough parts count, rounded down so it never overstates. */
   partsLabel(/** @type {Brand} */ brand) {
     const n = this.partCounts.get(squash(brand.name)) || 0;
@@ -1084,7 +1098,7 @@ class FpgPartsFinder extends HTMLElement {
     if (types.length > 16) return this.renderTypeGroups(brand, types);
     this.view.innerHTML = `
       <div class="fpg-pf-head">
-        ${brand.logo ? `<span class="fpg-pf-head__logo"><img src="${esc(brand.logo)}&width=240" alt="" width="120" height="60"></span>` : ''}
+        ${brand.logo || brand.photo ? `<span class="fpg-pf-head__logo">${this.brandPic(brand)}</span>` : ''}
         <div>
           <h2 class="fpg-pf-h" tabindex="-1" data-focus>${esc(brand.name)}: what kind of machine?</h2>
           <p class="fpg-pf-lead">${modelCount(brand)} machines listed across ${types.length} type${types.length === 1 ? '' : 's'}.</p>
@@ -1116,7 +1130,7 @@ class FpgPartsFinder extends HTMLElement {
     const s = (/** @type {number} */ n) => (n === 1 ? '' : 's');
     this.view.innerHTML = `
       <div class="fpg-pf-head">
-        ${brand.logo ? `<span class="fpg-pf-head__logo"><img src="${esc(brand.logo)}&width=240" alt="" width="120" height="60"></span>` : ''}
+        ${brand.logo || brand.photo ? `<span class="fpg-pf-head__logo">${this.brandPic(brand)}</span>` : ''}
         <div>
           <h2 class="fpg-pf-h" tabindex="-1" data-focus>${esc(brand.name)}: what kind of machine?</h2>
           <p class="fpg-pf-lead">${modelCount(brand).toLocaleString('en-GB')} machines listed across ${types.length} types.</p>
