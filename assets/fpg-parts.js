@@ -594,6 +594,7 @@ class FpgPartsFinder extends HTMLElement {
       this.data = await loadIndex(this.dataset.index || '');
       const m = await maker;
       if (m && typeof m.models === 'object') this.maker = m;
+      this.mergeMaker();
     } catch {
       this.view.innerHTML = this.errorHtml('The parts list did not load.');
       return;
@@ -721,10 +722,51 @@ class FpgPartsFinder extends HTMLElement {
   /** Starts loading a model's parts and the maker's list (kept, so the click shows them sooner). */
   prefetchModel(/** @type {string|number} */ id) {
     const urls = this.modelUrls(id);
-    cachedJson(urls.parts).catch(() => {});
     const model = this.data?.models.find((m) => String(m.id) === String(id));
+    /* Machines only the maker's list knows (not in the app) have none of our parts to ask for. */
+    if (!(/** @type {any} */ (model)?.own)) cachedJson(urls.parts).catch(() => {});
     if (model && this.hasMaker(model)) this.makerList(model.id).catch(() => {});
     else if (!model || !this.isUnavailable(model)) cachedJson(urls.dealer).catch(() => {});
+  }
+
+  /**
+   * Adds the machines we host makers' lists for to the brands, types and models
+   * (maker.b: [brand id, name, [[type id, name, [[model id, name], ...]], ...]]),
+   * joining brands and types we already list by name. Also raises the brands'
+   * rough parts counts to the maker's (maker.counts).
+   */
+  mergeMaker() {
+    const data = this.data;
+    if (!data) return;
+    for (const [name, n] of Object.entries(this.maker.counts || {})) {
+      const k = squash(brandName(name));
+      if (Number(n) > (this.partCounts.get(k) || 0)) this.partCounts.set(k, Number(n));
+    }
+    if (!Array.isArray(this.maker.b)) return;
+    let added = false;
+    for (const [bid, bname, types] of this.maker.b) {
+      let brand = data.brands.find((b) => squash(b.name) === squash(brandName(bname)));
+      if (!brand) {
+        brand = { id: bid, raw: bname, name: brandName(bname), logo: '', priority: false, types: [] };
+        data.brands.push(brand);
+        added = true;
+      }
+      for (const [tid, tname, list] of types) {
+        /** @type {Type & { own?: boolean }} */
+        let type = brand.types.find((t) => t.name.toLowerCase() === String(tname).toLowerCase()) || { id: tid, name: tname, brand, models: [], own: true };
+        if (!brand.types.includes(type)) brand.types.push(type);
+        for (const [mid, mname] of list) {
+          if (type.models.some((x) => x.id === mid)) continue;
+          /** @type {Model & { own?: boolean }} */
+          const model = { id: mid, name: mname, type, key: squash(mname), own: true };
+          type.models.push(model);
+          data.models.push(model);
+        }
+        type.models.sort((a, b) => collator.compare(a.name, b.name));
+      }
+      brand.types.sort((a, b) => collator.compare(a.name, b.name));
+    }
+    if (added) data.brands.sort((a, b) => Number(b.priority) - Number(a.priority) || (a.priority ? a.id - b.id : collator.compare(a.name, b.name)));
   }
 
   /** True when we host the maker's parts list for this machine ourselves (Scheppach). */
@@ -737,15 +779,30 @@ class FpgPartsFinder extends HTMLElement {
    * An entry is the list itself, or the name of the file it's in (next to the index file).
    */
   async makerList(/** @type {number} */ id) {
-    let entry = this.maker.models[String(id)];
-    if (typeof entry === 'string') {
-      const url = /^(https?:)?\/\//.test(entry) ? entry : String(this.dataset.maker || '').replace(/[^/]*$/, '') + entry;
-      const file = await cachedJson(url);
-      entry = file?.models?.[String(id)] || file;
+    const maker = this.maker;
+    const entry = maker.models[String(id)];
+    const brand = maker.brand || '';
+    /* An entry is the model's sections, or the ids of its parts lists (one section each), kept in shared files of maker.per lists. */
+    let secs = entry?.sections || [];
+    if (Array.isArray(entry)) {
+      /* Each list is its id, or [id, which machines it's for] when the model has several. */
+      const ids = entry.map((e) => (Array.isArray(e) ? e : [e, '']));
+      const base = String(this.dataset.maker || '').replace(/[^/]*$/, '');
+      const per = Number(maker.per) || 50;
+      const files = [...new Set(ids.map(([l]) => Math.floor(Number(l) / per)))];
+      const got = await Promise.all(files.map((n) => cachedJson(base + String(maker.shard || '').replace('{n}', String(n)))));
+      /** @type {Record<string, any>} */
+      const lists = Object.assign({}, ...got.map((f) => f?.lists || {}));
+      const img = (/** @type {string} */ pic) => (/^(https?:)?\/\//.test(pic) ? pic : String(maker.img || '').replace('{id}', pic));
+      secs = ids
+        .filter(([l]) => lists[String(l)])
+        .map(([l, hint]) => {
+          const list = lists[String(l)];
+          return { name: hint ? `${list.n} · ${hint}` : list.n, pics: (list.p || []).map(img), parts: list.r || [] };
+        });
     }
-    const brand = this.maker.brand || '';
     /* Parts as [ref, part number, name, maker's stock: 1 in stock, 2 due in, 0 out, -1 discontinued]. */
-    const sections = (entry?.sections || []).map((/** @type {any} */ sec) => ({
+    const sections = secs.map((/** @type {any} */ sec) => ({
       name: sec.name,
       diagrams: (sec.pics || []).map((/** @type {string} */ url) => ({ view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600` })),
       parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock]) => {
@@ -754,7 +811,7 @@ class FpgPartsFinder extends HTMLElement {
         return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), maker: brand };
       }),
     }));
-    return { source: this.maker.source || '', sections, note: this.maker.note || '', plain: !!this.maker.plain };
+    return { source: maker.source || '', sections, note: maker.note || '', plain: !!maker.plain };
   }
 
   /** True for a STIHL / Husqvarna machine the maker publishes no parts list (so no diagrams) for. */
@@ -1050,7 +1107,8 @@ class FpgPartsFinder extends HTMLElement {
     };
     draw();
 
-    /* Pick up models added in the app since the snapshot was built. */
+    /* Pick up models added in the app since the snapshot was built (not for types only the maker's lists have). */
+    if (/** @type {any} */ (type).own) return;
     fetch(`${this.proxy}/getModels?machineTypeId=${encodeURIComponent(type.id)}`)
       .then((r) => r.json())
       .then((/** @type {any[]} */ live) => {
@@ -1159,7 +1217,7 @@ class FpgPartsFinder extends HTMLElement {
     /** @type {any[]} */
     let groups;
     try {
-      groups = await cachedJson(urls.parts);
+      groups = /** @type {any} */ (model).own ? [] : await cachedJson(urls.parts);
     } catch {
       if (!current()) return;
       partsBox.innerHTML = this.errorHtml('The parts for this machine did not load.');
@@ -1392,6 +1450,14 @@ class FpgPartsFinder extends HTMLElement {
         <p class="fpg-pf-dealer__p">${note}</p>
       </div>
       <ul class="fpg-pf-dsecs" role="list">${sections.map((/** @type {any} */ sec, /** @type {number} */ i) => this.dealerTileHtml(sec, i)).join('')}</ul>`;
+    /* A drawing not uploaded yet: say so rather than show a broken image. */
+    box.querySelectorAll('.fpg-pf-dsec__pic img').forEach((img) =>
+      img.addEventListener('error', () => {
+        const note = document.createElement('span');
+        note.textContent = 'Drawing to follow';
+        img.replaceWith(note);
+      })
+    );
     box.hidden = false;
     return sections.length;
   }
