@@ -1416,6 +1416,10 @@ class FpgPartsFinder extends HTMLElement {
     const filter = /** @type {HTMLInputElement} */ (this.view.querySelector('[data-part-filter]'));
     const stockOnly = /** @type {HTMLInputElement} */ (this.view.querySelector('[data-instock]'));
     const apply = () => this.filterParts(filter.value, stockOnly.checked);
+    if (this.pendingFilter) {
+      filter.value = this.pendingFilter;
+      this.pendingFilter = '';
+    }
     filter.addEventListener('input', apply);
     stockOnly.addEventListener('change', apply);
 
@@ -2043,6 +2047,8 @@ class FpgPartsFinder extends HTMLElement {
     }
     if (d.goModel) {
       const model = this.data?.models.find((m) => String(m.id) === d.goModel);
+      /* Opened from a part number's list of machines: show just the sections with that part. */
+      this.pendingFilter = d.pnFilter || '';
       this.hideSuggestions();
       return this.go({ brand: model?.type.brand.id, type: model?.type.id, model: Number(d.goModel) });
     }
@@ -2204,6 +2210,7 @@ class FpgPartsFinder extends HTMLElement {
   /* ---------- makers' part numbers: which machines a part fits (assets/fpg-maker-pn-{n}.json) */
 
   pnToken = 0;
+  pendingFilter = '';
   /** @type {Map<number, Promise<any>>} */
   pnFiles = new Map();
   /** @type {any[]} */
@@ -2238,7 +2245,7 @@ class FpgPartsFinder extends HTMLElement {
     const h = this.pnHits[i];
     if (!h || !this.suggest) return;
     const items = h.machines.map(
-      (m) => `<li role="option" id="fpg-pf-o${m.id}"><button type="button" data-go-model="${m.id}" tabindex="-1">
+      (m) => `<li role="option" id="fpg-pf-o${m.id}"><button type="button" data-go-model="${m.id}" data-pn-filter="${esc(h.pn)}" tabindex="-1">
         ${machineIcon(m.type.name, 22)}<span><strong>${esc(m.type.brand.name)} ${esc(m.name)}</strong><small>${esc(m.type.name)}</small></span></button></li>`
     );
     const more = h.total > h.machines.length ? `<li class="fpg-pf-suggest__note">and ${h.total - h.machines.length} more</li>` : '';
