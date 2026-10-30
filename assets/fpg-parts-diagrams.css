@@ -455,6 +455,35 @@
   font-size: 0.875rem;
 }
 
+/* Some makers' refs are long (AL-KO's are the part number): the badge grows into a pill. */
+.fpg-pf-viewer .fpg-pf-vrow {
+  grid-template-columns: minmax(40px, max-content) minmax(0, 1fr);
+}
+
+.fpg-pf-viewer .fpg-pf-vrow.fpg-pf-vrow--img {
+  grid-template-columns: minmax(40px, max-content) minmax(0, 1fr) 72px;
+}
+
+.fpg-pf-viewer .fpg-pf-vrow__ref {
+  align-self: start;
+  width: auto;
+  min-width: 36px;
+  max-width: 92px;
+  height: auto;
+  min-height: 36px;
+  padding: 4px 8px;
+  border-radius: 18px;
+  line-height: 1.15;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 599px) {
+  .fpg-pf-viewer .fpg-pf-vrow.fpg-pf-vrow--img {
+    grid-template-columns: minmax(36px, max-content) minmax(0, 1fr) 56px;
+  }
+}
+
 .fpg-pf-vrow.is-on .fpg-pf-vrow__ref {
   background: #d9480f;
 }
