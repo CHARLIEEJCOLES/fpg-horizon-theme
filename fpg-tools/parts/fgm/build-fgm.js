@@ -26,7 +26,7 @@ const brandPictures = (index) => {
   return bi;
 };
 
-window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501, types = null, nameStyle = 'echo', list0 = 0, imgSlug = '' } = {}) => {
+window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501, types = null, typeFn = null, nameStyle = 'echo', list0 = 0, imgSlug = '', source = 'fgm', note = '', pimg = '', dimsKey = 'dims', photoKey = '' } = {}) => {
   const nodes = await KV.get('tree-' + root);
   const prods = await KV.get('prods-' + root);
   const plo = (await KV.get('plo-' + root)) || {};
@@ -34,8 +34,8 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
   const pl = (await KV.get('pricelist')).map;
   const plx = (await KV.get('plx')) || {};
   /* Machine photos: the catalogue tile's picture, full size (photo-{root}: node id -> file name, checked to exist). */
-  const photos = (await KV.get('photo-' + root)) || {};
-  const dims = (await KV.get('dims')) || {};
+  const photos = (await KV.get(photoKey || 'photo-' + root)) || {};
+  const dims = (await KV.get(dimsKey)) || {};
   const price = (pn) => pl[pn] || plx[pn];
 
   const squash = (s) => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -65,8 +65,9 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
   };
   /* types: the brand's own folder -> type names ('Power Drive': 'Self-propelled mower'); OLDER PRODUCTS folders are skipped. */
   const typeOf = (fp) => {
+    if (typeFn) return typeFn(fp.filter((x) => !/^older products$|archive/i.test(x)));
     if (types) {
-      const f = fp.filter((x) => !/^older products$/i.test(x));
+      const f = fp.filter((x) => !/^older products$|archive/i.test(x));
       return types[f.slice(0, 2).join(' > ')] || types[f[0] || ''] || tidy(f[0] || brand);
     }
     if (fp[0] === 'Chain Saw' && fp[1] === 'Pole Pruner') return 'Pruner';
@@ -188,19 +189,19 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
   }
   const index = {
     v: 2,
-    source: 'fgm',
+    source,
     brand,
     plain: true,
     groupSmall: false,
-    note: `These are ${brand}'s own parts lists for the {model}, from ${brand}'s UK distributor FGM Claymore. Where there's one per serial range, open the one that matches your machine's rating plate, then match the numbers on the drawing to the Ref column. Stock is our supplier's when this list was last updated.`,
-    img: `https://cdn.shopify.com/s/files/1/0734/1477/0982/files/fgm-${imgSlug || slug}-{id}.png`,
-    shard: `fpg-maker-fgm-${slug}-{n}.json?v=${version}`,
+    note: note || `These are ${brand}'s own parts lists for the {model}, from ${brand}'s UK distributor FGM Claymore. Where there's one per serial range, open the one that matches your machine's rating plate, then match the numbers on the drawing to the Ref column. Stock is our supplier's when this list was last updated.`,
+    img: `https://cdn.shopify.com/s/files/1/0734/1477/0982/files/${source === 'fgm' ? 'fgm-' : ''}${imgSlug || slug}-{id}.png`,
+    shard: `fpg-maker-${source === 'fgm' ? 'fgm-' : ''}${slug}-{n}.json?v=${version}`,
     per,
     counts: { [brand]: parts.size },
     b: [[bid, brand, [...tree.entries()].map(([t, list]) => [typeIds.get(t), t, list])]],
     models: mmap,
     /* Machine photos are copied into Shopify Files as fgm-photo-<n>.PNG (the CDN serves them as .png). */
-    pimg: 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/fgm-photo-{p}?width={s}',
+    pimg: pimg || 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/fgm-photo-{p}?width={s}',
     mi,
   };
   index.bi = brandPictures(index);
