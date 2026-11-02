@@ -47,7 +47,12 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
   const parseHS = (hs) => {
     if (!hs) return [];
     const d = new DOMParser().parseFromString(hs, 'text/xml');
-    return [...d.querySelectorAll('map')].map((m) => [m.getAttribute('a') || '', m.getAttribute('pid') || '', (m.getAttribute('label') || '').replace(m.getAttribute('pid') || '', '').trim()]);
+    /* STIGA's labels read "pid | name | qty": keep the name only. */
+    const clean = (s) => {
+      const p = String(s).split('|').map((x) => x.trim()).filter(Boolean);
+      return (p.length >= 2 && /^\d+([.,]\d+)?$/.test(p[p.length - 1]) ? p.slice(0, -1) : p).join(' ');
+    };
+    return [...d.querySelectorAll('map')].map((m) => [m.getAttribute('a') || '', m.getAttribute('pid') || '', clean((m.getAttribute('label') || '').replace(m.getAttribute('pid') || '', ''))]);
   };
   const folders = (id) => {
     const out = [];
