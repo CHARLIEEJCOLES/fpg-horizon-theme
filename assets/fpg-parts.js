@@ -1995,7 +1995,12 @@ class FpgPartsFinder extends HTMLElement {
         const i = next++;
         const p = parts[i];
         if (!p?.unavailable || !p.shopHandle || p.shopChecked) continue;
-        const hit = await shopPart(p.shopHandle, p.shopNo || p.partNumber);
+        let hit = await shopPart(p.shopHandle, p.shopNo || p.partNumber);
+        /* A part the maker has replaced: sell the one that replaced it (the row already says "now …"). */
+        if (!hit && p.replacedBy) {
+          const now = p.shopNo !== p.partNumber ? String(p.replacedBy).replace(/^[A-Z]{2,3}-/, '') : String(p.replacedBy);
+          hit = await shopPart(`${p.shopHandle.split('-')[0]}-${handleize(now)}`, now);
+        }
         p.shopChecked = true;
         if (!hit || quote.includes(String(hit.id))) continue;
         const v = hit.variant;
