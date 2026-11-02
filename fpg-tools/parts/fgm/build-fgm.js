@@ -26,7 +26,7 @@ const brandPictures = (index) => {
   return bi;
 };
 
-window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501, types = null, typeFn = null, nameStyle = 'echo', list0 = 0, imgSlug = '', source = 'fgm', note = '', pimg = '', dimsKey = 'dims', photoKey = '' } = {}) => {
+window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001, mid0 = 900001, per = 200, version = '1', existing = {}, bid = 9501, types = null, typeFn = null, nameStyle = 'echo', list0 = 0, imgSlug = '', source = 'fgm', note = '', pimg = '', dimsKey = 'dims', photoKey = '', stockFn = null } = {}) => {
   const nodes = await KV.get('tree-' + root);
   const prods = await KV.get('prods-' + root);
   const plo = (await KV.get('plo-' + root)) || {};
@@ -83,6 +83,8 @@ window.buildFGM = async ({ root = 4, brand = 'Echo', slug = 'echo', tid0 = 95001
     const s = sup ? price(sup) : r;
     if (!s) return [0, sup];
     if (/^NLA\b/i.test(s[0] || '')) return [-1, sup];
+    /* stockFn: a portal whose price list says something else (STIGA's: can it be ordered). */
+    if (stockFn) return [stockFn(s), sup];
     return [s[1] === 1 || s[1] === 2 ? 1 : s[1] === 3 ? 3 : 0, sup];
   };
 

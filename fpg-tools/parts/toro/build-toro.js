@@ -11,6 +11,9 @@
 window.buildToro = async ({ bid = 9701, tid0 = 97001, mid0 = 970001, per = 100, version = '1' } = {}) => {
   const data = await KV.get('toro');
   const dims = (await KV.get('toro-dims')) || {};
+  /* A few drawings have no 2X file: use the 1X one (toro-dims1) and the plain coordinates. */
+  const dims1 = (await KV.get('toro-dims1')) || {};
+  const src = {};
   const tidy = (s) => {
     const t = String(s || '').replace(/\s+/g, ' ').replace(/\s*,\s*/g, ', ').trim();
     const low = t.toLowerCase().replace(/\b([a-z]*\d[a-z0-9-]*)\b/g, (w) => w.toUpperCase());
@@ -65,10 +68,14 @@ window.buildToro = async ({ bid = 9701, tid0 = 97001, mid0 = 970001, per = 100, 
       if (!r.length) continue;
       const id = nextList++;
       const pic = picId(pg.img);
+      const big = !!dims[pic] || !dims1[pic];
+      src[pic] = big ? pg.img : pg.small;
       lists[id] = { n: tidy(pg.name), p: [pic], r };
-      if (dims[pic]) {
-        const m = pg.parts.filter((p) => p[5]).map((p) => [String(p[0] ?? ''), ...box(p[5])]).filter((b) => b.length === 5 && b.every((n, i) => i === 0 || Number.isFinite(n)));
-        if (m.length) Object.assign(lists[id], { m, wh: dims[pic] });
+      const wh = big ? dims[pic] : dims1[pic];
+      if (wh) {
+        const col = big ? 5 : 4;
+        const m = pg.parts.filter((p) => p[col]).map((p) => [String(p[0] ?? ''), ...box(p[col])]).filter((b) => b.length === 5 && b.every((n, i) => i === 0 || Number.isFinite(n)));
+        if (m.length) Object.assign(lists[id], { m, wh });
       }
       entry.push(id);
     }
@@ -92,6 +99,6 @@ window.buildToro = async ({ bid = 9701, tid0 = 97001, mid0 = 970001, per = 100, 
     pimg: '',
     mi: {},
   };
-  const pics = [...new Set(Object.values(lists).map((l) => l.p[0]))];
+  const pics = [...new Set(Object.values(lists).map((l) => l.p[0]))].map((id) => [id, src[id]]);
   return { index, shards, pics, stats: { models: Object.keys(models).length, lists: nextList, parts: parts.size, drawings: pics.length, withM: Object.values(lists).filter((l) => l.m).length } };
 };
