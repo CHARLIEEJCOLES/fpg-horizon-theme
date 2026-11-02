@@ -35,6 +35,50 @@ export const esc = (/** @type {unknown} */ value) =>
 
 const squash = (/** @type {string} */ s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 
+/** Shopify's handle for a name: "118811106/0" -> "118811106-0", "AL-KO" -> "al-ko". */
+const handleize = (/** @type {string} */ s) =>
+  String(s || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+/**
+ * Our live product for a maker's part, from templates/product.fpg-stock.liquid (price, stock and variant),
+ * or null when we don't sell it online. Asked once per page view per part.
+ * @type {Map<string, Promise<any>>}
+ */
+const shopParts = new Map();
+
+function shopPart(/** @type {string} */ handle, /** @type {string} */ no) {
+  const key = `${handle}|${no}`;
+  if (!shopParts.has(key)) {
+    const want = squash(no);
+    const read = (/** @type {string} */ h) =>
+      fetch(`/products/${encodeURIComponent(h)}?view=fpg-stock`, { headers: { Accept: 'application/json' } })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          const v = d?.v?.find((/** @type {any} */ x) => squash(x.sku) === want);
+          return v ? { ...d, variant: v } : null;
+        })
+        .catch(() => null);
+    /* The product's address is usually the brand and part number; failing that, ask the shop's search for the part number. */
+    const found = read(handle).then(
+      (hit) =>
+        hit ||
+        fetch(`/search/suggest.json?q=${encodeURIComponent(no)}&resources[type]=product&resources[limit]=4&resources[options][fields]=variants.sku`)
+          .then((r) => (r.ok ? r.json() : null))
+          .then((j) => {
+            const list = j?.resources?.results?.products || [];
+            const p = list.find((/** @type {any} */ x) => squash(x.handle).endsWith(want) || squash(x.title).includes(want));
+            return p && p.handle !== handle ? read(p.handle) : null;
+          })
+          .catch(() => null)
+    );
+    shopParts.set(key, found);
+  }
+  return /** @type {Promise<any>} */ (shopParts.get(key));
+}
+
 /** Natural sort, so MS 170 comes before MS 1700 and 021 before 044. */
 const collator = new Intl.Collator('en-GB', { numeric: true, sensitivity: 'base' });
 
@@ -898,7 +942,9 @@ class FpgPartsFinder extends HTMLElement {
         /* "7, 8, 4": the first number is the part; the badge shows it and the line lists the rest. */
         const refs = String(ref || '').split(/[\s,]+/).filter(Boolean);
         const pic = imgs[no] ? this.makerImage(imgs[no], 160, maker) : '';
-        return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), replacedBy: replacedBy || '', maker: brand, image: pic, imageLarge: pic && this.makerImage(imgs[no], 900, maker) };
+        /* Our own product for the part, if we have one: "echo-p022-061670" for Echo's P022-061670 (FGM adds a two-letter brand prefix, "EC-"). */
+        const shopNo = maker.source === 'fgm' ? String(no).replace(/^[A-Z]{2,3}-/, '') : String(no);
+        return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), replacedBy: replacedBy || '', maker: brand, image: pic, imageLarge: pic && this.makerImage(imgs[no], 900, maker), shopNo, shopHandle: `${handleize(brand)}-${handleize(shopNo)}` };
       }),
     }));
     return { source: maker.source || '', sections, note: maker.note || '', plain: !!maker.plain };
@@ -1734,8 +1780,18 @@ class FpgPartsFinder extends HTMLElement {
     this.viewer = dialog;
     this.append(dialog);
     const brand = this.dealer?.model.type.brand.name || '';
-    const rows = (sec.parts || []).map((/** @type {any} */ p, /** @type {number} */ i) => this.dealerRowHtml(p, i, brand)).join('') ||
+    let rows = (sec.parts || []).map((/** @type {any} */ p, /** @type {number} */ i) => this.dealerRowHtml(p, i, brand)).join('') ||
       '<p class="fpg-pf-v__note">No parts listed in this section.</p>';
+    /* Parts we sell online get our price, stock and Add to basket as soon as we find them. */
+    this.linkShopParts(sec, brand, (/** @type {number} */ i) => {
+      if (!dialog.isConnected) return;
+      rows = (sec.parts || []).map((/** @type {any} */ p, /** @type {number} */ n) => this.dealerRowHtml(p, n, brand)).join('');
+      const row = dialog.querySelector(`[data-v-row="${i}"]`);
+      if (!row) return;
+      const on = row.classList.contains('is-on');
+      row.outerHTML = this.dealerRowHtml(sec.parts[i], i, brand);
+      if (on) dialog.querySelector(`[data-v-row="${i}"]`)?.classList.add('is-on');
+    });
 
     const state = { zoom: 1, maps: /** @type {any[]} */ ([]), run: 0, drag: /** @type {any} */ (null) };
     const secs = this.dealer?.sections || [];
@@ -1921,6 +1977,38 @@ class FpgPartsFinder extends HTMLElement {
       if (i !== at && pic.numbers) this.numbersFor(sec, i);
     });
     this.prefetchDrawing(index + 1);
+  }
+
+  /**
+   * Looks up our own product for each of a maker's parts (a few at a time) and turns the row into a
+   * priced, buyable one. Quote-only products (Call for Price) stay as they are.
+   */
+  async linkShopParts(/** @type {any} */ sec, /** @type {string} */ brand, /** @type {(i: number) => void} */ done) {
+    const parts = /** @type {any[]} */ (sec.parts || []);
+    const quote = String(/** @type {any} */ (window).cfp_products?.products || '').split(',').filter(Boolean);
+    let next = 0;
+    const work = async () => {
+      while (next < parts.length) {
+        const i = next++;
+        const p = parts[i];
+        if (!p?.unavailable || !p.shopHandle || p.shopChecked) continue;
+        const hit = await shopPart(p.shopHandle, p.shopNo || p.partNumber);
+        p.shopChecked = true;
+        if (!hit || quote.includes(String(hit.id))) continue;
+        const v = hit.variant;
+        Object.assign(p, {
+          unavailable: false,
+          variantId: String(v.id),
+          price: Number(v.price) / 100,
+          inventoryQuantity: Number(v.qty) || 0,
+          inventoryPolicy: String(v.policy || '').toUpperCase(),
+          handle: hit.handle,
+          sku: v.sku || p.partNumber,
+        });
+        done(i);
+      }
+    };
+    await Promise.all([work(), work(), work(), work(), work(), work()]);
   }
 
   dealerRowHtml(/** @type {any} */ p, /** @type {number} */ i, /** @type {string} */ brand) {

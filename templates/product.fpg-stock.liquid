@@ -1,0 +1,11 @@
+{% layout none %}
+{%- comment -%}
+  The parts finder's price and stock check for a maker's part (assets/fpg-parts.js, shopPart):
+  /products/<handle>?view=fpg-stock returns the product's variants as JSON. Prices are in pence, ex VAT
+  as entered in the shop. Not linked from anywhere a shopper sees.
+{%- endcomment -%}
+{"id":{{ product.id | json }},"handle":{{ product.handle | json }},"title":{{ product.title | json }},"v":[
+{%- for x in product.variants -%}
+{"id":{{ x.id | json }},"sku":{{ x.sku | json }},"price":{{ x.price | json }},"qty":{{ x.inventory_quantity | default: 0 | json }},"policy":{{ x.inventory_policy | json }},"available":{{ x.available | json }}}{% unless forloop.last %},{% endunless %}
+{%- endfor -%}
+]}
