@@ -1984,6 +1984,8 @@ class FpgPartsFinder extends HTMLElement {
    * priced, buyable one. Quote-only products (Call for Price) stay as they are.
    */
   async linkShopParts(/** @type {any} */ sec, /** @type {string} */ brand, /** @type {(i: number) => void} */ done) {
+    /* Scheppach and Echo rows are priced by assets/fpg-scheppach-prices.js; leave those to it. */
+    if (/^(scheppach|echo)$/i.test(brand)) return;
     const parts = /** @type {any[]} */ (sec.parts || []);
     const quote = String(/** @type {any} */ (window).cfp_products?.products || '').split(',').filter(Boolean);
     let next = 0;
