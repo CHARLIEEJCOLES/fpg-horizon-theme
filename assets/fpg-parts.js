@@ -54,7 +54,8 @@ function shopPart(/** @type {string} */ handle, /** @type {string} */ no) {
   if (!shopParts.has(key)) {
     const want = squash(no);
     const read = (/** @type {string} */ h) =>
-      fetch(`/products/${encodeURIComponent(h)}?view=fpg-stock`, { headers: { Accept: 'application/json' } })
+      /* No JSON Accept header: with one, Shopify answers with its own product JSON instead of the template. */
+      fetch(`/products/${encodeURIComponent(h)}?view=fpg-stock`)
         .then((r) => (r.ok ? r.json() : null))
         .then((d) => {
           const v = d?.v?.find((/** @type {any} */ x) => squash(x.sku) === want);
