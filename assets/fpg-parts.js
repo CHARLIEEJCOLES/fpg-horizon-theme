@@ -1113,7 +1113,10 @@ class FpgPartsFinder extends HTMLElement {
     /* Brands only Scheppach's lists know, with under 500 parts, sit behind one "Other Scheppach-made brands" tile. */
     const small = listed.filter((/** @type {Brand} */ b) => !b.priority && b.makerOnly && (this.partCounts.get(squash(b.name)) || 0) < 500);
     const grouped = small.length > 1;
-    const others = listed.filter((/** @type {Brand} */ b) => !b.priority && !(grouped && small.includes(b)));
+    /* The featured brands (STIHL, Husqvarna) also sit in the A to Z grid, where people scanning for a logo expect them. */
+    const others = listed
+      .filter((/** @type {Brand} */ b) => !(grouped && small.includes(b)))
+      .sort((/** @type {Brand} */ a, /** @type {Brand} */ b) => collator.compare(a.name, b.name));
     if (smallOnly && grouped) return this.renderSmallBrands(small);
     const unlisted = brands.filter((/** @type {Brand} */ b) => modelCount(b) === 0);
     const dealer = this.dataset.dealerLabel || 'Approved dealer';
@@ -1159,7 +1162,7 @@ class FpgPartsFinder extends HTMLElement {
     this.view.innerHTML = `
       <h2 class="fpg-pf-h" tabindex="-1" data-focus>Choose your machine's brand</h2>
       <div class="fpg-pf-features">${featuredHtml}</div>
-      ${others.length ? `<h3 class="fpg-pf-sub">Other brands we stock parts for</h3><ul class="fpg-pf-brands" role="list">${othersHtml}</ul>` : ''}
+      ${others.length ? `<h3 class="fpg-pf-sub">All brands we stock parts for</h3><ul class="fpg-pf-brands" role="list">${othersHtml}</ul>` : ''}
       ${
         unlisted.length
           ? `<p class="fpg-pf-note">We can also order parts for ${unlistedNames}. These aren't listed online yet, so ${this.contactHtml('get in touch')} with your model and serial number.</p>`
