@@ -46,7 +46,8 @@
       "settings": {
         "common_url": "shopify://pages/bar-and-chain-finder",
         "no_diagrams": "Z146\nR316T\nLC 19AP\nLC 19SP\nLC 19A\nLC 19\nLB 348SI\nLB 248S\nComet S LB 253S\nCTH 19530\n254XP\n281XP\n394XP\n233R\n443RB\n262XP\n272XP\n362XP\n385XP\n41\n42\n55 RANCHER\n232L\n232R\n233RJ\n523L\nKM 91\nFS 511\nHLA 88\nMS 220\nMS 651\nMSA 220T-O\nHT 100\nHT 130\nBG 65\nBG 86 & SH86\nFS 110\nFS 311\nFS 46\nTS50\nHL 90\nHS 52\nSR440\nMSE 250C",
-        "part_counts": "STIHL: 12304\nHusqvarna: 12006\nForst: 48\nMitox: 12\nEcho: 9\nScheppach: 7\nScag: 4\nParkside: 3\nB&Q: 2\nFerrex: 2\nGreenmech: 2\nOleo-Mac: 2\nTimberwolf: 2\nGardenline: 1"
+        "part_counts": "STIHL: 12304\nHusqvarna: 12006\nForst: 48\nMitox: 12\nEcho: 9\nScheppach: 7\nScag: 4\nParkside: 3\nB&Q: 2\nFerrex: 2\nGreenmech: 2\nOleo-Mac: 2\nTimberwolf: 2\nGardenline: 1",
+        "hidden_brands": "B&Q\nDexter\nFort\nGermania\nGreenmech\nZgonc\nHerkules\nIXES\nKama\nKity\nLawnmaster\nMacAllister\nMatrix\nMeec\nMorrison"
       }
     }
   },
