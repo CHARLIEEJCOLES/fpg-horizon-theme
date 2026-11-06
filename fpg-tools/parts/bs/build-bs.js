@@ -28,8 +28,18 @@ window.buildBS = async ({ bid = 9901, tid0 = 99001, mid0 = 990001, per = 150, ve
   };
   const guid = (url) => (String(url).match(/\/BRG\/([0-9a-f-]{36})\//i) || [])[1] || '';
   const num = (s) => parseFloat(String(s).replace(/[^\d.]/g, '')) || 9e9;
-  /* H&C lists B&S engines and a few B&S-branded machines; the label says which. */
-  const typeOf = (label) => (/\bPSI\b/i.test(label) ? 'Pressure washer' : /generator|\bwatts?\b/i.test(label) ? 'Generator' : 'Engine');
+  /* H&C lists B&S engines and a few B&S-branded machines; the label says which. Engines are split by size:
+     a B&S model number starts with the engine's size in cubic inches (09P702 = 9 cu in, about 150cc; 44S977 = 44 cu in),
+     so a 2,800-engine list becomes three shorter ones a customer can place their engine in. */
+  const SIZES = ['Engines up to 200cc', 'Engines 200 to 500cc', 'Engines over 500cc'];
+  const typeOf = (label, model) => {
+    if (/\bPSI\b/i.test(label)) return 'Pressure washer';
+    if (/generator|\bwatts?\b/i.test(label)) return 'Generator';
+    const cuin = parseInt(String(model).slice(0, 2), 10);
+    return !Number.isFinite(cuin) || cuin <= 12 ? SIZES[0] : cuin <= 30 ? SIZES[1] : SIZES[2];
+  };
+  /* The first size keeps the old "Engine" id, so links to the B&S engine list still open a list. */
+  const TYPE_ORDER = [SIZES[0], 'Generator', 'Pressure washer', SIZES[1], SIZES[2]];
   const lists = {};
   const models = {};
   const tree = new Map();
@@ -72,8 +82,8 @@ window.buildBS = async ({ bid = 9901, tid0 = 99001, mid0 = 990001, per = 150, ve
       entry.push(id);
     }
     if (!entry.length) continue;
-    const type = typeOf(label);
-    if (!typeIds.has(type)) typeIds.set(type, tid0 + ['Engine', 'Generator', 'Pressure washer'].indexOf(type));
+    const type = typeOf(label, model);
+    if (!typeIds.has(type)) typeIds.set(type, tid0 + TYPE_ORDER.indexOf(type));
     if (!tree.has(type)) tree.set(type, []);
     /* Model ids stay the same between partial and full builds, so saved machines and links keep working. */
     const mid = mid0 + stable.get(model);
@@ -89,12 +99,16 @@ window.buildBS = async ({ bid = 9901, tid0 = 99001, mid0 = 990001, per = 150, ve
     brand: 'Briggs & Stratton',
     plain: true,
     groupSmall: false,
+    /* fpg-parts-hide.js: engine sizes small to large, then the machines; model lists grouped by their first 3 characters. */
+    to: [...SIZES, 'Generator', 'Pressure washer'],
+    series: 3,
+    lead: 'The model and type numbers are stamped on the engine itself, usually on the metal cover near the spark plug, e.g. Model 09P702, Type 0001-H1.',
     note: "These are Briggs & Stratton's own parts lists for the {model}, from our supplier Henton & Chattell. We've used one type number per engine model, and parts can differ between types, so check the model and type numbers stamped on your engine and ask us if yours is different. Match the numbers on the drawing to the Ref column. Stock is our supplier's when this list was last updated.",
     img: 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/bs-{id}.png',
     shard: `fpg-maker-bs-{n}.json?v=${version}`,
     per,
     counts: { 'Briggs & Stratton': parts.size },
-    b: [[bid, 'Briggs & Stratton', [...tree.entries()].map(([t, list]) => [typeIds.get(t), t, list])]],
+    b: [[bid, 'Briggs & Stratton', [...tree.entries()].sort(([a], [b]) => (SIZES.includes(a) ? SIZES.indexOf(a) : 9) - (SIZES.includes(b) ? SIZES.indexOf(b) : 9)).map(([t, list]) => [typeIds.get(t), t, list])]],
     models,
     pimg: '',
     mi: {},

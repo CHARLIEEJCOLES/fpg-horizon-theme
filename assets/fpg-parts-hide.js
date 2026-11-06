@@ -8,6 +8,8 @@
  * And it fills in stock a maker file gained after it was built (see makerListWithStock).
  * And it adds a second part-number lookup for maker files added since the main one (makerPartHitsPlus).
  * And the mouse wheel zooms a parts drawing (zoomWithWheel), and the basket − / + answers at once (quickStep).
+ * And a maker file can order its machine types ("to") and group long model lists by how the number starts ("series").
+ * And opening a brand, type or machine jumps to the top of the finder instead of gliding up from the footer (routeToTop).
  * Stock lights and our Brightpearl prices are in fpg-maker-prices.js, loaded from here (bump v on each upload).
  */
 import(new URL('fpg-maker-prices.js?v=3', import.meta.url).href).catch(() => {});
@@ -49,6 +51,86 @@ function brandLogos(/** @type {any} */ finder) {
     }
   }
   return changed;
+}
+
+/**
+ * A maker file can set the order of its brand's machine types ("to": type names, in order). fpg-parts.js sorts types
+ * A to Z, which for Briggs & Stratton's engine sizes would put "over 500cc" before "up to 200cc".
+ */
+function typeOrder(/** @type {any} */ finder) {
+  const data = finder.data;
+  if (!data || !Array.isArray(finder.makers)) return false;
+  let changed = false;
+  for (const maker of finder.makers) {
+    if (!Array.isArray(maker?.to)) continue;
+    const rank = (/** @type {any} */ t) => {
+      const i = maker.to.indexOf(t.name);
+      return i < 0 ? maker.to.length : i;
+    };
+    for (const [, name] of maker.b || []) {
+      const brand = data.brands.find((/** @type {any} */ b) => b.name === name);
+      if (!brand) continue;
+      const before = brand.types.map((/** @type {any} */ t) => t.id).join();
+      brand.types.sort((/** @type {any} */ a, /** @type {any} */ b) => rank(a) - rank(b));
+      if (brand.types.map((/** @type {any} */ t) => t.id).join() !== before) changed = true;
+    }
+  }
+  return changed;
+}
+
+/**
+ * Long lists of model numbers with no letters in front (Briggs & Stratton's 09P702, 21R707...) come out of fpg-parts.js
+ * as one block. A maker file's "series" (a number of characters) groups them under headings by how the number starts
+ * (09P..., 21R...), the way STIHL's MS, FS and HS lists are grouped. Models alone in their group go under "Other models".
+ */
+function seriesGroups(/** @type {any} */ finder, /** @type {any} */ type) {
+  const maker = (finder.makers || []).find((/** @type {any} */ m) => m?.series && (m.b || []).some((/** @type {any} */ b) => b[1] === type?.brand?.name));
+  const list = /** @type {HTMLElement | null} */ (finder.view?.querySelector('[data-model-list]'));
+  if (!maker || !list || list.dataset.fpgSeries) return;
+  /* Where to find the model number, when the maker file says ("lead"); engines carry it on the engine, not a machine label. */
+  const lead = finder.view.querySelector('.fpg-pf-lead');
+  if (lead && maker.lead) lead.textContent = String(maker.lead);
+  const items = /** @type {HTMLElement[]} */ ([...list.querySelectorAll('li[data-model-name]')]);
+  if (items.length <= 12) return;
+  const n = Number(maker.series) || 3;
+  /** @type {Map<string, HTMLElement[]>} */
+  const groups = new Map();
+  for (const li of items) {
+    const k = String(li.dataset.modelName || '').slice(0, n);
+    if (!groups.has(k)) groups.set(k, []);
+    /** @type {HTMLElement[]} */ (groups.get(k)).push(li);
+  }
+  /** @type {HTMLElement[]} */
+  const other = [];
+  for (const [k, l] of [...groups]) {
+    if (l.length > 1) continue;
+    other.push(...l);
+    groups.delete(k);
+  }
+  if (groups.size < 2) return;
+  const ulClass = list.querySelector('ul')?.className || 'fpg-pf-models';
+  const block = (/** @type {string} */ title, /** @type {HTMLElement[]} */ lis) => {
+    const div = document.createElement('div');
+    div.className = 'fpg-pf-series';
+    div.dataset.series = '';
+    const h = document.createElement('h3');
+    h.className = 'fpg-pf-series__h';
+    h.append(`${title} `);
+    const count = document.createElement('span');
+    count.textContent = String(lis.length);
+    h.append(count);
+    const ul = document.createElement('ul');
+    ul.className = ulClass;
+    ul.setAttribute('role', 'list');
+    ul.append(...lis);
+    div.append(h, ul);
+    return div;
+  };
+  /* Character by character, so 09P, 090 and 092 sit together (a numeric sort reads "021" as 21 and puts it after 12E). */
+  const blocks = [...groups.keys()].sort().map((k) => block(`${k}…`, /** @type {HTMLElement[]} */ (groups.get(k))));
+  if (other.length) blocks.push(block('Other models', other));
+  list.replaceChildren(...blocks);
+  list.dataset.fpgSeries = 'true';
 }
 
 /** @type {Map<string, Promise<Record<string, number> | null>>} */
@@ -152,9 +234,37 @@ customElements.whenDefined('fpg-parts-finder').then(() => {
     merge.call(this);
     hideBrands(this);
     brandLogos(this);
+    typeOrder(this);
   }
   mergeAndHide.fpgHides = true;
   Finder.prototype.mergeMaker = mergeAndHide;
+  const models = Finder.prototype.renderModels;
+  if (typeof models === 'function' && !models.fpgSeries) {
+    /** @this {any} */
+    function renderModelsInSeries(/** @type {any} */ type) {
+      const out = models.call(this, type);
+      seriesGroups(this, type);
+      return out;
+    }
+    renderModelsInSeries.fpgSeries = true;
+    Finder.prototype.renderModels = renderModelsInSeries;
+  }
+  /* Opening a brand, type or machine from far down a long page (the brands grid) left the shorter new page showing its
+     footer for a moment, then glided up slowly (the theme scrolls smoothly). Now it jumps straight to the finder's top. */
+  const route = Finder.prototype.route;
+  if (typeof route === 'function' && !route.fpgJump) {
+    /** @this {any} */
+    function routeToTop(scroll = true) {
+      const out = route.call(this, scroll);
+      if (scroll) {
+        const top = this.getBoundingClientRect().top + window.scrollY - 90;
+        if (window.scrollY > top) window.scrollTo({ top, behavior: 'instant' });
+      }
+      return out;
+    }
+    routeToTop.fpgJump = true;
+    Finder.prototype.route = routeToTop;
+  }
   /* Stock found after a maker file was built (a maker file's "stock": a file of part number -> 1 can order, 2 due in,
      3 out at the supplier, next to the index) fills in the parts that file lists as not on the price list (0). */
   const list = Finder.prototype.makerList;
@@ -275,6 +385,7 @@ customElements.whenDefined('fpg-parts-finder').then(() => {
   for (const el of document.querySelectorAll('fpg-parts-finder')) {
     const hid = hideBrands(el);
     const logos = brandLogos(el);
-    if ((hid || logos) && typeof (/** @type {any} */ (el).route) === 'function') /** @type {any} */ (el).route(false);
+    const order = typeOrder(el);
+    if ((hid || logos || order) && typeof (/** @type {any} */ (el).route) === 'function') /** @type {any} */ (el).route(false);
   }
 });
