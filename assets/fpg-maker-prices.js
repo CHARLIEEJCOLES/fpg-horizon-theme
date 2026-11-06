@@ -12,8 +12,9 @@
  *    RETAIL price where it has one, otherwise the supplier's trade price plus our markup (+£6 under £10, +£10 to £50,
  *    +£15 to £120, +£20 above), worked out before the file is written. The file never holds trade or cost prices.
  *    Data: Content > Files > fpg-bp-prices.json  { "at": "2026-11-06", "p": { "PARTNO": pence incl. VAT } }
- *    Read through the shop's own /cdn/shop/files/ path with a 10-minute key: Shopify's CDN keeps serving the first copy
- *    it saw for an address, so a replaced file (the scheduled refresh) shows within 10 minutes.
+ *    The section gives the file's current address (data-bp-prices = Liquid's file_url, which carries the file's version):
+ *    Shopify's CDN keeps serving the first copy it saw for an address, so only the versioned one shows a replaced file
+ *    (the scheduled refresh) as soon as the page is loaded again.
  *    Scheppach and Echo rows are left to fpg-scheppach-prices.js first; a row it found no price for can get ours.
  */
 
@@ -53,7 +54,8 @@ document.head.append(css);
 let prices = null;
 /** @type {Promise<any> | null} */
 let loading = null;
-const pricesUrl = () => `/cdn/shop/files/fpg-bp-prices.json?t=${Math.floor(Date.now() / 600000)}`;
+const pricesUrl = () =>
+  document.querySelector('fpg-parts-finder[data-bp-prices]')?.getAttribute('data-bp-prices') || '/cdn/shop/files/fpg-bp-prices.json';
 const load = () =>
   loading ||
   (loading = fetch(pricesUrl())
