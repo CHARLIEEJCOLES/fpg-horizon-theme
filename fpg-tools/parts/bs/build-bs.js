@@ -1,13 +1,21 @@
 /*
  * Builds the part finder's data for Briggs & Stratton from what the crawl of Henton & Chattell's dealer
  * site (hcuk.co, PartsHome -> PartSearchARI) saved in that tab's IndexedDB ("fpg"/"kv"):
- *   bs-pick       [[model, H&C type id, "model-type-trim" label]]  one type per engine model
- *   bs-m-<model>  {id, k, secs:[{n: section name, img: ARI drawing URL, r: [[item, part no, description, qty]]}]}
- * H&C's pages have no drawing hotspots, so these lists have no clickable numbers (no m/wh).
+ *   bs-pick        [[model, H&C type id, "model-type-trim" label]]  one type per engine model
+ *   bs2-m-<model>  {id, k, secs:[{sid, n: section name, img: ARI drawing URL, r: [[item, part no, description, qty, H&C stock, boxes]]}]}
+ *                  boxes = [[left, top, right, bottom]] on the drawing, from the row's hsleft0/hstop0/... attributes
+ *   bs-dims        {guid: [width, height]} of each ARI drawing ("Max" size, the size the boxes are measured on)
+ * (bs-m-<model> is the 2 Nov crawl's format, without stock or boxes; still read if bs2-m- is missing.)
  * Drawings are ARI's (cdn.datamanager.arinet.com/image/BRG/<guid>/Max), copied into Shopify Files as bs-<guid>.png.
+ * crawl-hcuk.js alongside does the crawl. Henton & Chattell's site answers one page at a time (about 6 s each),
+ * so the 400 commonest engines (KV bs-selected) are read first.
  */
 window.buildBS = async ({ bid = 9901, tid0 = 99001, mid0 = 990001, per = 150, version = '1', only = null } = {}) => {
   const pick = await KV.get('bs-pick');
+  const dims = (await KV.get('bs-dims')) || {};
+  /* H&C's stock: "In Stock" = on their shelf, so we can order it in. "No Stock" (over 90% of B&S parts) only means
+     not on their shelf; they can usually get it from B&S, so it shows as "ask us" (0), not out of stock. */
+  const stockOf = (s) => (/^in stock/i.test(s || '') ? 1 : 0);
   const tidy = (s) => {
     const t = String(s || '')
       .replace(/\\u([0-9a-f]{4})/gi, (_, h) => String.fromCharCode(parseInt(h, 16)))
@@ -32,16 +40,18 @@ window.buildBS = async ({ bid = 9901, tid0 = 99001, mid0 = 990001, per = 150, ve
   const stable = new Map([...pick].map((p) => p[0]).sort((a, b) => a.localeCompare(b, 'en', { numeric: true })).map((m, i) => [m, i]));
   const rows = pick.filter(([m]) => !only || only.has(m)).sort((a, b) => a[0].localeCompare(b[0], 'en', { numeric: true }));
   for (const [model, , label] of rows) {
-    const v = await KV.get('bs-m-' + model);
+    const v = (await KV.get('bs2-m-' + model)) || (await KV.get('bs-m-' + model));
     if (!v || !v.secs?.length) continue;
     const entry = [];
     for (const s of v.secs) {
       const g = guid(s.img);
       if (!g || !s.r?.length) continue;
       const byPn = new Map();
-      for (const [item, pn, desc] of s.r) {
+      const m = [];
+      for (const [item, pn, desc, , st, boxes] of s.r) {
         if (!pn) continue;
-        const x = byPn.get(pn) || { refs: [], desc };
+        for (const b of boxes || []) if (b.every(Number.isFinite) && b[2] > b[0] && b[3] > b[1]) m.push([String(item ?? '').trim(), ...b]);
+        const x = byPn.get(pn) || { refs: [], desc, st };
         const ref = String(item ?? '').trim();
         if (ref && !x.refs.includes(ref)) x.refs.push(ref);
         byPn.set(pn, x);
@@ -50,14 +60,15 @@ window.buildBS = async ({ bid = 9901, tid0 = 99001, mid0 = 990001, per = 150, ve
         .map(([pn, x]) => {
           parts.add(pn);
           x.refs.sort((a, b) => num(a) - num(b));
-          /* Henton & Chattell show no stock on these pages: 0 = ask us. */
-          return [x.refs.join(', '), pn, tidy(x.desc), 0];
+          return [x.refs.join(', '), pn, tidy(x.desc), stockOf(x.st)];
         })
         .sort((a, b) => num(a[0]) - num(b[0]));
       if (!r.length) continue;
       const id = nextList++;
       pics.set(g, s.img);
       lists[id] = { n: tidy(s.n) || 'Parts', p: [g], r };
+      /* Clickable numbers, when we know the drawing's size. */
+      if (m.length && dims[g]) Object.assign(lists[id], { m, wh: dims[g] });
       entry.push(id);
     }
     if (!entry.length) continue;
@@ -78,7 +89,7 @@ window.buildBS = async ({ bid = 9901, tid0 = 99001, mid0 = 990001, per = 150, ve
     brand: 'Briggs & Stratton',
     plain: true,
     groupSmall: false,
-    note: "These are Briggs & Stratton's own parts lists for the {model}, from our supplier Henton & Chattell. We've used one type number per engine model, and parts can differ between types, so check the model and type numbers stamped on your engine and ask us if yours is different. Match the numbers on the drawing to the Ref column.",
+    note: "These are Briggs & Stratton's own parts lists for the {model}, from our supplier Henton & Chattell. We've used one type number per engine model, and parts can differ between types, so check the model and type numbers stamped on your engine and ask us if yours is different. Match the numbers on the drawing to the Ref column. Stock is our supplier's when this list was last updated.",
     img: 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/bs-{id}.png',
     shard: `fpg-maker-bs-{n}.json?v=${version}`,
     per,
