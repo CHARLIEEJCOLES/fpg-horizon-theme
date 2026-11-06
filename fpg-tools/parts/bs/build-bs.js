@@ -98,6 +98,11 @@ window.buildBS = async ({ bid = 9901, tid0 = 99001, mid0 = 990001, per = 150, ve
     models,
     pimg: '',
     mi: {},
+    /* Logos for brands in other makers' files that the Part Finder app has none for (fpg-parts-hide.js brandLogos reads every maker's bl). */
+    bl: {
+      Harry: 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/harry-logo.jpg?v=1793968101',
+      Workzone: 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/workzone-brand-logo.png?v=1793968147',
+    },
   };
   return { index, shards, pics: [...pics.entries()], stats: { models: Object.keys(models).length, lists: nextList, parts: parts.size, drawings: pics.size, shards: Object.keys(shards).length } };
 };
