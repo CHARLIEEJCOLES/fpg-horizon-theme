@@ -2,7 +2,9 @@
  * Product CSV import queue for the Shopify admin (run in an admin.shopify.com/store/forest-park-garden-2794/products tab).
  * Shopify runs one product import at a time, so this tries the next file every 2 minutes and moves on once it starts.
  * Files: the dealer price-list imports on Shopify Files (new products, NLA rows dropped) and the STIGA title fix
- * (Handle,Title only, imported with "Overwrite products with matching handles": columns left out keep their values).
+ * (Handle,Title,Option1 Name,Option1 Value = Title,Default Title, imported with "Overwrite products with matching handles":
+ * columns left out keep their values; Shopify refuses an update without the option columns. Every one of the 23,246 is a
+ * single "Default Title" variant, checked first; tested on 2 products 6 Nov 23:07, price, SKU, tags and vendor unchanged).
  * The STIGA title files are kept in this tab's localStorage (fpg-csv-StigaTitles1..5), the queue in fpg-queue.
  * Paste the whole file into the console (or javascript_tool), then: await fpgQueueStart().
  * Status: _q (still to import), _qlog ([time, file, result]); "busy" just means another import is still running.
@@ -36,11 +38,13 @@ window.fpgQueueStart = async () => {
     const dt = new DataTransfer(); dt.items.add(new File([csv], name, { type: 'text/csv' })); inp.files = dt.files; inp.dispatchEvent(new Event('change', { bubbles: true }));
     await sleep(1500);
     if (_overwrite.has(key)) {
-      const box = [...dlg().querySelectorAll('input[type=checkbox]')].find((c) => /overwrite/i.test((c.labels && c.labels[0]?.innerText) || c.closest('label')?.innerText || c.parentElement?.parentElement?.innerText || ''));
+      /* Shopify's dialog draws it as <s-checkbox name="overwrite">, with the real input inside its shadow root. */
+      const sc = deep(dlg(), (el) => el.tagName === 'S-CHECKBOX' && el.getAttribute('name') === 'overwrite')[0];
+      const box = sc ? sc.shadowRoot?.querySelector('input[type=checkbox]') || deep(sc, (el) => el.type === 'checkbox')[0] : deep(dlg(), (el) => el.type === 'checkbox' && el.name === 'overwrite')[0];
       if (!box) { await closeAll(); return 'no overwrite box'; }
       if (!box.checked) box.click();
       await sleep(400);
-      if (!box.checked) { await closeAll(); return 'overwrite not ticked'; }
+      if (!(box.checked && (!sc || sc.checked))) { await closeAll(); return 'overwrite not ticked'; }
     }
     const up = [...dlg().querySelectorAll('button')].find((b) => b.innerText.trim() === 'Upload file' && !b.disabled);
     if (!up) { await closeAll(); return 'no upload btn'; }
@@ -48,6 +52,7 @@ window.fpgQueueStart = async () => {
     for (let i = 0; i < 60; i++) {
       await sleep(500); const d = dlg(); const txt = d?.innerText || '';
       if (/already in progress/i.test(txt)) { await closeAll(); return 'busy'; }
+      if (/There was an error/i.test(txt)) { const m = txt.split('\n').filter(Boolean).slice(3, 6).join(' | '); await closeAll(); return 'error: ' + m; }
       const go = d && [...d.querySelectorAll('button')].find((b) => /^Import products$/.test(b.innerText.trim()) && !b.disabled);
       if (go) { go.click(); await sleep(3000); return 'started'; }
     }
