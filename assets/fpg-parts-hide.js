@@ -6,6 +6,7 @@
  * It also gives brands their logo from a maker file's "bl" (see brandLogos), e.g. Mountfield, which
  * only comes from STIGA's lists and so has no logo in the Part Finder app.
  * And it fills in stock a maker file gained after it was built (see makerListWithStock).
+ * And it adds a second part-number lookup for maker files added since the main one (makerPartHitsPlus).
  */
 const squash = (/** @type {string} */ s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 
@@ -62,6 +63,19 @@ function stockFile(/** @type {any} */ maker) {
   return /** @type {Promise<Record<string, number> | null>} */ (stockFiles.get(url));
 }
 
+/** @type {Map<string, Promise<Record<string, any[]> | null>>} */
+const pn2Files = new Map();
+function pn2File(/** @type {string} */ url) {
+  if (!pn2Files.has(url))
+    pn2Files.set(
+      url,
+      fetch(url)
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null)
+    );
+  return /** @type {Promise<Record<string, any[]> | null>} */ (pn2Files.get(url));
+}
+
 customElements.whenDefined('fpg-parts-finder').then(() => {
   const Finder = /** @type {any} */ (customElements.get('fpg-parts-finder'));
   const merge = Finder?.prototype.mergeMaker;
@@ -88,6 +102,45 @@ customElements.whenDefined('fpg-parts-finder').then(() => {
     }
     makerListWithStock.fpgStock = true;
     Finder.prototype.makerList = makerListWithStock;
+  }
+  /* A second part-number lookup for maker files added after the main one was built (fpg-maker-pn2-{0..15}.json,
+     next to fpg-maker-pn-0.json, same format and hashing, 16 files): its hits join the main lookup's. */
+  const hits = Finder.prototype.makerPartHits;
+  if (typeof hits === 'function' && !hits.fpgPn2) {
+    /** @this {any} */
+    async function makerPartHitsPlus(/** @type {string} */ text) {
+      const main = (await hits.call(this, text)) || [];
+      const first = String(this.dataset.makerPn || '');
+      const q = squash(text).toLowerCase();
+      if (!first || !this.data || q.length < 5 || (q.match(/\d/g) || []).length < 4) return main;
+      const n = [...q.replace(/^[a-z]+/, '')].reduce((h, c) => (h * 33 + c.charCodeAt(0)) % 1000003, 7) % 16;
+      const file = await pn2File(first.replace('fpg-maker-pn-0.json', `fpg-maker-pn2-${n}.json`));
+      const byId = new Map(this.data.models.map((/** @type {any} */ m) => [String(m.id), m]));
+      /* A part both lookups know (one STIGA makes for Mountfield too) becomes one hit listing both makers' machines. */
+      const seen = new Map(main.map((/** @type {any} */ h) => [h.pn, h]));
+      const more = [];
+      for (const [key, list] of Object.entries(file || {})) {
+        const lead = key.length - q.length;
+        if (key !== q && !(lead > 0 && lead <= 3 && key.endsWith(q) && /^[a-z]+$/.test(key.slice(0, lead)))) continue;
+        for (const [pn, name, stock, rep, total, mids] of /** @type {any[]} */ (list)) {
+          const machines = mids.map((/** @type {any} */ id) => byId.get(String(id))).filter(Boolean);
+          if (!machines.length) continue;
+          const stockText = stock === 1 ? 'We can order it in' : stock === 2 ? 'Can order in' : stock === 3 ? 'Out of stock at our supplier' : stock === -1 ? `Discontinued${rep ? ` · now ${rep}` : ''}` : '';
+          const known = seen.get(pn);
+          if (known) {
+            const ids = new Set(known.machines.map((/** @type {any} */ m) => m.id));
+            known.machines = [...known.machines, ...machines.filter((/** @type {any} */ m) => !ids.has(m.id))];
+            known.total = Math.max(known.total + total, known.machines.length);
+            if (!known.stockText && stockText) known.stockText = stockText;
+            continue;
+          }
+          more.push({ pn, name, stockText, rep, total: Math.max(total, machines.length), machines });
+        }
+      }
+      return [...main, ...more].sort((a, b) => b.total - a.total).slice(0, 4);
+    }
+    makerPartHitsPlus.fpgPn2 = true;
+    Finder.prototype.makerPartHits = makerPartHitsPlus;
   }
   /* If a finder got its data before this file arrived, tidy it now and redraw the page it's on. */
   for (const el of document.querySelectorAll('fpg-parts-finder')) {
