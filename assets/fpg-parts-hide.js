@@ -10,7 +10,7 @@
  * And the mouse wheel zooms a parts drawing (zoomWithWheel).
  * Stock lights and our Brightpearl prices are in fpg-maker-prices.js, loaded from here (bump v on each upload).
  */
-import(new URL('fpg-maker-prices.js?v=1', import.meta.url).href).catch(() => {});
+import(new URL('fpg-maker-prices.js?v=2', import.meta.url).href).catch(() => {});
 const squash = (/** @type {string} */ s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 
 /** Drops the hidden brands from one finder's data. True if anything was dropped. */

@@ -7,14 +7,15 @@
  *    amber  we can get it but it isn't on a shelf yet ("Order in", "Can order in", "Not sold online" / ask us)
  *    red    out of stock at our supplier, out of stock with us and not orderable, or discontinued
  *
- * 2. Our prices from Brightpearl. Rows in the drawing viewer for parts that aren't Shopify products (the "Ask for a
- *    price" / "Ask us" rows) get FP&G's own selling price where Brightpearl has one for the part number (or for the
- *    part that replaced it). Never trade or cost prices.
+ * 2. Our prices. Rows in the drawing viewer for parts that aren't Shopify products (the "Ask for a price" / "Ask us"
+ *    rows) get FP&G's own selling price for the part number (or for the part that replaced it): Brightpearl's FPG
+ *    RETAIL price where it has one, otherwise the supplier's trade price plus our markup (+£6 under £10, +£10 to £50,
+ *    +£15 to £120, +£20 above), worked out before the file is written. The file never holds trade or cost prices.
  *    Data: Content > Files > fpg-bp-prices.json  { "at": "2026-11-06", "p": { "PARTNO": pence incl. VAT } }
- *    Fetched with the day as a cache key, so a new file (the scheduled refresh replaces it) shows within a day.
+ *    Read through the shop's own /cdn/shop/files/ path with a 10-minute key: Shopify's CDN keeps serving the first copy
+ *    it saw for an address, so a replaced file (the scheduled refresh) shows within 10 minutes.
  *    Scheppach and Echo rows are left to fpg-scheppach-prices.js first; a row it found no price for can get ours.
  */
-const PRICES_URL = 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/fpg-bp-prices.json';
 
 /* ---------- 1. Stock lights ---------- */
 const lightOf = (/** @type {Element} */ badge) => {
@@ -52,10 +53,10 @@ document.head.append(css);
 let prices = null;
 /** @type {Promise<any> | null} */
 let loading = null;
-const day = new Date().toISOString().slice(0, 10);
+const pricesUrl = () => `/cdn/shop/files/fpg-bp-prices.json?t=${Math.floor(Date.now() / 600000)}`;
 const load = () =>
   loading ||
-  (loading = fetch(`${PRICES_URL}?d=${day}`)
+  (loading = fetch(pricesUrl())
     .then((r) => (r.ok ? r.json() : {}))
     .then((data) => (prices = data?.p || {}))
     .catch(() => (prices = {})));
