@@ -6,9 +6,14 @@
  * Each file: { key: [[part no, name, stock, replaced by, machines in total, [model ids (up to 40)]], ...] }
  * key = the part number in lower case, letters and digits only. A part number goes in file
  * pnShard(key) (a hash of the key without leading letters, mod N; the finder's pnFile() must match), so "316913" and "AK316913" land together.
+ * Machines of the brands in the section's "Brands to leave out" (data-hidden-brands) are not counted, and a part
+ * that only fits those brands is left out, so the search never points at a machine the grid doesn't show.
  */
 window.buildPN = async ({ shards = 64, cap = 40 } = {}) => {
-  const urls = document.querySelector('[data-maker]').getAttribute('data-maker').trim().split(/\s+/);
+  const el = document.querySelector('[data-maker]');
+  const urls = el.getAttribute('data-maker').trim().split(/\s+/);
+  const sq = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const hidden = new Set(String(el.dataset.hiddenBrands || '').split(/[\r\n,]+/).map(sq).filter(Boolean));
   const squash = (s) => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
   const pnShard = (key) => [...key.replace(/^[a-z]+/, '')].reduce((h, c) => (h * 33 + c.charCodeAt(0)) % 1000003, 7) % shards;
   /** key -> Map(part no + maker file -> {pn, name, stock, rep, mids:Set}) */
@@ -16,9 +21,13 @@ window.buildPN = async ({ shards = 64, cap = 40 } = {}) => {
   for (const url of urls) {
     const index = await (await fetch(url)).json();
     const base = url.replace(/[^/]*$/, '');
+    /* models of hidden brands */
+    const hiddenModels = new Set();
+    for (const [, bname, types] of index.b || []) if (hidden.has(sq(bname))) for (const [, , list] of types) for (const [mid] of list) hiddenModels.add(String(mid));
     /* list id -> model ids */
     const listModels = new Map();
     for (const [mid, entries] of Object.entries(index.models || {})) {
+      if (hiddenModels.has(String(mid))) continue;
       for (const e of entries) {
         const id = String(Array.isArray(e) ? e[0] : e);
         if (!listModels.has(id)) listModels.set(id, new Set());
