@@ -36,7 +36,8 @@
   <fpg-parts-finder
     class="fpg-pf"
     data-index="{{ 'fpg-parts-index.json' | asset_url }}"
-    data-maker="{{ 'fpg-maker-parts.json' | asset_url }} {{ 'fpg-maker-fgm-echo.json' | asset_url }}"
+    data-maker="{{ 'fpg-maker-parts.json' | asset_url }} {{ 'fpg-maker-fgm-echo.json' | asset_url }} {{ 'fpg-maker-alko.json' | asset_url }} {{ 'fpg-maker-fgm-more.json' | asset_url }} {{ 'fpg-maker-toro.json' | asset_url }} {{ 'fpg-maker-stiga.json' | asset_url }} {{ 'fpg-maker-mitox.json' | asset_url }}"
+    data-maker-pn="{{ 'fpg-maker-pn-0.json' | asset_url }}"
     data-proxy="{{ proxy | escape }}"
     data-vat="{{ settings.fpg_vat_rate | default: 20 }}"
     {% if section.settings.maker_stock %}
@@ -50,6 +51,7 @@
     data-machines-url="{{ section.settings.machines_url | default: '/pages/my-machines' }}"
     data-no-diagrams="{{ section.settings.no_diagrams | escape }}"
     data-part-counts="{{ section.settings.part_counts | escape }}"
+    data-hidden-brands="{{ section.settings.hidden_brands | escape }}"
   >
     <header class="fpg-pf-hero">
       <div class="fpg-pf-hero__text">
@@ -131,6 +133,10 @@
 </div>
 <script src="{{ 'fpg-cart.js' | asset_url }}" type="module" async></script>
 <script src="{{ 'fpg-parts.js' | asset_url }}" type="module" async></script>
+{%- comment -%} Brands left out of the finder (setting "Brands to leave out"); see the file's header. {%- endcomment -%}
+<script src="{{ 'fpg-parts-hide.js' | asset_url }}" type="module" async></script>
+{%- comment -%} Our prices for Scheppach parts in the drawing viewer (see the file's header). {%- endcomment -%}
+<script src="{{ 'fpg-scheppach-prices.js' | asset_url }}" type="module" async></script>
 
 {% stylesheet %}
 /* The other parts tools, so every way to find a part is on this page. */
@@ -266,6 +272,7 @@
     { "type": "text", "id": "dealer_label", "label": "Dealer badge", "default": "Approved dealer" },
     { "type": "text", "id": "dealer_brands", "label": "Brands that get the dealer badge", "info": "Comma separated. Only list brands FP&G is an approved dealer for.", "default": "STIHL" },
     { "type": "textarea", "id": "no_diagrams", "label": "Machines with no maker parts list", "info": "STIHL / Husqvarna models (one per line, as named in the Part Finder) that the maker publishes no parts list for. They're crossed out in the models grid and say the diagrams are unavailable; our own parts for them still show. Remove a line once the machine has a dealer list in Polly." },
+    { "type": "textarea", "id": "hidden_brands", "label": "Brands to leave out", "info": "One per line (or comma separated), as named on the brand cards. These brands, their machines and their parts lists don't show anywhere in the finder.", "default": "B&Q\nDexter\nFort\nGermania\nGreenmech\nZgonc" },
     { "type": "textarea", "id": "part_counts", "label": "Rough parts count per brand", "info": "One per line, e.g. STIHL: 48000. Shown on the brand cards, rounded down (48,000+ parts). Count our listed parts plus the maker's parts lists, each part once." },
     { "type": "checkbox", "id": "maker_stock", "label": "Show live manufacturer stock", "info": "Uses the Cormorant server in Theme settings > FP&G, for parts we have none of.", "default": true },
     { "type": "header", "content": "Other parts tools", "info": "Shown under the search box on the first step, so every way to find a part is in one place." },
