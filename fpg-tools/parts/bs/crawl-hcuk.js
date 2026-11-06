@@ -24,7 +24,8 @@ window.bsReadDoc = (d) => {
       const n = +tr.getAttribute('hscount') || 0;
       const b = [];
       for (let i = 0; i < n; i++) b.push([+tr.getAttribute('hsleft' + i), +tr.getAttribute('hstop' + i), +tr.getAttribute('hsright' + i), +tr.getAttribute('hsbottom' + i)]);
-      r.push([c[0] || tr.getAttribute('theitem') || '', c[1] || '', c[2] || '', c[3] || '', tr.getAttribute('popupstockstatus') || '', b]);
+      /* Then H&C's RRP (the only price on the page; there's no dealer price) and stock colour (Red/Green). */
+      r.push([c[0] || tr.getAttribute('theitem') || '', c[1] || '', c[2] || '', c[3] || '', tr.getAttribute('popupstockstatus') || '', b, tr.getAttribute('popuprrp') || '', tr.getAttribute('popupstockcolour') || '']);
     }
   return { img: d.getElementById('HiddenImageUrl')?.value || '', r };
 };
