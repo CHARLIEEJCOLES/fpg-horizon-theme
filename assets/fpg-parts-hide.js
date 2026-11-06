@@ -7,6 +7,7 @@
  * only comes from STIGA's lists and so has no logo in the Part Finder app.
  * And it fills in stock a maker file gained after it was built (see makerListWithStock).
  * And it adds a second part-number lookup for maker files added since the main one (makerPartHitsPlus).
+ * And the mouse wheel zooms a parts drawing (zoomWithWheel).
  */
 const squash = (/** @type {string} */ s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 
@@ -76,6 +77,70 @@ function pn2File(/** @type {string} */ url) {
   return /** @type {Promise<Record<string, any[]> | null>} */ (pn2Files.get(url));
 }
 
+/**
+ * Mouse zoom on a parts drawing. fpg-parts.js's viewer zooms only on Ctrl + wheel (and by its - / + / Fit buttons),
+ * so a plain wheel scrolled the drawing instead. Here the wheel (and a trackpad pinch) over the drawing zooms in and out
+ * around the pointer, a double-click zooms in there (or back to fit when fully in), and Shift + wheel still scrolls
+ * sideways. Dragging moves a zoomed drawing as before. Each zoom is handed to the viewer's own Ctrl + wheel handler
+ * (one 1.25x step), after enough wheel movement to make a notch, so a trackpad zooms smoothly rather than racing.
+ */
+function zoomWithWheel() {
+  if (/** @type {any} */ (window).fpgWheelZoom) return;
+  /** @type {any} */ (window).fpgWheelZoom = true;
+  /* Says so under the drawing, for a mouse or trackpad. */
+  const css = document.createElement('style');
+  css.textContent =
+    '@media (hover: hover) and (pointer: fine) {' +
+    ' .fpg-pf-v__hint:not(:empty)::after { content: " Scroll to zoom, drag to move."; opacity: 0.75; }' +
+    ' .fpg-pf-v [data-v-scroll][data-zoomed="false"] img { cursor: zoom-in; } }';
+  document.head.append(css);
+  const ours = new WeakSet();
+  let acc = 0;
+  let last = 0;
+  /** One viewer zoom step at the pointer: dir < 0 zooms in. */
+  const step = (/** @type {Element} */ target, /** @type {number} */ dir, /** @type {number} */ x, /** @type {number} */ y) => {
+    const ev = new WheelEvent('wheel', { deltaY: dir * 100, ctrlKey: true, clientX: x, clientY: y, bubbles: true, cancelable: true });
+    ours.add(ev);
+    target.dispatchEvent(ev);
+  };
+  document.addEventListener(
+    'wheel',
+    (e) => {
+      if (ours.has(e) || e.shiftKey || !(e.target instanceof Element)) return;
+      const scroll = e.target.closest('.fpg-pf-v [data-v-scroll]');
+      if (!scroll) return;
+      e.preventDefault();
+      e.stopPropagation();
+      /* Lines and pages to pixels; a pinch sends small deltas, so it counts for more. */
+      const px = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? 400 : 1) * (e.ctrlKey ? 4 : 1);
+      if (e.timeStamp - last > 300) acc = 0;
+      last = e.timeStamp;
+      acc += px;
+      while (Math.abs(acc) >= 80) {
+        const dir = Math.sign(acc);
+        acc -= dir * 80;
+        step(e.target, dir, e.clientX, e.clientY);
+      }
+      /* A single small notch (some mice send under 80) still zooms once. */
+      if (Math.abs(px) >= 30 && Math.abs(px) < 80 && Math.abs(acc) === Math.abs(px)) {
+        acc = 0;
+        step(e.target, Math.sign(px), e.clientX, e.clientY);
+      }
+    },
+    { capture: true, passive: false }
+  );
+  document.addEventListener('dblclick', (e) => {
+    if (!(e.target instanceof Element) || e.target.closest('[data-hot], a, button')) return;
+    const scroll = e.target.closest('.fpg-pf-v [data-v-scroll]');
+    if (!(scroll instanceof HTMLElement)) return;
+    e.preventDefault();
+    const dialog = scroll.closest('dialog') || document;
+    const zoomIn = /** @type {HTMLButtonElement | null} */ (dialog.querySelector('[data-v-zoom="1"]'));
+    if (zoomIn?.disabled) return /** @type {HTMLElement | null} */ (dialog.querySelector('[data-v-zoom="0"]'))?.click();
+    for (let i = 0; i < 3; i++) step(e.target, -1, e.clientX, e.clientY);
+  });
+}
+
 customElements.whenDefined('fpg-parts-finder').then(() => {
   const Finder = /** @type {any} */ (customElements.get('fpg-parts-finder'));
   const merge = Finder?.prototype.mergeMaker;
@@ -142,6 +207,7 @@ customElements.whenDefined('fpg-parts-finder').then(() => {
     makerPartHitsPlus.fpgPn2 = true;
     Finder.prototype.makerPartHits = makerPartHitsPlus;
   }
+  zoomWithWheel();
   /* If a finder got its data before this file arrived, tidy it now and redraw the page it's on. */
   for (const el of document.querySelectorAll('fpg-parts-finder')) {
     const hid = hideBrands(el);
