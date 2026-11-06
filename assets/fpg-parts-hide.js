@@ -7,7 +7,7 @@
  * only comes from STIGA's lists and so has no logo in the Part Finder app.
  * And it fills in stock a maker file gained after it was built (see makerListWithStock).
  * And it adds a second part-number lookup for maker files added since the main one (makerPartHitsPlus).
- * And the mouse wheel zooms a parts drawing (zoomWithWheel).
+ * And the mouse wheel zooms a parts drawing (zoomWithWheel), and the basket − / + answers at once (quickStep).
  * Stock lights and our Brightpearl prices are in fpg-maker-prices.js, loaded from here (bump v on each upload).
  */
 import(new URL('fpg-maker-prices.js?v=2', import.meta.url).href).catch(() => {});
@@ -208,6 +208,67 @@ customElements.whenDefined('fpg-parts-finder').then(() => {
     }
     makerPartHitsPlus.fpgPn2 = true;
     Finder.prototype.makerPartHits = makerPartHitsPlus;
+  }
+  /* Faster − / + on a part's basket quantity. fpg-parts.js waited for the basket to answer after every click
+     (buttons greyed out, about a second each). Here the number changes at once, clicks can follow each other
+     straight away, and only the final quantity is sent, 350 ms after the last click (one request for 1 -> 5).
+     The basket's answer then corrects the number if the shop can't supply that many. */
+  const step = Finder.prototype.stepQuantity;
+  if (typeof step === 'function' && !step.fpgQuick) {
+    /** @type {WeakMap<HTMLElement, {want: number, timer: number, busy: boolean, again: boolean}>} */
+    const pending = new WeakMap();
+    /** @this {any} */
+    function quickStep(/** @type {HTMLElement} */ button) {
+      const box = /** @type {HTMLElement | null} */ (button.closest('[data-buy]'));
+      const variant = box?.dataset.buy || '';
+      const line = this.basket?.get(variant);
+      if (!box || !line) return step.call(this, button);
+      const p = pending.get(box) || { want: line.quantity, timer: 0, busy: false, again: false };
+      pending.set(box, p);
+      /* Keeps fpg-parts.js from redrawing this box with the old number while clicks are still coming. */
+      box.dataset.busy = 'true';
+      p.want = Math.max(0, p.want + Number(button.dataset.qtyStep));
+      const n = box.querySelector('.fpg-pf-qty__n');
+      if (n) n.innerHTML = p.want ? `<strong>${p.want}</strong> in basket` : 'Removing…';
+      const minus = /** @type {HTMLButtonElement | null} */ (box.querySelector('[data-qty-step="-1"]'));
+      if (minus) {
+        minus.disabled = p.want === 0;
+        minus.setAttribute('aria-label', p.want <= 1 ? 'Remove from basket' : 'One fewer');
+      }
+      const send = async () => {
+        if (p.busy) return void (p.again = true);
+        p.busy = true;
+        p.again = false;
+        const want = p.want;
+        const key = this.basket.get(variant)?.key || line.key;
+        try {
+          const tools = /** @type {any} */ (window).FPGTools;
+          const cart = tools?.setLineQuantity
+            ? await tools.setLineQuantity(key, want, box)
+            : await fetch('/cart/change.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: key, quantity: want }) }).then((r) => r.json());
+          p.busy = false;
+          if (p.again || p.want !== want) return void send();
+          pending.delete(box);
+          delete box.dataset.busy;
+          this.setBasket(cart);
+          const got = this.basket.get(variant)?.quantity || 0;
+          if (want > 0 && got < want) {
+            const shown = box.querySelector('.fpg-pf-qty__n');
+            if (shown) shown.innerHTML = `<strong>${got}</strong> in basket (all we have)`;
+          }
+        } catch (error) {
+          p.busy = false;
+          pending.delete(box);
+          delete box.dataset.busy;
+          box.innerHTML = this.buyInner(variant);
+          console.warn('[FP&G parts finder]', error);
+        }
+      };
+      clearTimeout(p.timer);
+      p.timer = window.setTimeout(send, 350);
+    }
+    quickStep.fpgQuick = true;
+    Finder.prototype.stepQuantity = quickStep;
   }
   zoomWithWheel();
   /* If a finder got its data before this file arrived, tidy it now and redraw the page it's on. */
