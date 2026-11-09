@@ -310,15 +310,17 @@ function engineFamilies(/** @type {any} */ finder, /** @type {any} */ brand, /**
     const css = document.createElement('style');
     css.id = 'fpg-fam-css';
     css.textContent =
-      '.fpg-fam { margin: 0 0 32px; }' +
+      '.fpg-fam { margin: 0 0 32px; scroll-margin-top: 130px; }' +
       ' .fpg-fam__intro { margin: 0 0 18px; font-size: 1.15rem; }' +
       ' .fpg-fam__sec { margin: 0 0 26px; }' +
       ' .fpg-fam__sec h4 { margin: 0 0 10px; font-size: 1rem; opacity: 0.85; }' +
       ' .fpg-fam__tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }' +
-      ' .fpg-fam__tile { display: grid; grid-template-rows: auto 1fr; width: 100%; height: 100%; padding: 0; overflow: hidden; border: 1px solid rgb(0 45 55 / 0.12); border-radius: 14px; background: #fff; color: inherit; font: inherit; text-align: start; cursor: pointer; }' +
+      ' .fpg-fam__tiles > li, .fpg-fam__rows > li { display: grid; min-width: 0; }' +
+      ' .fpg-fam__tile { display: grid; grid-template-rows: auto 1fr; width: 100%; padding: 0; overflow: hidden; border: 1px solid rgb(0 45 55 / 0.12); border-radius: 14px; background: #fff; color: inherit; font: inherit; text-align: start; cursor: pointer; }' +
       ' .fpg-fam__tile:hover, .fpg-fam__tile:focus-visible { border-color: var(--lk-teal, #002d37); }' +
       ' .fpg-fam__pic { display: grid; place-items: center; aspect-ratio: 4 / 3; background: var(--lk-mist, #f3f6f4); color: rgb(0 45 55 / 0.45); }' +
-      ' .fpg-fam__pic img { width: 82%; height: 88%; object-fit: contain; mix-blend-mode: multiply; }' +
+      ' .fpg-fam__pic { position: relative; }' +
+      ' .fpg-fam__pic img { position: absolute; inset: 6% 9%; width: 82%; height: 88%; object-fit: contain; mix-blend-mode: multiply; }' +
       ' .fpg-fam__rows { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }' +
       ' .fpg-fam__tiles + .fpg-fam__rows { margin-top: 12px; }' +
       ' .fpg-fam__rows .fpg-fam__tile { display: block; }' +
@@ -343,7 +345,10 @@ function engineFamilies(/** @type {any} */ finder, /** @type {any} */ brand, /**
       ' .fpg-fam__size > summary::after { content: "+"; font-weight: 400; font-size: 1.3rem; line-height: 1; }' +
       ' .fpg-fam__size[open] > summary::after { content: "\\2212"; }' +
       ' .fpg-fam__size > summary span { margin-inline-start: auto; font-weight: 400; opacity: 0.75; }' +
-      ' .fpg-fam__size .fpg-fam__engs { padding: 0 16px 16px; }' +
+      ' .fpg-fam__body { padding: 0 16px 16px; }' +
+      ' .fpg-fam__sub + .fpg-fam__sub { margin-top: 14px; }' +
+      ' .fpg-fam__sub h5 { margin: 0 0 6px; font-size: 0.95rem; letter-spacing: 0.03em; }' +
+      ' .fpg-fam__sub h5 small { margin-inline-start: 6px; font-weight: 400; letter-spacing: 0; opacity: 0.7; }' +
       ' .fpg-fam__engs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }' +
       ' .fpg-fam__eng { padding: 7px 12px; border: 1px solid rgb(0 45 55 / 0.16); border-radius: 8px; background: var(--lk-mist, #f3f6f4); color: inherit; font: inherit; font-weight: 600; letter-spacing: 0.03em; cursor: pointer; }' +
       ' .fpg-fam__eng:hover, .fpg-fam__eng:focus-visible { border-color: var(--lk-teal, #002d37); background: #fff; }' +
@@ -419,11 +424,22 @@ function engineFamilies(/** @type {any} */ finder, /** @type {any} */ brand, /**
       if (!sizes.has(k)) sizes.set(k, []);
       /** @type {any[]} */ (sizes.get(k)).push(r);
     }
+    /* A big size (Briggs & Stratton made hundreds of 12 cubic inch engines) is split again by the third character. */
+    const chips = (/** @type {any[]} */ rs) => {
+      if (rs.length <= 40) return `<ul class="fpg-fam__engs" role="list">${rs.map(chip).join('')}</ul>`;
+      /** @type {Map<string, any[]>} */
+      const by3 = new Map();
+      for (const r of rs) {
+        const k = r.code.slice(0, 3);
+        if (!by3.has(k)) by3.set(k, []);
+        /** @type {any[]} */ (by3.get(k)).push(r);
+      }
+      return [...by3]
+        .map(([k, l]) => `<div class="fpg-fam__sub"><h5>${esc(k)}<span aria-hidden="true">…</span> <small>${count(l.length)}</small></h5><ul class="fpg-fam__engs" role="list">${l.map(chip).join('')}</ul></div>`)
+        .join('');
+    };
     out.innerHTML = [...sizes]
-      .map(
-        ([k, rs]) =>
-          `<details class="fpg-fam__size"><summary>${esc(sizeLabel(k))}<span>${count(rs.length)}</span></summary><ul class="fpg-fam__engs" role="list">${rs.map(chip).join('')}</ul></details>`
-      )
+      .map(([k, rs]) => `<details class="fpg-fam__size"><summary>${esc(sizeLabel(k))}<span>${count(rs.length)}</span></summary><div class="fpg-fam__body">${chips(rs)}</div></details>`)
       .join('');
   };
   const open = (/** @type {string} */ key, /** @type {boolean} */ focus) => {
