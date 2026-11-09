@@ -10,7 +10,8 @@
  * And the mouse wheel zooms a parts drawing (zoomWithWheel), and the basket − / + answers at once (quickStep).
  * And a maker file can order its machine types ("to") and group long model lists by how the number starts ("series").
  * And opening a brand, type or machine jumps to the top of the finder instead of gliding up from the footer (routeToTop).
- * And a brand whose maker file says where the engine number is ("lead", Briggs & Stratton) gets an engine-number lookup above its size tiles (engineLookup).
+ * And a brand whose maker file says where the engine number is ("lead", Briggs & Stratton) gets an engine-number lookup above its size tiles (engineLookup),
+ * and Briggs & Stratton's size tiles give way to a tile per engine series, named as on the engine (engineFamilies).
  * Stock lights and our Brightpearl prices are in fpg-maker-prices.js, loaded from here (bump v on each upload).
  */
 import(new URL('fpg-maker-prices.js?v=3', import.meta.url).href).catch(() => {});
@@ -187,10 +188,14 @@ function engineLookup(/** @type {any} */ finder, /** @type {any} */ brand) {
   head.after(box);
   const h2 = head.querySelector('.fpg-pf-h');
   if (h2) h2.textContent = `${brand.name}: find your engine`;
-  const or = document.createElement('h3');
-  or.className = 'fpg-eng-or';
-  or.textContent = 'Or browse by engine size';
-  box.after(or);
+  const families = engineFamilies(finder, brand, rows);
+  if (families) box.after(families);
+  else {
+    const or = document.createElement('h3');
+    or.className = 'fpg-eng-or';
+    or.textContent = 'Or browse by engine size';
+    box.after(or);
+  }
   const input = /** @type {HTMLInputElement} */ (box.querySelector('[data-fpg-engine-q]'));
   const status = /** @type {HTMLElement} */ (box.querySelector('.fpg-eng__status'));
   const list = /** @type {HTMLElement} */ (box.querySelector('[data-fpg-engine-hits]'));
@@ -240,6 +245,219 @@ function engineLookup(/** @type {any} */ finder, /** @type {any} */ brand) {
     e.preventDefault();
     /** @type {HTMLElement | null} */ (list.querySelector(`[data-go-model="${pick.m.id}"]`))?.click();
   });
+}
+
+/*
+ * Briggs & Stratton engines by the name on the engine, for engineFamilies. Sources: the Briggs & Stratton label guide and
+ * engine pages (series names and model numbers) and its model-number key: the first two digits are the size in cubic
+ * inches, and the fourth character says which way the crankshaft points (0-4 and A-G across, 5-9 and H-Z down).
+ * "pre": engine numbers starting with these belong to the series. "test": the rule for the rest, in order.
+ * Photos are Briggs & Stratton's own, copied to the shop's Files.
+ */
+const BS_FILES = 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/';
+const BS_GROUPS = [
+  { sec: 'Push mowers', key: '450e', name: '450E Series', img: 'bs-series-450e.png', pre: ['08P5', '08P6'] },
+  { sec: 'Push mowers', key: '500e', name: '500E Series', img: 'bs-series-500e.png', pre: ['09P6'] },
+  { sec: 'Push mowers', key: '550e', name: '550E and 575EX Series', img: 'bs-series-575ex.png', pre: ['09P7'] },
+  { sec: 'Push mowers', key: '675', name: '625E, 650EXi and 675EXi Series', img: 'bs-series-675exi.png', pre: ['103M', '104M'] },
+  { sec: 'Push mowers', key: '750dov', name: '750EX DOV Series', img: 'bs-series-750ex-dov.png', pre: ['093J', '1006'] },
+  { sec: 'Push mowers', key: '875', name: '800E to 875EXi Series', img: 'bs-series-875exi.png', pre: ['11P9', '111P', '12R9', '12S9', '12Q9', '121R', '125P'] },
+  { sec: 'Push mowers', key: '950e', name: '950E Series', pre: ['14B9'] },
+  { sec: 'Push mowers', key: 'quantum', name: 'Quantum', pre: ['12H8', '123K'] },
+  { sec: 'Push mowers', key: 'edge', name: 'Intek Edge-Pro', pre: ['126T'] },
+  { sec: 'Push mowers', key: 'old-s', name: 'Older engines up to 165cc', note: 'Classic, Sprint, Quattro and others', test: (/** @type {number} */ cu, /** @type {boolean} */ down) => down && cu <= 10 },
+  { sec: 'Push mowers', key: 'old-m', name: 'Older engines 180 to 200cc', note: 'Engine numbers starting 11 or 12', test: (/** @type {number} */ cu, /** @type {boolean} */ down) => down && cu <= 12 },
+  { sec: 'Ride-on mowers', key: 'r344', name: '3105E to 3130EX Series', note: '344cc, also sold as Intek', img: 'bs-series-3130ex.png', pre: ['21R5', '21R6', '21R7', '21R8', '21R9', '21B9'] },
+  { sec: 'Ride-on mowers', key: 'r500', name: '4145E to 4195E Series', note: '500cc, also sold as Intek', img: 'bs-series-4175e.png', pre: ['31R5', '31R6', '31R7', '31R8', '31R9'] },
+  { sec: 'Ride-on mowers', key: 'ride1', name: 'Other single-cylinder engines', note: '210 to 560cc', test: (/** @type {number} */ cu, /** @type {boolean} */ down) => down && cu < 35 },
+  { sec: 'Ride-on mowers', key: 'ride2', name: 'Twin-cylinder engines', note: '570cc and up', test: (/** @type {number} */ _cu, /** @type {boolean} */ down) => down },
+  { sec: 'Tillers, generators and other machines', key: 'across', name: 'Horizontal-shaft engines', note: 'Crankshaft comes out of the side: tillers, generators, pressure washers, go-karts, log splitters', test: () => true },
+];
+const ENGINE_ICON =
+  '<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><rect x="14" y="20" width="30" height="28" rx="4"/><path d="M18 20v-6h22v6M44 26h8v16h-8M14 30H8v10h6M22 48v6M36 48v6"/><path d="M20 27h18M20 33h18M20 39h18"/></g></svg>';
+
+/**
+ * Briggs & Stratton has thousands of engines, and its owners know them by the name on the engine cover (500E Series,
+ * Quantum...) or the machine they're on, not by a size band. So instead of the size tiles, its brand page shows a tile
+ * per series (with Briggs & Stratton's photo where it has one), under the kind of machine. A tile opens its engines in
+ * place: small series as one list, big ones by size (the first two digits of the number), folded so the page stays short.
+ * Returns the block to put under the engine-number lookup, or null for any other brand.
+ */
+function engineFamilies(/** @type {any} */ finder, /** @type {any} */ brand, /** @type {any[]} */ rows) {
+  if (squash(brand?.name) !== 'BRIGGSSTRATTON') return null;
+  /** @type {Map<string, any[]>} */
+  const byGroup = new Map(BS_GROUPS.map((g) => [g.key, []]));
+  /** @type {any[]} */
+  const other = [];
+  for (const r of rows) {
+    const c = r.code;
+    let g = BS_GROUPS.find((x) => x.pre?.some((p) => c.startsWith(p)));
+    if (!g && /^\d\d[0-9A-Z]{4}$/.test(c)) {
+      const down = /[5-9H-Z]/.test(c[3]);
+      g = BS_GROUPS.find((x) => x.test?.(Number(c.slice(0, 2)), down));
+    }
+    if (g) /** @type {any[]} */ (byGroup.get(g.key)).push(r);
+    else other.push(r);
+  }
+  const groups = BS_GROUPS.map((g) => ({ ...g, rows: /** @type {any[]} */ (byGroup.get(g.key)) })).filter((g) => g.rows.length);
+  if (other.length) groups.push({ sec: 'Tillers, generators and other machines', key: 'other', name: 'Other engine numbers', note: 'Numbers that don’t start with a size', rows: other });
+  const esc = (/** @type {string} */ s) => String(s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch] || ch);
+  const count = (/** @type {number} */ n) => `${n.toLocaleString('en-GB')} engine${n === 1 ? '' : 's'}`;
+  const starts = (/** @type {any} */ g) => {
+    if (g.note) return g.note;
+    return `Engine numbers starting ${g.pre.join(', ').replace(/, ([^,]*)$/, ' or $1')}`;
+  };
+  if (!document.getElementById('fpg-fam-css')) {
+    const css = document.createElement('style');
+    css.id = 'fpg-fam-css';
+    css.textContent =
+      '.fpg-fam { margin: 0 0 32px; }' +
+      ' .fpg-fam__intro { margin: 0 0 18px; font-size: 1.15rem; }' +
+      ' .fpg-fam__sec { margin: 0 0 26px; }' +
+      ' .fpg-fam__sec h4 { margin: 0 0 10px; font-size: 1rem; opacity: 0.85; }' +
+      ' .fpg-fam__tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }' +
+      ' .fpg-fam__tile { display: grid; grid-template-rows: auto 1fr; width: 100%; height: 100%; padding: 0; overflow: hidden; border: 1px solid rgb(0 45 55 / 0.12); border-radius: 14px; background: #fff; color: inherit; font: inherit; text-align: start; cursor: pointer; }' +
+      ' .fpg-fam__tile:hover, .fpg-fam__tile:focus-visible { border-color: var(--lk-teal, #002d37); }' +
+      ' .fpg-fam__pic { display: grid; place-items: center; aspect-ratio: 4 / 3; background: var(--lk-mist, #f3f6f4); color: rgb(0 45 55 / 0.45); }' +
+      ' .fpg-fam__pic img { width: 82%; height: 88%; object-fit: contain; mix-blend-mode: multiply; }' +
+      ' .fpg-fam__pic svg { width: 38%; height: auto; }' +
+      ' .fpg-fam__txt { display: grid; align-content: start; gap: 3px; padding: 12px 14px 14px; }' +
+      ' .fpg-fam__txt strong { font-size: 1.02rem; line-height: 1.25; }' +
+      ' .fpg-fam__txt small { opacity: 0.75; line-height: 1.35; }' +
+      ' .fpg-fam__txt em { font-style: normal; font-size: 0.88rem; font-weight: 600; color: var(--lk-teal, #002d37); margin-top: 4px; }' +
+      ' .fpg-fam__panel[hidden], .fpg-fam__home[hidden] { display: none; }' +
+      ' .fpg-fam__back { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 14px; padding: 8px 14px 8px 10px; border: 1px solid rgb(0 45 55 / 0.2); border-radius: 999px; background: #fff; color: inherit; font: inherit; cursor: pointer; }' +
+      ' .fpg-fam__back:hover, .fpg-fam__back:focus-visible { border-color: var(--lk-teal, #002d37); }' +
+      ' .fpg-fam__top { display: flex; gap: 18px; align-items: center; margin: 0 0 16px; }' +
+      ' .fpg-fam__top .fpg-fam__pic { flex: none; width: 120px; border-radius: 12px; }' +
+      ' .fpg-fam__top h4 { margin: 0 0 4px; font-size: 1.3rem; }' +
+      ' .fpg-fam__top p { margin: 0; opacity: 0.8; }' +
+      ' .fpg-fam .fpg-pf-filter { max-width: 360px; margin: 0 0 16px; background: #fff; }' +
+      ' .fpg-fam__size { margin: 0 0 8px; border: 1px solid rgb(0 45 55 / 0.12); border-radius: 12px; background: #fff; }' +
+      ' .fpg-fam__size > summary { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; cursor: pointer; list-style: none; font-weight: 600; }' +
+      ' .fpg-fam__size > summary::-webkit-details-marker { display: none; }' +
+      ' .fpg-fam__size > summary::after { content: "+"; font-weight: 400; font-size: 1.3rem; line-height: 1; }' +
+      ' .fpg-fam__size[open] > summary::after { content: "\\2212"; }' +
+      ' .fpg-fam__size > summary span { margin-inline-start: auto; font-weight: 400; opacity: 0.75; }' +
+      ' .fpg-fam__size .fpg-fam__engs { padding: 0 16px 16px; }' +
+      ' .fpg-fam__engs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }' +
+      ' .fpg-fam__eng { padding: 7px 12px; border: 1px solid rgb(0 45 55 / 0.16); border-radius: 8px; background: var(--lk-mist, #f3f6f4); color: inherit; font: inherit; font-weight: 600; letter-spacing: 0.03em; cursor: pointer; }' +
+      ' .fpg-fam__eng:hover, .fpg-fam__eng:focus-visible { border-color: var(--lk-teal, #002d37); background: #fff; }' +
+      ' .fpg-fam__none { margin: 0; opacity: 0.8; }' +
+      ' @media (max-width: 560px) { .fpg-fam__tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .fpg-fam__txt { padding: 10px 11px 12px; } .fpg-fam__top .fpg-fam__pic { width: 84px; } }';
+    document.head.append(css);
+  }
+  const pic = (/** @type {any} */ g) =>
+    `<span class="fpg-fam__pic">${g.img ? `<img src="${BS_FILES}${g.img}?width=480" alt="" width="480" height="480" loading="lazy">` : ENGINE_ICON}</span>`;
+  const sections = [...new Set(groups.map((g) => g.sec))];
+  const wrap = document.createElement('section');
+  wrap.className = 'fpg-fam';
+  wrap.dataset.fpgFam = '';
+  wrap.setAttribute('aria-labelledby', 'fpg-fam-h');
+  wrap.innerHTML = `
+    <div class="fpg-fam__home">
+      <h3 class="fpg-fam__intro" id="fpg-fam-h">Or pick the name on your engine</h3>
+      ${sections
+        .map(
+          (sec) => `<div class="fpg-fam__sec"><h4>${esc(sec)}</h4><ul class="fpg-fam__tiles" role="list">${groups
+            .filter((g) => g.sec === sec)
+            .map(
+              (g) =>
+                `<li><button type="button" class="fpg-fam__tile" data-fpg-fam-open="${g.key}">${pic(g)}<span class="fpg-fam__txt"><strong>${esc(g.name)}</strong><small>${esc(starts(g))}</small><em>${count(g.rows.length)}</em></span></button></li>`
+            )
+            .join('')}</ul></div>`
+        )
+        .join('')}
+    </div>
+    <div class="fpg-fam__panel" hidden></div>`;
+  const home = /** @type {HTMLElement} */ (wrap.querySelector('.fpg-fam__home'));
+  const panel = /** @type {HTMLElement} */ (wrap.querySelector('.fpg-fam__panel'));
+  /* The size tiles fpg-parts.js drew are replaced by these. */
+  finder.view.querySelectorAll('.fpg-pf-types').forEach((/** @type {HTMLElement} */ el) => (el.hidden = true));
+  const chip = (/** @type {any} */ r) =>
+    `<li><button type="button" class="fpg-fam__eng" data-go-model="${r.m.id}" title="${esc(`${r.label}${r.type ? `, type ${r.type}` : ''}`)}">${esc(r.label)}</button></li>`;
+  const sortRows = (/** @type {any[]} */ l) => [...l].sort((a, b) => a.code.localeCompare(b.code, 'en'));
+  const sizeLabel = (/** @type {string} */ two) => {
+    const cu = Number(two);
+    if (!Number.isFinite(cu) || !/^\d\d$/.test(two)) return 'Other numbers';
+    return `Numbers starting ${two}: about ${Math.round((cu * 16.387) / 5) * 5}cc`;
+  };
+  const storeKey = `fpg-fam:${brand.id}`;
+  const remember = (/** @type {string} */ v) => {
+    try {
+      if (v) sessionStorage.setItem(storeKey, v);
+      else sessionStorage.removeItem(storeKey);
+    } catch {}
+  };
+  const drawList = (/** @type {any} */ g, /** @type {string} */ q) => {
+    const out = /** @type {HTMLElement} */ (panel.querySelector('[data-fpg-fam-list]'));
+    const x = squash(q);
+    const l = sortRows(x ? g.rows.filter((/** @type {any} */ r) => r.full.includes(x) || (/^\d/.test(x) && r.full.startsWith(`0${x}`))) : g.rows);
+    if (!l.length) {
+      out.innerHTML = `<p class="fpg-fam__none">None of these engines match ${esc(q.trim().toUpperCase())}. Try the lookup at the top, which checks every Briggs & Stratton engine.</p>`;
+      return;
+    }
+    if (l.length <= 40 || x) {
+      out.innerHTML = `<ul class="fpg-fam__engs" role="list">${l.map(chip).join('')}</ul>`;
+      return;
+    }
+    /** @type {Map<string, any[]>} */
+    const sizes = new Map();
+    for (const r of l) {
+      const k = r.code.slice(0, 2);
+      if (!sizes.has(k)) sizes.set(k, []);
+      /** @type {any[]} */ (sizes.get(k)).push(r);
+    }
+    out.innerHTML = [...sizes]
+      .map(
+        ([k, rs]) =>
+          `<details class="fpg-fam__size"><summary>${esc(sizeLabel(k))}<span>${count(rs.length)}</span></summary><ul class="fpg-fam__engs" role="list">${rs.map(chip).join('')}</ul></details>`
+      )
+      .join('');
+  };
+  const open = (/** @type {string} */ key, /** @type {boolean} */ focus) => {
+    const g = groups.find((x) => x.key === key);
+    if (!g) return;
+    panel.innerHTML = `
+      <button type="button" class="fpg-fam__back" data-fpg-fam-back><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>All Briggs & Stratton engines</button>
+      <div class="fpg-fam__top">${pic(g)}<div><h4 tabindex="-1">${esc(g.name)}</h4><p>${esc(starts(g))}. ${count(g.rows.length)}.</p></div></div>
+      ${g.rows.length > 12 ? `<label class="fpg-pf-filter"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="visually-hidden">Narrow down these engines</span><input type="search" placeholder="Narrow down, e.g. ${esc(g.rows[0].label.slice(0, 4))}" autocomplete="off" autocapitalize="characters" spellcheck="false" data-fpg-fam-q></label>` : ''}
+      <div data-fpg-fam-list></div>`;
+    drawList(g, '');
+    panel.querySelector('[data-fpg-fam-q]')?.addEventListener('input', (e) => drawList(g, /** @type {HTMLInputElement} */ (e.target).value));
+    home.hidden = true;
+    panel.hidden = false;
+    panel.dataset.key = key;
+    if (focus) {
+      /** @type {HTMLElement | null} */ (panel.querySelector('h4'))?.focus({ preventScroll: true });
+      wrap.scrollIntoView({ block: 'start' });
+    }
+  };
+  const close = () => {
+    const key = panel.dataset.key;
+    panel.hidden = true;
+    panel.replaceChildren();
+    delete panel.dataset.key;
+    home.hidden = false;
+    remember('');
+    /** @type {HTMLElement | null} */ (home.querySelector(`[data-fpg-fam-open="${key}"]`))?.focus({ preventScroll: true });
+    wrap.scrollIntoView({ block: 'start' });
+  };
+  wrap.addEventListener('click', (e) => {
+    const t = /** @type {HTMLElement} */ (e.target);
+    const tile = /** @type {HTMLElement | null} */ (t.closest('[data-fpg-fam-open]'));
+    if (tile) return open(String(tile.dataset.fpgFamOpen), true);
+    if (t.closest('[data-fpg-fam-back]')) return close();
+    /* Opening an engine from a series: coming back to the brand reopens that series. */
+    if (t.closest('[data-go-model]') && panel.dataset.key) remember(panel.dataset.key);
+  });
+  let back = '';
+  try {
+    back = sessionStorage.getItem(storeKey) || '';
+    sessionStorage.removeItem(storeKey);
+  } catch {}
+  if (back) open(back, false);
+  return wrap;
 }
 
 /** @type {Map<string, Promise<Record<string, number> | null>>} */
