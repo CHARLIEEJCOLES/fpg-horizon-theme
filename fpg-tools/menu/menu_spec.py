@@ -374,6 +374,23 @@ MENU = [
             ('Westerman Hard Surface Brush', 'prod:fpg-hire-westerman-wr870-hard-surface-brush', []),
         ]),
     ]),
+    # FPG Training lives on its own site; these link straight to its course pages (checked 9 Nov 2026).
+    ('Training', 'x:https://fpgtraining.co.uk/courses/', [
+        ('NPTC Courses', 'x:https://fpgtraining.co.uk/courses/', [
+            ('Chainsaw Courses', 'x:https://fpgtraining.co.uk/chainsaw-training-cardiff/', []),
+            ('Brushcutter & Trimmer', 'x:https://fpgtraining.co.uk/courses/brushcutter-training-cardiff/', []),
+            ('Woodchipper', 'x:https://fpgtraining.co.uk/courses/woodchipper-training-cardiff/', []),
+            ('Powered Pole Pruner', 'x:https://fpgtraining.co.uk/pole-pruner-training-wales/', []),
+            ('Pesticides (PA1 & PA6)', 'x:https://fpgtraining.co.uk/pa1andpa6/', []),
+            ('Emergency First Aid at Work +F', 'x:https://fpgtraining.co.uk/emergency-first-aid-and-f-course-cardiff/', []),
+            ('All Courses & Prices', 'x:https://fpgtraining.co.uk/courses/', []),
+        ]),
+        ('Book a Course', 'x:https://fpgtraining.co.uk/contact-us/', [
+            ('Contact Training', 'x:https://fpgtraining.co.uk/contact-us/', []),
+            ('Course Dates', 'x:https://fpgtraining.co.uk/calendar/', []),
+            ('Call 01443 230000', 'x:tel:01443230000', []),
+        ]),
+    ]),
     ('Offers', 'c:current-promotions', [
         ('Promotions & Special Offers', 'c:current-promotions', []),
         ('Clearance Sale', 'c:clearance', []),
