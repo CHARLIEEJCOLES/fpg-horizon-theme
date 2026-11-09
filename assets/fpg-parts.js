@@ -939,13 +939,16 @@ class FpgPartsFinder extends HTMLElement {
             : null;
         return { view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600`, numbers: !!inline, inline };
       }),
-      parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock, replacedBy]) => {
+      parts: (sec.parts || []).map((/** @type {any[]} */ [ref, no, title, stock, replacedBy, quantity]) => {
         /* "7, 8, 4": the first number is the part; the badge shows it and the line lists the rest. */
         const refs = String(ref || '').split(/[\s,]+/).filter(Boolean);
         const pic = imgs[no] ? this.makerImage(imgs[no], 160, maker) : '';
-        /* Our own product for the part, if we have one: "echo-p022-061670" for Echo's P022-061670 (FGM adds a two-letter brand prefix, "EC-"). */
-        const shopNo = maker.source === 'fgm' ? String(no).replace(/^[A-Z]{2,3}-/, '') : String(no);
-        return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), replacedBy: replacedBy || '', maker: brand, image: pic, imageLarge: pic && this.makerImage(imgs[no], 900, maker), shopNo, shopHandle: `${handleize(brand)}-${handleize(shopNo)}` };
+        /* Our own product for the part, if we have one: "echo-p022-061670" for Echo's P022-061670 (FGM adds a two-letter brand prefix, "EC-").
+           A maker file can name it instead (h: part number -> [our product's handle, its SKU]), e.g. Forst, whose products have numbered handles. */
+        const own = /** @type {any} */ (maker).h?.[no];
+        const shopNo = own ? String(own[1]) : maker.source === 'fgm' ? String(no).replace(/^[A-Z]{2,3}-/, '') : String(no);
+        const shopHandle = own ? String(own[0]) : `${handleize(brand)}-${handleize(shopNo)}`;
+        return { diagramRef: refs[0] || '', refs, partNumber: no, title, unavailable: true, makerStock: Number(stock), replacedBy: replacedBy || '', quantity: Number(quantity) || 0, maker: brand, image: pic, imageLarge: pic && this.makerImage(imgs[no], 900, maker), shopNo, shopHandle };
       }),
     }));
     return { source: maker.source || '', sections, note: maker.note || '', plain: !!maker.plain };
