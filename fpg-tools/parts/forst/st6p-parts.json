@@ -1,0 +1,1190 @@
+[
+ {
+  "name": "Hopper tray touch sensor",
+  "page": 35,
+  "parts": [
+   [
+    "1",
+    "12-30-017",
+    "Push to stop decal",
+    1
+   ],
+   [
+    "2",
+    "24-19-058",
+    "Sensor trip bar fab assy",
+    1
+   ],
+   [
+    "3",
+    "12-13-015",
+    "M6 nyloc nut ISO 7040",
+    2
+   ],
+   [
+    "4",
+    "12-10-090",
+    "Buffer 15 x 20 M6",
+    2
+   ],
+   [
+    "5",
+    "24-19-054",
+    "Sensor hopper tray fab assy",
+    1
+   ],
+   [
+    "6",
+    "12-14-002",
+    "M16 Nylon Washer extra large OD 56 x 5 THK ISO 7094",
+    2
+   ],
+   [
+    "7",
+    "12-14-005",
+    "M16 Washer ISO 7089",
+    2
+   ],
+   [
+    "8",
+    "12-13-005",
+    "M16 nyloc nut ISO 7040",
+    2
+   ],
+   [
+    "9",
+    "12-10-083",
+    "Forward/reverse touch sensor assy (Green)",
+    2
+   ],
+   [
+    "10",
+    "12-14-020",
+    "M4 washer ISO 7089",
+    12
+   ],
+   [
+    "11",
+    "12-14-027",
+    "M4 Serrated washer DIN 128",
+    12
+   ],
+   [
+    "12",
+    "12-12-101",
+    "M4 x 20 Pan Head Pozi Screw",
+    12
+   ],
+   [
+    "13",
+    "12-10-080",
+    "Stop touch sensor assy (Red)",
+    2
+   ],
+   [
+    "14",
+    "22-01-008",
+    "Hopper tray hinge pin",
+    1
+   ],
+   [
+    "15",
+    "12-14-024.1",
+    "M8 Serrated washer",
+    4
+   ],
+   [
+    "16",
+    "12-12-401",
+    "M8 x 25 Lg 8.8 Hex Head screw",
+    4
+   ],
+   [
+    "17",
+    "12-14-013",
+    "M8 washer ISO 7089",
+    4
+   ],
+   [
+    "18",
+    "24-03-124",
+    "Cable cover / Trip mech guard",
+    1
+   ],
+   [
+    "19",
+    "12-14-001",
+    "M16 Large washer",
+    2
+   ],
+   [
+    "20",
+    "12-13-009",
+    "M16 Half nut",
+    2
+   ],
+   [
+    "21",
+    "12-13-004",
+    "M16 Dome nut",
+    2
+   ],
+   [
+    "22",
+    "12-10-072",
+    "Inductive proximity sensor kit (orange tip)",
+    1
+   ],
+   [
+    "21a",
+    "12-10-071",
+    "Inductive proximity sensor kit (white tip)",
+    1
+   ],
+   [
+    "23",
+    "12-10-084",
+    "Gas spring 22 DIA 50 stroke",
+    1
+   ],
+   [
+    "24",
+    "12-14-017",
+    "M6 washer ISO 7089",
+    2
+   ]
+  ]
+ },
+ {
+  "name": "Chipping chamber",
+  "page": 36,
+  "parts": [
+   [
+    "1",
+    "12-11-020",
+    "Bearing & housing",
+    1
+   ],
+   [
+    "2",
+    "12-10-075",
+    "G1/8in BSPP 4mm male stud coupling",
+    1
+   ],
+   [
+    "3",
+    "12-A-010",
+    "Flywheel assy",
+    1
+   ],
+   [
+    "4",
+    "12-01-064",
+    "Flywheel bearing housing",
+    1
+   ],
+   [
+    "4a",
+    "12-01-064.1",
+    "Bearing",
+    1
+   ],
+   [
+    "5",
+    "24-19-055",
+    "Top feed roller housing",
+    1
+   ],
+   [
+    "6",
+    "24-19-054",
+    "Sensor folding hopper tray assy",
+    1
+   ],
+   [
+    "7",
+    "24-19-013",
+    "Chipping chamber with hopper",
+    1
+   ],
+   [
+    "8",
+    "12-12-505",
+    "M10 x 20lg 10.9 CSK hex socket screw",
+    2
+   ],
+   [
+    "9",
+    "12-01-002",
+    "Side anvil",
+    1
+   ],
+   [
+    "10",
+    "12-12-1100",
+    "M16 x 35Lg 10.9 Hex Head screw",
+    4
+   ],
+   [
+    "11",
+    "12-14-006",
+    "M16 serrated lock washer DIN 6798-A17",
+    4
+   ],
+   [
+    "12",
+    "22-03-090",
+    "Bearing washer plate",
+    1
+   ]
+  ]
+ },
+ {
+  "name": "Chipping chamber: bottom feed",
+  "page": 37,
+  "parts": [
+   [
+    "1",
+    "24-19-065",
+    "Bottom feed roller and shaft",
+    1
+   ],
+   [
+    "2",
+    "12-20-004",
+    "Rectangular key 30x8x7",
+    1
+   ],
+   [
+    "3",
+    "12-01-053",
+    "Feed roller spherical bearing housing",
+    1
+   ],
+   [
+    "4",
+    "12-01-052",
+    "Oilite 30 ID spherical bearing",
+    1
+   ],
+   [
+    "5",
+    "12-01-062",
+    "Feed bearing clamp",
+    1
+   ],
+   [
+    "6",
+    "12-14-009",
+    "M10 Washer ISO 7089",
+    2
+   ],
+   [
+    "7",
+    "12-14-010",
+    "M10 spring washer DIN 128",
+    2
+   ],
+   [
+    "8",
+    "12-12-509",
+    "M10 x 35Lg 8.8 Hex Head Screw",
+    2
+   ],
+   [
+    "9",
+    "12-12-308",
+    "M5 x 20 Lg Socket Head Screw \u2013 Zinc Blk.",
+    4
+   ],
+   [
+    "10",
+    "12-01-049",
+    "Rigid shaft coupling 25 ID",
+    1
+   ],
+   [
+    "11",
+    "12-19-133-D",
+    "Feed motor clamp",
+    1
+   ],
+   [
+    "11a",
+    "12-03-201",
+    "Feed motor clamp shim",
+    1
+   ],
+   [
+    "12",
+    "12-19-132-D",
+    "Feed motor bracket fab. assy.",
+    1
+   ],
+   [
+    "13",
+    "12-24-005",
+    "Hydraulic motor",
+    1
+   ],
+   [
+    "14",
+    "12-12-609",
+    "M12 x 45 Lg 8.8 Socket Head Cap Screw",
+    2
+   ],
+   [
+    "15,16",
+    "12-10-195",
+    "M14 Spherical dished washer set",
+    1
+   ],
+   [
+    "17",
+    "12-14-038",
+    "M14 Washer ISO 7089",
+    1
+   ],
+   [
+    "18",
+    "12-13-018",
+    "M14 Nyloc nut ISO 7040",
+    1
+   ]
+  ]
+ },
+ {
+  "name": "Chipping chamber: bottom feed & anvil",
+  "page": 38,
+  "parts": [
+   [
+    "1",
+    "12-12-601",
+    "M12 x 50Lg 8.8 Hex Head screw",
+    1
+   ],
+   [
+    "2",
+    "12-14-015",
+    "M12 Spring washer DIN 128",
+    1
+   ],
+   [
+    "3",
+    "12-14-003",
+    "M12 Washer ISO 7089",
+    1
+   ],
+   [
+    "4",
+    "12-01-003",
+    "Anvil clamp",
+    1
+   ],
+   [
+    "5",
+    "12-01-013",
+    "Anvil",
+    1
+   ],
+   [
+    "6",
+    "12-10-094",
+    "R1/8in BSPT 4mm male stud elbow",
+    1
+   ],
+   [
+    "7",
+    "12-12-502",
+    "M10 x 30Lg 8.8 Hex Head screw",
+    3
+   ],
+   [
+    "8",
+    "12-99-008",
+    "M10 Serrated Washer",
+    3
+   ],
+   [
+    "9",
+    "12-14-009",
+    "M10 Washer (if required)",
+    3
+   ],
+   [
+    "10",
+    "12-11-005",
+    "Self Aligning Flange Bearing 2Z 30 ID",
+    1
+   ],
+   [
+    "11",
+    "12-03-042",
+    "Feed roller bearing shim",
+    1
+   ],
+   [
+    "12",
+    "12-15-002",
+    "Tension spring 7.01 wire 23.98 ID 31 turns",
+    2
+   ]
+  ]
+ },
+ {
+  "name": "Chipping chamber: drive",
+  "page": 39,
+  "parts": [
+   [
+    "1",
+    "24-A-002",
+    "Belt tensioner with nylon pulley.",
+    1
+   ],
+   [
+    "2",
+    "12-12-506",
+    "M10 x 25Lg 8.8 Hex Head screw",
+    2
+   ],
+   [
+    "3",
+    "12-14-010",
+    "M10 Spring Washer DIN 128",
+    2
+   ],
+   [
+    "4",
+    "12-14-009",
+    "M10 Washer ISO 7089",
+    2
+   ],
+   [
+    "5",
+    "12-19-063",
+    "Pulley retainer",
+    1
+   ],
+   [
+    "6",
+    "12-10-038",
+    "Taper lock bush 50 ID",
+    1
+   ],
+   [
+    "7",
+    "12-10-299",
+    "Birn Pulley 507 OD x 44 wide 2 groove",
+    1
+   ],
+   [
+    "8",
+    "12-10-071",
+    "Inductive proximity sensor kit",
+    1
+   ],
+   [
+    "9",
+    "12-10-085",
+    "Shim 50 ID x 62 OD x 0.5 THK DIN 988",
+    1
+   ],
+   [
+    "10",
+    "12-10-071",
+    "Inductive proximity sensor kit",
+    1
+   ],
+   [
+    "11",
+    "12-10-086",
+    "Shim 50 ID x 62 OD x 1 THK DIN 988",
+    1
+   ]
+  ]
+ },
+ {
+  "name": "Chipping chamber: flywheel drive",
+  "page": 40,
+  "parts": [
+   [
+    "1",
+    "12-10-305",
+    "V Belt - B75",
+    2
+   ]
+  ]
+ },
+ {
+  "name": "Chipping chamber: bottom feed roller cover",
+  "page": 41,
+  "parts": [
+   [
+    "1",
+    "12-12-504",
+    "M10 x 20Lg 8.8 Hex Head screw",
+    2
+   ],
+   [
+    "2",
+    "12-14-010",
+    "M10 Spring Washer DIN 128",
+    2
+   ],
+   [
+    "3",
+    "12-14-009",
+    "M10 Washer ISO 7089",
+    2
+   ],
+   [
+    "4",
+    "12-03-045",
+    "Feed roller cover",
+    1
+   ]
+  ]
+ },
+ {
+  "name": "Chute",
+  "page": 42,
+  "parts": [
+   [
+    "1",
+    "12-19-056.B",
+    "Chute clamp fab assy",
+    2
+   ],
+   [
+    "2",
+    "12-20-001",
+    "Spring Pin Slotted 10 DIA x 30Lg ISO 8752",
+    2
+   ],
+   [
+    "3",
+    "12-19-164",
+    "M16 Chute Clamp Assy.",
+    2
+   ],
+   [
+    "4",
+    "12-19-051.B",
+    "Chute fab assy",
+    1
+   ],
+   [
+    "5",
+    "12-11-007",
+    "Plain bearing 12 ID, 16 OD, 22 flange x 10 Lg",
+    4
+   ],
+   [
+    "6",
+    "12-14-003",
+    "M12 Washer ISO 7089",
+    6
+   ],
+   [
+    "7",
+    "12-13-003",
+    "M12 nyloc nut ISO 7040",
+    3
+   ],
+   [
+    "8",
+    "12-01-043",
+    "Hood hinge stud",
+    1
+   ],
+   [
+    "9",
+    "12-19-151.B",
+    "Chute hood fab assy",
+    1
+   ],
+   [
+    "10",
+    "12-30-024",
+    "Forst small orange decal",
+    2
+   ],
+   [
+    "11",
+    "12-15-020",
+    "M12 Elastomer washer OD 25-ID 12 x 5 THK",
+    2
+   ],
+   [
+    "12",
+    "12-19-055.B",
+    "Chute handle - standard",
+    1
+   ],
+   [
+    "13",
+    "12-10-004",
+    "M12 female steel handle",
+    1
+   ],
+   [
+    "14",
+    "12-14-004",
+    "M12 Washer extra large OD 44 x 4 THK ISO 7094",
+    2
+   ]
+  ]
+ },
+ {
+  "name": "Top feed roller",
+  "page": 43,
+  "parts": [
+   [
+    "1",
+    "12-12-609",
+    "M12 x 45Lg 8.8 Socket Head Cap Screw",
+    2
+   ],
+   [
+    "2",
+    "12-24-005",
+    "Hydraulic motor 199.6cc/rev",
+    1
+   ],
+   [
+    "3",
+    "12-19-132-D",
+    "Feed motor bracket fab assy",
+    1
+   ],
+   [
+    "4",
+    "12-19-133-D",
+    "Feed motor clamp",
+    1
+   ],
+   [
+    "4a",
+    "12-03-201",
+    "Feed motor mount 3mm shim",
+    1
+   ],
+   [
+    "5",
+    "12-12-308",
+    "M5 x 20Lg Skt. Head Cap Screw Zinc/Blk.",
+    4
+   ],
+   [
+    "6",
+    "12-01-049",
+    "Rigid shaft coupling 25 ID",
+    1
+   ],
+   [
+    "7",
+    "12-99-008.1",
+    "M10 Serrated Washer",
+    5
+   ],
+   [
+    "8",
+    "12-14-009",
+    "M10 Washer ISO 7089",
+    5
+   ],
+   [
+    "9",
+    "12-12-509",
+    "M10 x 35Lg 8.8 Hex Head screw",
+    2
+   ],
+   [
+    "10",
+    "12-10-094",
+    "R1/8in BSPT 4mm male stud elbow",
+    2
+   ],
+   [
+    "11",
+    "12-11-013",
+    "Self aligning flange bearing 2 hole 30 ID",
+    1
+   ],
+   [
+    "12",
+    "12-03-102",
+    "Feed roller 2 hole bearing shim",
+    1
+   ],
+   [
+    "13",
+    "24-01-052",
+    "Feed cheek RH 32mm slot",
+    1
+   ],
+   [
+    "14",
+    "12-20-004",
+    "Rectangular key 30x8x7",
+    1
+   ],
+   [
+    "15",
+    "24-19-064",
+    "Top feed roller and shaft",
+    1
+   ],
+   [
+    "16",
+    "24-01-053",
+    "Feed cheek LH 32mm slot",
+    1
+   ],
+   [
+    "17",
+    "12-03-042",
+    "Feed roller bearing shim",
+    1
+   ],
+   [
+    "18",
+    "12-11-005",
+    "Self Aligning Flange Bearing 2Z 30 ID",
+    1
+   ],
+   [
+    "19",
+    "12-12-502",
+    "M10 x 30Lg 8.8 Hex Head screw",
+    3
+   ],
+   [
+    "20, 21",
+    "12-10-195",
+    "M14 spherical dished washer set",
+    1
+   ],
+   [
+    "22",
+    "12-14-038",
+    "M14 Washer ISO 7089",
+    3
+   ],
+   [
+    "23",
+    "12-13-018",
+    "M14 nyloc nut ISO 7040",
+    3
+   ],
+   [
+    "24",
+    "12-13-011",
+    "M8 nyloc nut ISO 7040",
+    2
+   ],
+   [
+    "25",
+    "12-14-013",
+    "M8 washer ISO 7089",
+    2
+   ],
+   [
+    "26",
+    "22-02-002",
+    "Top feed roller stop",
+    1
+   ],
+   [
+    "27",
+    "12-11-004",
+    "Plain bearing 20 ID, 26 OD, 28 flange x 12 Lg",
+    2
+   ],
+   [
+    "28",
+    "12-01-008",
+    "Shoulder screw M16 x 14Lg",
+    4
+   ],
+   [
+    "29",
+    "12-01-061",
+    "Feed adjuster collar",
+    2
+   ],
+   [
+    "30",
+    "12-12-613",
+    "M12 x 140 eyebolt DIN 444",
+    2
+   ],
+   [
+    "31",
+    "24-19-055",
+    "Top feed housing fab assy",
+    1
+   ]
+  ]
+ },
+ {
+  "name": "Flywheel",
+  "page": 44,
+  "parts": [
+   [
+    "1",
+    "12-20-024",
+    "Rectangular key 40x14x9",
+    1
+   ],
+   [
+    "2",
+    "24-01-051",
+    "Flywheel shaft",
+    1
+   ],
+   [
+    "3",
+    "12-20-002",
+    "Rectangular key 90x14x9",
+    1
+   ],
+   [
+    "4",
+    "12-01-046",
+    "Flywheel shaft spacer",
+    1
+   ],
+   [
+    "5",
+    "12-13-007",
+    "M16 10.9 Hex nut ISO 4032",
+    6
+   ],
+   [
+    "6",
+    "12-14-006",
+    "M16 serrated lock washer DIN 6798-A17",
+    6
+   ],
+   [
+    "7",
+    "12-01-042",
+    "Flywheel machined assy",
+    1
+   ],
+   [
+    "8",
+    "12-01-012",
+    "Flywheel shaft spacer",
+    1
+   ],
+   [
+    "9",
+    "12-03-093.05",
+    "Blade shim 0.5mm",
+    2
+   ],
+   [
+    "10",
+    "12-12-1102",
+    "M16 x 45Lg 10.9 CSK hex socket screw ISO 10642",
+    4
+   ],
+   [
+    "11",
+    "12-01-009",
+    "Flywheel blade",
+    2
+   ],
+   [
+    "12",
+    "12-12-1103",
+    "M16 x 50Lg 8.8 Hex Head screw cone point DIN 564",
+    2
+   ],
+   [
+    "",
+    "12-03-093.10",
+    "Blade shim 1mm",
+    0
+   ],
+   [
+    "",
+    "12-03-093.15",
+    "Blade shim 1.5mm",
+    0
+   ],
+   [
+    "",
+    "12-03-093.20",
+    "Blade shim 2mm",
+    0
+   ],
+   [
+    "",
+    "12-03-093.25",
+    "Blade shim 2.5mm",
+    0
+   ],
+   [
+    "",
+    "99-99-099",
+    "Blade bolt set (bolt, washer & nut)",
+    0
+   ]
+  ]
+ },
+ {
+  "name": "Fuel tank",
+  "page": 45,
+  "parts": [
+   [
+    "1",
+    "24-02-003",
+    "Fuel tank 35L moulded assy",
+    1
+   ],
+   [
+    "2",
+    "24-02-005",
+    "Petrol tank cap",
+    1
+   ],
+   [
+    "3",
+    "12-14-008",
+    "M12 Bonded washer (Dowty)",
+    2
+   ],
+   [
+    "4",
+    "12-10-027",
+    "Banjo M12",
+    1
+   ],
+   [
+    "5",
+    "12-10-026",
+    "Banjo bolt M12",
+    1
+   ]
+  ]
+ },
+ {
+  "name": "Hydraulic pump",
+  "page": 46,
+  "parts": [
+   [
+    "1",
+    "12-24-061",
+    "Hydraulic single pump 8cc",
+    1
+   ],
+   [
+    "2",
+    "12-12-403",
+    "M8 Bolt x 40mm",
+    4
+   ],
+   [
+    "3",
+    "12-14-013",
+    "M8 Plain washer",
+    4
+   ],
+   [
+    "4",
+    "24-03-036",
+    "Pump bracket assy.",
+    1
+   ],
+   [
+    "5",
+    "12-14-013",
+    "M8 Plain washer",
+    4
+   ],
+   [
+    "6",
+    "12-13-011",
+    "M8 Nyloc nut",
+    4
+   ],
+   [
+    "7",
+    "12-12-302",
+    "M6 Bolt x 12mm",
+    4
+   ],
+   [
+    "8",
+    "12-14-018",
+    "M6 Spring washer",
+    4
+   ],
+   [
+    "9",
+    "12-14-017",
+    "M6 Plain washer",
+    4
+   ],
+   [
+    "10",
+    "24-10-001",
+    "Spider coupling",
+    1
+   ],
+   [
+    "11",
+    "24-01-057",
+    "PTO Shaft",
+    1
+   ]
+  ]
+ },
+ {
+  "name": "Light board",
+  "page": 47,
+  "parts": [
+   [
+    "1",
+    "12-10-248",
+    "Tail light - left",
+    1
+   ],
+   [
+    "1a",
+    "12-10-249",
+    "Tail light lens - left",
+    1
+   ],
+   [
+    "2",
+    "12-10-250",
+    "Tail light - right",
+    1
+   ],
+   [
+    "2a",
+    "12-10-251",
+    "Tail light lens - Right",
+    1
+   ],
+   [
+    "4",
+    "12-12-626",
+    "Nylon push on rivets",
+    4
+   ],
+   [
+    "5",
+    "12-10-100",
+    "Side reflector amber",
+    2
+   ],
+   [
+    "6",
+    "12-99-006",
+    "M4 x 10 Pan head pozi screw",
+    6
+   ],
+   [
+    "7",
+    "12-14-021",
+    "M4 Spring washer ISO 128",
+    6
+   ],
+   [
+    "8",
+    "12-14-020",
+    "M4 Washer ISO 7089",
+    6
+   ],
+   [
+    "9",
+    "12-10-097",
+    "Number plate holder",
+    2
+   ],
+   [
+    "10",
+    "24-19-063",
+    "Light board fab assy",
+    1
+   ],
+   [
+    "11",
+    "12-14-017",
+    "M6 washer ISO 7089",
+    4
+   ],
+   [
+    "12",
+    "12-13-015",
+    "M6 nyloc nut ISO 7040",
+    4
+   ],
+   [
+    "",
+    "12-10-252",
+    "LED loom complete",
+    1
+   ],
+   [
+    "",
+    "12-10-253",
+    "Curly cable",
+    1
+   ],
+   [
+    "",
+    "24-19-067",
+    "Light guards",
+    0
+   ]
+  ]
+ },
+ {
+  "name": "Belt tensioner",
+  "page": 48,
+  "parts": [
+   [
+    "1",
+    "24-01-060",
+    "Belt tensioner nylon pulley",
+    1
+   ],
+   [
+    "2",
+    "24-05-003",
+    "Belt tensioner spacer",
+    2
+   ],
+   [
+    "3",
+    "24-03-169",
+    "Belt tensioner plate",
+    1
+   ],
+   [
+    "4",
+    "12-11-011",
+    "6304 2RS Deep groove ball bearing",
+    2
+   ],
+   [
+    "5",
+    "12-12-211",
+    "M20 x 100 lg. 8.8 Hex bolt",
+    1
+   ],
+   [
+    "6",
+    "12-10-182.P",
+    "M20 Nyloc nut",
+    1
+   ]
+  ]
+ }
+]
