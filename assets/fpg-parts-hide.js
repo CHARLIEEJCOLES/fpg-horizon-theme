@@ -188,6 +188,8 @@ function engineLookup(/** @type {any} */ finder, /** @type {any} */ brand) {
   head.after(box);
   const h2 = head.querySelector('.fpg-pf-h');
   if (h2) h2.textContent = `${brand.name}: find your engine`;
+  const lead = head.querySelector('.fpg-pf-lead');
+  if (lead) lead.textContent = `${models.length.toLocaleString('en-GB')} engines, with their parts diagrams.`;
   const families = engineFamilies(finder, brand, rows);
   if (families) box.after(families);
   else {
@@ -273,9 +275,6 @@ const BS_GROUPS = [
   { sec: 'Ride-on mowers', key: 'ride2', name: 'Twin-cylinder engines', note: '570cc and up', test: (/** @type {number} */ _cu, /** @type {boolean} */ down) => down },
   { sec: 'Tillers, generators and other machines', key: 'across', name: 'Horizontal-shaft engines', note: 'Crankshaft comes out of the side: tillers, generators, pressure washers, go-karts, log splitters', test: () => true },
 ];
-const ENGINE_ICON =
-  '<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><rect x="14" y="20" width="30" height="28" rx="4"/><path d="M18 20v-6h22v6M44 26h8v16h-8M14 30H8v10h6M22 48v6M36 48v6"/><path d="M20 27h18M20 33h18M20 39h18"/></g></svg>';
-
 /**
  * Briggs & Stratton has thousands of engines, and its owners know them by the name on the engine cover (500E Series,
  * Quantum...) or the machine they're on, not by a size band. So instead of the size tiles, its brand page shows a tile
@@ -320,7 +319,12 @@ function engineFamilies(/** @type {any} */ finder, /** @type {any} */ brand, /**
       ' .fpg-fam__tile:hover, .fpg-fam__tile:focus-visible { border-color: var(--lk-teal, #002d37); }' +
       ' .fpg-fam__pic { display: grid; place-items: center; aspect-ratio: 4 / 3; background: var(--lk-mist, #f3f6f4); color: rgb(0 45 55 / 0.45); }' +
       ' .fpg-fam__pic img { width: 82%; height: 88%; object-fit: contain; mix-blend-mode: multiply; }' +
-      ' .fpg-fam__pic svg { width: 38%; height: auto; }' +
+      ' .fpg-fam__rows { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }' +
+      ' .fpg-fam__tiles + .fpg-fam__rows { margin-top: 12px; }' +
+      ' .fpg-fam__rows .fpg-fam__tile { display: block; }' +
+      ' .fpg-fam__rows .fpg-fam__txt { grid-template-columns: 1fr auto; column-gap: 14px; padding: 13px 16px; }' +
+      ' .fpg-fam__rows .fpg-fam__txt strong, .fpg-fam__rows .fpg-fam__txt small { grid-column: 1; }' +
+      ' .fpg-fam__rows .fpg-fam__txt em { grid-column: 2; grid-row: 1 / span 2; align-self: center; margin: 0; white-space: nowrap; }' +
       ' .fpg-fam__txt { display: grid; align-content: start; gap: 3px; padding: 12px 14px 14px; }' +
       ' .fpg-fam__txt strong { font-size: 1.02rem; line-height: 1.25; }' +
       ' .fpg-fam__txt small { opacity: 0.75; line-height: 1.35; }' +
@@ -348,7 +352,7 @@ function engineFamilies(/** @type {any} */ finder, /** @type {any} */ brand, /**
     document.head.append(css);
   }
   const pic = (/** @type {any} */ g) =>
-    `<span class="fpg-fam__pic">${g.img ? `<img src="${BS_FILES}${g.img}?width=480" alt="" width="480" height="480" loading="lazy">` : ENGINE_ICON}</span>`;
+    g.img ? `<span class="fpg-fam__pic"><img src="${BS_FILES}${g.img}?width=480" alt="" width="480" height="480" loading="lazy"></span>` : '';
   const sections = [...new Set(groups.map((g) => g.sec))];
   const wrap = document.createElement('section');
   wrap.className = 'fpg-fam';
@@ -359,13 +363,20 @@ function engineFamilies(/** @type {any} */ finder, /** @type {any} */ brand, /**
       <h3 class="fpg-fam__intro" id="fpg-fam-h">Or pick the name on your engine</h3>
       ${sections
         .map(
-          (sec) => `<div class="fpg-fam__sec"><h4>${esc(sec)}</h4><ul class="fpg-fam__tiles" role="list">${groups
-            .filter((g) => g.sec === sec)
-            .map(
-              (g) =>
-                `<li><button type="button" class="fpg-fam__tile" data-fpg-fam-open="${g.key}">${pic(g)}<span class="fpg-fam__txt"><strong>${esc(g.name)}</strong><small>${esc(starts(g))}</small><em>${count(g.rows.length)}</em></span></button></li>`
-            )
-            .join('')}</ul></div>`
+          (sec) => {
+            /* Series with a Briggs & Stratton photo as picture cards; the rest as slimmer cards under them. */
+            const tiles = (/** @type {any[]} */ l, /** @type {string} */ cls) =>
+              l.length
+                ? `<ul class="${cls}" role="list">${l
+                    .map(
+                      (g) =>
+                        `<li><button type="button" class="fpg-fam__tile" data-fpg-fam-open="${g.key}">${pic(g)}<span class="fpg-fam__txt"><strong>${esc(g.name)}</strong><small>${esc(starts(g))}</small><em>${count(g.rows.length)}</em></span></button></li>`
+                    )
+                    .join('')}</ul>`
+                : '';
+            const inSec = groups.filter((g) => g.sec === sec);
+            return `<div class="fpg-fam__sec"><h4>${esc(sec)}</h4>${tiles(inSec.filter((g) => g.img), 'fpg-fam__tiles')}${tiles(inSec.filter((g) => !g.img), 'fpg-fam__rows')}</div>`;
+          }
         )
         .join('')}
     </div>
