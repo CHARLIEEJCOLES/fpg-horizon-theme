@@ -184,7 +184,8 @@
   transform: translateX(3px);
 }
 
-/* The "Build a Climbing Kit" link and other starred tools stand out */
+/* The "Build a Climbing Kit" and "Contact Training" links and other starred tools stand out */
+#header-component .mega-menu__link[href='https://fpgtraining.co.uk/contact-us/']:not(.mega-menu__link--parent),
 #header-component .mega-menu__link[href$='/collections/kit-creator']:not(.mega-menu__link--parent) {
   display: inline-flex;
   margin-bottom: 6px;
@@ -194,11 +195,13 @@
   color: #fff !important;
 }
 
+#header-component .mega-menu__link[href='https://fpgtraining.co.uk/contact-us/']:not(.mega-menu__link--parent) *,
 #header-component .mega-menu__link[href$='/collections/kit-creator']:not(.mega-menu__link--parent) *,
 #header-component .mega-menu__link[href$='/collections/kit-creator']:not(.mega-menu__link--parent) .wrap-text {
   color: #fff !important;
 }
 
+#header-component .mega-menu__link[href='https://fpgtraining.co.uk/contact-us/']:not(.mega-menu__link--parent):hover,
 #header-component .mega-menu__link[href$='/collections/kit-creator']:not(.mega-menu__link--parent):hover {
   background: #5f7d6d;
   color: #fff !important;

@@ -101,6 +101,18 @@
             "label": "Look up parts",
             "link": "shopify://pages/bar-and-chain-finder"
           }
+        },
+        "promo_training": {
+          "type": "promo",
+          "settings": {
+            "menu_title": "Training",
+            "image": "shopify://shop_images/photo-1790514202254-f26ae7887210.jpg",
+            "eyebrow": "FPG Training",
+            "heading": "NPTC courses in Treforest",
+            "text": "City & Guilds chainsaw, brushcutter, chipper, pesticide and first aid courses on our own training site.",
+            "label": "Contact training",
+            "link": "https://fpgtraining.co.uk/contact-us/"
+          }
         }
       },
       "block_order": [
@@ -109,7 +121,8 @@
         "promo_3",
         "promo_4",
         "promo_5",
-        "promo_6"
+        "promo_6",
+        "promo_training"
       ],
       "settings": {}
     },
