@@ -10,6 +10,7 @@
  * And the mouse wheel zooms a parts drawing (zoomWithWheel), and the basket − / + answers at once (quickStep).
  * And a maker file can order its machine types ("to") and group long model lists by how the number starts ("series").
  * And opening a brand, type or machine jumps to the top of the finder instead of gliding up from the footer (routeToTop).
+ * And a brand whose maker file says where the engine number is ("lead", Briggs & Stratton) gets an engine-number lookup above its size tiles (engineLookup).
  * Stock lights and our Brightpearl prices are in fpg-maker-prices.js, loaded from here (bump v on each upload).
  */
 import(new URL('fpg-maker-prices.js?v=3', import.meta.url).href).catch(() => {});
@@ -133,6 +134,104 @@ function seriesGroups(/** @type {any} */ finder, /** @type {any} */ type) {
   list.dataset.fpgSeries = 'true';
 }
 
+/**
+ * Engine-number lookup on a brand page whose maker file says where the number is ("lead", Briggs & Stratton).
+ * With thousands of engines, picking a size and scrolling isn't a way to find yours: the number on the engine is.
+ * A box above the size tiles matches what's typed against every engine of the brand, however it's written:
+ * "09P702", "9P702" (leading 0 left off), "09P702-0001-H1" or "09P7020001H1" (model, type and code run together).
+ * The best 12 show as the usual model buttons (fpg-parts.js opens them); Enter opens the only or exact one.
+ */
+function engineLookup(/** @type {any} */ finder, /** @type {any} */ brand) {
+  const maker = (finder.makers || []).find((/** @type {any} */ m) => m?.lead && (m.b || []).some((/** @type {any} */ b) => b[1] === brand?.name));
+  const head = finder.view?.querySelector('.fpg-pf-head');
+  if (!maker || !head || finder.view.querySelector('[data-fpg-engine]')) return;
+  const models = (finder.data?.models || []).filter((/** @type {any} */ m) => m.type?.brand === brand);
+  if (models.length < 50) return;
+  /* "09P702 (type 0001)" -> code 09P702, type 0001. */
+  const rows = models.map((/** @type {any} */ m) => {
+    const [, code = m.name, type = ''] = String(m.name).match(/^(\S+)(?:\s*\(type\s*([^)]*)\))?/i) || [];
+    return { m, code: squash(code), full: squash(code) + squash(type) };
+  });
+  if (!document.getElementById('fpg-engine-css')) {
+    const css = document.createElement('style');
+    css.id = 'fpg-engine-css';
+    css.textContent =
+      '.fpg-eng { margin: 0 0 28px; padding: 22px 24px; border-radius: 18px; background: var(--lk-mist, #f3f6f4); }' +
+      ' .fpg-eng__h { margin: 0 0 4px; font-size: 1.15rem; }' +
+      ' .fpg-eng__hint { margin: 0 0 14px; opacity: 0.8; max-width: 62ch; }' +
+      ' .fpg-eng .fpg-pf-filter { max-width: 460px; background: #fff; }' +
+      ' .fpg-eng .fpg-pf-filter input { font-size: 1.1rem; letter-spacing: 0.04em; text-transform: uppercase; }' +
+      ' .fpg-eng .fpg-pf-filter input::placeholder { text-transform: none; letter-spacing: 0; }' +
+      ' .fpg-eng__status { margin: 12px 0 0; font-size: 0.95rem; }' +
+      ' .fpg-eng__status:empty { display: none; }' +
+      ' .fpg-eng .fpg-pf-models { margin-top: 14px; }' +
+      ' .fpg-eng-or { margin: 0 0 12px; font-size: 1rem; }';
+    document.head.append(css);
+  }
+  const box = document.createElement('section');
+  box.className = 'fpg-eng';
+  box.dataset.fpgEngine = '';
+  box.setAttribute('aria-labelledby', 'fpg-eng-h');
+  box.innerHTML = `
+    <h3 class="fpg-eng__h" id="fpg-eng-h">Find your engine by its model number</h3>
+    <p class="fpg-eng__hint"></p>
+    <label class="fpg-pf-filter"><span class="visually-hidden">Engine model number</span><input type="search" placeholder="Model number, e.g. 09P702" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" data-fpg-engine-q aria-describedby="fpg-eng-s"></label>
+    <p class="fpg-eng__status" id="fpg-eng-s" role="status"></p>
+    <ul class="fpg-pf-models" role="list" data-fpg-engine-hits hidden></ul>`;
+  /** @type {HTMLElement} */ (box.querySelector('.fpg-eng__hint')).textContent = String(maker.lead);
+  head.after(box);
+  const or = document.createElement('h3');
+  or.className = 'fpg-eng-or';
+  or.textContent = 'Or browse by engine size';
+  box.after(or);
+  const input = /** @type {HTMLInputElement} */ (box.querySelector('[data-fpg-engine-q]'));
+  const status = /** @type {HTMLElement} */ (box.querySelector('.fpg-eng__status'));
+  const list = /** @type {HTMLElement} */ (box.querySelector('[data-fpg-engine-hits]'));
+  const esc = (/** @type {string} */ s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] || c);
+  /** Best matches first: the model number exactly, then model + type + code typed in full, then numbers that start with it. */
+  const find = (/** @type {string} */ raw) => {
+    const q = squash(raw);
+    if (q.length < 2) return [];
+    const qs = /^\d/.test(q) ? [q, `0${q}`] : [q];
+    /** @type {[number, any][]} */
+    const hits = [];
+    for (const r of rows) {
+      let rank = -1;
+      for (const x of qs) {
+        if (r.code === x) rank = Math.max(rank, 3);
+        else if (x.length > r.code.length && x.startsWith(r.code) && r.code.length >= 5) rank = Math.max(rank, 2);
+        else if (r.full.startsWith(x)) rank = Math.max(rank, 1);
+      }
+      if (rank >= 0) hits.push([rank, r]);
+    }
+    return hits.sort((a, b) => b[0] - a[0] || a[1].code.localeCompare(b[1].code, 'en', { numeric: true })).map(([rank, r]) => ({ rank, ...r }));
+  };
+  let last = /** @type {any[]} */ ([]);
+  const show = () => {
+    const raw = input.value;
+    last = find(raw);
+    const shown = last.slice(0, 12);
+    list.innerHTML = shown
+      .map((/** @type {any} */ h) => `<li data-model-name="${esc(h.m.key)}"><button type="button" class="fpg-pf-model" data-go-model="${h.m.id}">${esc(h.m.name)}</button></li>`)
+      .join('');
+    list.hidden = !shown.length;
+    const q = squash(raw);
+    if (q.length < 2) status.textContent = '';
+    else if (!last.length)
+      status.textContent = `We don't have an engine numbered ${raw.trim().toUpperCase()}. Check the number on the engine (letters like O and 0 are easy to mix up), or send us a photo of the label and we'll find your parts.`;
+    else if (last.length > shown.length) status.textContent = `${last.length.toLocaleString('en-GB')} engines start with that. Keep typing to narrow it down, or pick yours below.`;
+    else status.textContent = last.length === 1 ? 'This is the one. Open it to see its parts.' : `${last.length} engines match.`;
+  };
+  input.addEventListener('input', show);
+  input.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const pick = last.length === 1 ? last[0] : last[0]?.rank >= 2 && last[1]?.rank !== last[0].rank ? last[0] : null;
+    if (!pick) return;
+    e.preventDefault();
+    /** @type {HTMLElement | null} */ (list.querySelector(`[data-go-model="${pick.m.id}"]`))?.click();
+  });
+}
+
 /** @type {Map<string, Promise<Record<string, number> | null>>} */
 const stockFiles = new Map();
 /** A maker file's extra stock file, fetched once per page. */
@@ -248,6 +347,17 @@ customElements.whenDefined('fpg-parts-finder').then(() => {
     }
     renderModelsInSeries.fpgSeries = true;
     Finder.prototype.renderModels = renderModelsInSeries;
+  }
+  const types = Finder.prototype.renderTypes;
+  if (typeof types === 'function' && !types.fpgEngine) {
+    /** @this {any} */
+    function renderTypesWithLookup(/** @type {any} */ brand) {
+      const out = types.call(this, brand);
+      engineLookup(this, brand);
+      return out;
+    }
+    renderTypesWithLookup.fpgEngine = true;
+    Finder.prototype.renderTypes = renderTypesWithLookup;
   }
   /* Opening a brand, type or machine from far down a long page (the brands grid) left the shorter new page showing its
      footer for a moment, then glided up slowly (the theme scrolls smoothly). Now it jumps straight to the finder's top. */
