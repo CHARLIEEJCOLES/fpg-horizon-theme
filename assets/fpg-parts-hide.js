@@ -139,7 +139,7 @@ function seriesGroups(/** @type {any} */ finder, /** @type {any} */ type) {
  * With thousands of engines, picking a size and scrolling isn't a way to find yours: the number on the engine is.
  * A box above the size tiles matches what's typed against every engine of the brand, however it's written:
  * "09P702", "9P702" (leading 0 left off), "09P702-0001-H1" or "09P7020001H1" (model, type and code run together).
- * The best 12 show as the usual model buttons (fpg-parts.js opens them); Enter opens the only or exact one.
+ * The best 12 show as buttons fpg-parts.js opens like any model (data-go-model); Enter opens the only or exact one.
  */
 function engineLookup(/** @type {any} */ finder, /** @type {any} */ brand) {
   const maker = (finder.makers || []).find((/** @type {any} */ m) => m?.lead && (m.b || []).some((/** @type {any} */ b) => b[1] === brand?.name));
@@ -150,7 +150,7 @@ function engineLookup(/** @type {any} */ finder, /** @type {any} */ brand) {
   /* "09P702 (type 0001)" -> code 09P702, type 0001. */
   const rows = models.map((/** @type {any} */ m) => {
     const [, code = m.name, type = ''] = String(m.name).match(/^(\S+)(?:\s*\(type\s*([^)]*)\))?/i) || [];
-    return { m, code: squash(code), full: squash(code) + squash(type) };
+    return { m, label: code, type, code: squash(code), full: squash(code) + squash(type) };
   });
   if (!document.getElementById('fpg-engine-css')) {
     const css = document.createElement('style');
@@ -164,7 +164,12 @@ function engineLookup(/** @type {any} */ finder, /** @type {any} */ brand) {
       ' .fpg-eng .fpg-pf-filter input::placeholder { text-transform: none; letter-spacing: 0; }' +
       ' .fpg-eng__status { margin: 12px 0 0; font-size: 0.95rem; }' +
       ' .fpg-eng__status:empty { display: none; }' +
-      ' .fpg-eng .fpg-pf-models { margin-top: 14px; }' +
+      ' .fpg-eng .fpg-pf-filter svg { flex: none; }' +
+      ' .fpg-eng__hits { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin: 14px 0 0; padding: 0; list-style: none; }' +
+      ' .fpg-eng__hit { display: grid; gap: 2px; width: 100%; padding: 12px 14px; border: 1px solid rgb(0 45 55 / 0.12); border-radius: 12px; background: #fff; color: inherit; font: inherit; text-align: start; cursor: pointer; }' +
+      ' .fpg-eng__hit:hover, .fpg-eng__hit:focus-visible { border-color: var(--lk-teal, #002d37); }' +
+      ' .fpg-eng__hit strong { font-size: 1.05rem; letter-spacing: 0.03em; }' +
+      ' .fpg-eng__hit small { opacity: 0.75; }' +
       ' .fpg-eng-or { margin: 0 0 12px; font-size: 1rem; }';
     document.head.append(css);
   }
@@ -175,11 +180,13 @@ function engineLookup(/** @type {any} */ finder, /** @type {any} */ brand) {
   box.innerHTML = `
     <h3 class="fpg-eng__h" id="fpg-eng-h">Find your engine by its model number</h3>
     <p class="fpg-eng__hint"></p>
-    <label class="fpg-pf-filter"><span class="visually-hidden">Engine model number</span><input type="search" placeholder="Model number, e.g. 09P702" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" data-fpg-engine-q aria-describedby="fpg-eng-s"></label>
+    <label class="fpg-pf-filter"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="visually-hidden">Engine model number</span><input type="search" placeholder="Model number, e.g. 09P702" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" data-fpg-engine-q aria-describedby="fpg-eng-s"></label>
     <p class="fpg-eng__status" id="fpg-eng-s" role="status"></p>
-    <ul class="fpg-pf-models" role="list" data-fpg-engine-hits hidden></ul>`;
+    <ul class="fpg-eng__hits" role="list" data-fpg-engine-hits hidden></ul>`;
   /** @type {HTMLElement} */ (box.querySelector('.fpg-eng__hint')).textContent = String(maker.lead);
   head.after(box);
+  const h2 = head.querySelector('.fpg-pf-h');
+  if (h2) h2.textContent = `${brand.name}: find your engine`;
   const or = document.createElement('h3');
   or.className = 'fpg-eng-or';
   or.textContent = 'Or browse by engine size';
@@ -212,7 +219,10 @@ function engineLookup(/** @type {any} */ finder, /** @type {any} */ brand) {
     last = find(raw);
     const shown = last.slice(0, 12);
     list.innerHTML = shown
-      .map((/** @type {any} */ h) => `<li data-model-name="${esc(h.m.key)}"><button type="button" class="fpg-pf-model" data-go-model="${h.m.id}">${esc(h.m.name)}</button></li>`)
+      .map(
+        (/** @type {any} */ h) =>
+          `<li><button type="button" class="fpg-eng__hit" data-go-model="${h.m.id}"><strong>${esc(h.label)}</strong><small>${h.type ? `Type ${esc(h.type)} · ` : ''}${esc(h.m.type?.name || '')}</small></button></li>`
+      )
       .join('');
     list.hidden = !shown.length;
     const q = squash(raw);
