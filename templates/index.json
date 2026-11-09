@@ -15,10 +15,40 @@
         "hero_content": {
           "type": "group",
           "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "flex-start",
             "gap": 18,
             "width": "custom",
-            "custom_width": 60
+            "custom_width": 60,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
             "hero_eyebrow": {
@@ -26,9 +56,23 @@
               "settings": {
                 "text": "<p>Approved STIHL dealer · Treforest, South Wales</p>",
                 "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
                 "type_preset": "h6",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
                 "wrap": "pretty",
-                "text_color": "#E2E9E5"
+                "text_color": "#e2e9e5",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             },
@@ -38,9 +82,22 @@
                 "text": "<h2>Professional kit for forestry, arb and grounds care</h2>",
                 "width": "100%",
                 "max_width": "narrow",
+                "alignment": "left",
                 "type_preset": "h1",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
                 "wrap": "pretty",
-                "text_color": "#FFFFFF"
+                "text_color": "#ffffff",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             },
@@ -49,14 +106,95 @@
               "settings": {
                 "text": "<p>Machinery, genuine parts, PPE and workshop servicing, with straight advice from people who know the kit.</p>",
                 "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
                 "wrap": "pretty",
-                "text_color": "#FFFFFF"
+                "text_color": "#ffffff",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "hero_buttons": {
+              "type": "group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": false,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "hero_btn_parts": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Find parts for your machine",
+                    "link": "shopify://pages/fpg-part-finder",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
+                    "custom_button_text": "{{ settings.color_palette.background }}",
+                    "custom_button_border": "{{ settings.color_palette.background }}",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "hero_btn_parts"
+              ]
             },
             "hero_search": {
               "type": "fpg-search-bar",
               "settings": {
+                "placeholder": "Search products, part numbers or models",
+                "button_label": "Search",
+                "style": "dark",
+                "chips_label": "Popular:",
                 "chip_1_label": "Chainsaw chains",
                 "chip_1_link": "shopify://collections/chainsaw-chains",
                 "chip_2_label": "Chainsaw bars",
@@ -75,6 +213,7 @@
             "hero_eyebrow",
             "hero_title",
             "hero_text",
+            "hero_buttons",
             "hero_search"
           ]
         }
@@ -83,11 +222,33 @@
         "hero_content"
       ],
       "settings": {
+        "media_type_1": "image",
         "image_1": "shopify://shop_images/img_3ecf4803-96fe-4485-965a-74b9142bc686.jpg",
+        "media_type_2": "image",
+        "stack_media_on_mobile": false,
+        "custom_mobile_media": false,
+        "media_type_1_mobile": "image",
+        "media_type_2_mobile": "image",
+        "link": "",
+        "open_in_new_tab": false,
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
         "gap": 16,
-        "section_height": "large",
+        "section_width": "page-width",
+        "section_height": "medium",
+        "section_height_custom": 50,
+        "background_color": "",
         "toggle_overlay": true,
-        "overlay_color": "#002D37A6",
+        "overlay_color": "#002d37a6",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "blurred_reflection": false,
+        "reflection_opacity": 75,
         "padding-block-start": 64,
         "padding-block-end": 64
       }
@@ -100,8 +261,38 @@
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
             "gap": 10,
-            "width": "fit-content"
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
             "usp_0_icon": {
@@ -109,7 +300,9 @@
               "settings": {
                 "icon": "check_box",
                 "width": 22,
-                "icon_color": "#002D37"
+                "link": "",
+                "open_in_new_tab": false,
+                "icon_color": "#002d37"
               },
               "blocks": {}
             },
@@ -118,9 +311,23 @@
               "settings": {
                 "text": "<p><strong>Approved STIHL dealer</strong></p>",
                 "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
                 "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
                 "font_size": "0.875rem",
-                "wrap": "pretty"
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             }
@@ -135,8 +342,38 @@
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
             "gap": 10,
-            "width": "fit-content"
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
             "usp_1_icon": {
@@ -144,7 +381,9 @@
               "settings": {
                 "icon": "map_pin",
                 "width": 22,
-                "icon_color": "#002D37"
+                "link": "",
+                "open_in_new_tab": false,
+                "icon_color": "#002d37"
               },
               "blocks": {}
             },
@@ -153,9 +392,23 @@
               "settings": {
                 "text": "<p><strong>Click & collect in Treforest</strong></p>",
                 "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
                 "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
                 "font_size": "0.875rem",
-                "wrap": "pretty"
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             }
@@ -170,8 +423,38 @@
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
             "gap": 10,
-            "width": "fit-content"
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
             "usp_2_icon": {
@@ -179,7 +462,9 @@
               "settings": {
                 "icon": "clipboard",
                 "width": 22,
-                "icon_color": "#002D37"
+                "link": "",
+                "open_in_new_tab": false,
+                "icon_color": "#002d37"
               },
               "blocks": {}
             },
@@ -188,9 +473,23 @@
               "settings": {
                 "text": "<p><strong>Workshop servicing & repairs</strong></p>",
                 "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
                 "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
                 "font_size": "0.875rem",
-                "wrap": "pretty"
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             }
@@ -205,8 +504,38 @@
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
             "gap": 10,
-            "width": "fit-content"
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
             "usp_3_icon": {
@@ -214,7 +543,9 @@
               "settings": {
                 "icon": "chat_bubble",
                 "width": 22,
-                "icon_color": "#002D37"
+                "link": "",
+                "open_in_new_tab": false,
+                "icon_color": "#002d37"
               },
               "blocks": {}
             },
@@ -223,9 +554,23 @@
               "settings": {
                 "text": "<p><strong>Expert advice: 01443 230000</strong></p>",
                 "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
                 "type_preset": "paragraph",
+                "font": "var(--font-body--family)",
                 "font_size": "0.875rem",
-                "wrap": "pretty"
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {}
             }
@@ -245,727 +590,116 @@
       "name": "Trust strip",
       "settings": {
         "content_direction": "row",
+        "vertical_on_mobile": true,
         "horizontal_alignment": "space-between",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
         "gap": 16,
-        "background_color": "#E2E9E5",
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "#e2e9e5",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
         "padding-block-start": 18,
         "padding-block-end": 18
       }
     },
-    "fpg_categories": {
-      "type": "collection-list",
+    "fpg_parts_widget": {
+      "type": "fpg-parts-widget",
       "blocks": {
-        "cat_head": {
-          "type": "group",
+        "pw_stihl": {
+          "type": "brand",
           "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "gap": 16
-          },
-          "blocks": {
-            "cat_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "cat_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Shop by category</h2>",
-                    "width": "100%",
-                    "type_preset": "h2",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "cat_head_title"
-              ]
-            },
-            "cat_head_link": {
-              "type": "button",
-              "settings": {
-                "label": "All products",
-                "link": "shopify://collections/all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "cat_head_left",
-            "cat_head_link"
-          ]
+            "name": "STIHL",
+            "logo": "shopify://shop_images/stihl_priority.png",
+            "brand_id": 1
+          }
         },
-        "static-collection-card": {
-          "type": "_collection-card",
-          "static": true,
+        "pw_husqvarna": {
+          "type": "brand",
           "settings": {
-            "placement": "below_image",
-            "vertical_alignment": "flex-start",
-            "collection_card_gap": 12,
-            "border_radius": 12
-          },
-          "blocks": {
-            "collection-card-image": {
-              "type": "_collection-card-image",
-              "static": true,
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 12
-              },
-              "blocks": {}
-            },
-            "collection-title": {
-              "type": "collection-title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "h4"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "collection-title"
-          ]
+            "name": "Husqvarna",
+            "logo": "shopify://shop_images/husqvarna_priority.png",
+            "brand_id": 2
+          }
+        },
+        "pw_stiga": {
+          "type": "brand",
+          "settings": {
+            "name": "STIGA",
+            "logo": "shopify://shop_images/stiga.png",
+            "brand_id": 31
+          }
+        },
+        "pw_toro": {
+          "type": "brand",
+          "settings": {
+            "name": "Toro",
+            "logo": "shopify://shop_images/Toro.png",
+            "brand_id": 11
+          }
+        },
+        "pw_echo": {
+          "type": "brand",
+          "settings": {
+            "name": "Echo",
+            "logo": "shopify://shop_images/echo_logo.png",
+            "brand_id": 3
+          }
+        },
+        "pw_mitox": {
+          "type": "brand",
+          "settings": {
+            "name": "Mitox",
+            "logo": "shopify://shop_images/mitox_logo.png",
+            "brand_id": 6
+          }
+        },
+        "pw_scheppach": {
+          "type": "brand",
+          "settings": {
+            "name": "Scheppach",
+            "logo": "shopify://shop_images/scheppach_logo.png",
+            "brand_id": 10
+          }
         }
       },
       "block_order": [
-        "cat_head"
+        "pw_stihl",
+        "pw_husqvarna",
+        "pw_stiga",
+        "pw_toro",
+        "pw_echo",
+        "pw_mitox",
+        "pw_scheppach"
       ],
       "settings": {
-        "collection_list": [
-          "all-chainsaws",
-          "all-lawnmowers",
-          "automowers",
-          "garden-tractors",
-          "hedge-trimmers-cordless",
-          "brushcutters-strimmers-petrol",
-          "wood-chippers",
-          "all-clothing-and-ppe"
-        ],
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "max_collections": 8,
-        "gap": 24,
-        "padding-block-start": 64,
-        "padding-block-end": 64
-      }
-    },
-    "fpg_offers": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "gap": 16
-          },
-          "blocks": {
-            "offers_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "offers_head_eyebrow": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>This month</p>",
-                    "width": "100%",
-                    "type_preset": "h6",
-                    "wrap": "pretty",
-                    "text_color": "#5F7D6D"
-                  },
-                  "blocks": {}
-                },
-                "offers_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>Offers & promotions</h2>",
-                    "width": "100%",
-                    "type_preset": "h2",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                },
-                "offers_countdown": {
-                  "type": "fpg-countdown",
-                  "settings": {
-                    "end_date": "",
-                    "style": "pill"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "offers_head_eyebrow",
-                "offers_head_title",
-                "offers_countdown"
-              ]
-            },
-            "offers_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all offers",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "offers_head_left",
-            "offers_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "settings": {
-        "collection": "current-promotions",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 8,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "background_color": "#F3F6F4",
-        "padding-block-start": 64,
-        "padding-block-end": 64
-      }
-    },
-    "fpg_service": {
-      "type": "media-with-content",
-      "blocks": {
-        "media": {
-          "type": "_media-without-appearance",
-          "static": true,
-          "settings": {
-            "image": "shopify://shop_images/img_065124c2-16c4-4599-9cd7-98f3c2b57e5c.jpg"
-          },
-          "blocks": {}
-        },
-        "content": {
-          "type": "_content-without-appearance",
-          "static": true,
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "service_eyebrow": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Workshop</p>",
-                "width": "100%",
-                "type_preset": "h6",
-                "wrap": "pretty",
-                "text_color": "#5F7D6D"
-              },
-              "blocks": {}
-            },
-            "service_title": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>Servicing and repairs in Treforest</h2>",
-                "width": "100%",
-                "max_width": "narrow",
-                "type_preset": "h2",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            },
-            "service_text": {
-              "type": "text",
-              "settings": {
-                "text": "<p>We service and repair everything from chainsaws and hedge trimmers to robotic and ride-on mowers, using genuine parts. Book online or call us on 01443 230000.</p>",
-                "width": "100%",
-                "max_width": "narrow",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            },
-            "service_buttons": {
-              "type": "group",
-              "settings": {
-                "content_direction": "row",
-                "vertical_on_mobile": false,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "service_btn0": {
-                  "type": "button",
-                  "settings": {
-                    "label": "Book a service",
-                    "link": "shopify://collections/servicing-repair"
-                  },
-                  "blocks": {}
-                },
-                "service_btn1": {
-                  "type": "button",
-                  "settings": {
-                    "label": "Parts diagrams",
-                    "link": "shopify://pages/parts-finder",
-                    "style_class": "button-secondary"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "service_btn0",
-                "service_btn1"
-              ]
-            }
-          },
-          "block_order": [
-            "service_eyebrow",
-            "service_title",
-            "service_text",
-            "service_buttons"
-          ]
-        }
-      },
-      "settings": {
-        "media_width": "medium",
-        "media_height": "60svh",
-        "section_width": "page-width",
-        "extend_media": false,
-        "padding-block-start": 64,
-        "padding-block-end": 64
-      }
-    },
-    "fpg_hire": {
-      "type": "media-with-content",
-      "blocks": {
-        "media": {
-          "type": "_media-without-appearance",
-          "static": true,
-          "settings": {
-            "image": "shopify://shop_images/Orange_Forestry_Equipment_Display.png"
-          },
-          "blocks": {}
-        },
-        "content": {
-          "type": "_content-without-appearance",
-          "static": true,
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "gap": 16
-          },
-          "blocks": {
-            "hire_eyebrow": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Machine hire</p>",
-                "width": "100%",
-                "type_preset": "h6",
-                "wrap": "pretty",
-                "text_color": "#5F7D6D"
-              },
-              "blocks": {}
-            },
-            "hire_title": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>Hire professional machinery</h2>",
-                "width": "100%",
-                "max_width": "narrow",
-                "type_preset": "h2",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            },
-            "hire_text": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Wood chippers, stump grinders, tracked carriers, mowers and more. Collect from Treforest by the day, weekend or week.</p>",
-                "width": "100%",
-                "max_width": "narrow",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            },
-            "hire_buttons": {
-              "type": "group",
-              "settings": {
-                "content_direction": "row",
-                "vertical_on_mobile": false,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "hire_btn0": {
-                  "type": "button",
-                  "settings": {
-                    "label": "View hire range",
-                    "link": "shopify://collections/for-hire"
-                  },
-                  "blocks": {}
-                },
-                "hire_btn1": {
-                  "type": "button",
-                  "settings": {
-                    "label": "Ask about hire",
-                    "link": "shopify://pages/contact",
-                    "style_class": "button-secondary"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "hire_btn0",
-                "hire_btn1"
-              ]
-            }
-          },
-          "block_order": [
-            "hire_eyebrow",
-            "hire_title",
-            "hire_text",
-            "hire_buttons"
-          ]
-        }
-      },
-      "settings": {
-        "media_position": "right",
-        "media_width": "medium",
-        "media_height": "60svh",
-        "section_width": "page-width",
-        "extend_media": false,
-        "background_color": "#F3F6F4",
-        "padding-block-start": 64,
-        "padding-block-end": 64
-      }
-    },
-    "fpg_new": {
-      "type": "product-list",
-      "blocks": {
-        "static-header": {
-          "type": "_product-list-content",
-          "static": true,
-          "settings": {
-            "content_direction": "row",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "space-between",
-            "vertical_alignment": "flex-end",
-            "gap": 16
-          },
-          "blocks": {
-            "new_head_left": {
-              "type": "group",
-              "settings": {
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "fit-content"
-              },
-              "blocks": {
-                "new_head_eyebrow": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Just landed</p>",
-                    "width": "100%",
-                    "type_preset": "h6",
-                    "wrap": "pretty",
-                    "text_color": "#5F7D6D"
-                  },
-                  "blocks": {}
-                },
-                "new_head_title": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h2>New in</h2>",
-                    "width": "100%",
-                    "type_preset": "h2",
-                    "wrap": "pretty"
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "new_head_eyebrow",
-                "new_head_title"
-              ]
-            },
-            "new_head_link": {
-              "type": "_product-list-button",
-              "settings": {
-                "label": "View all",
-                "style_class": "button-secondary"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "new_head_left",
-            "new_head_link"
-          ]
-        },
-        "static-product-card": {
-          "type": "_product-card",
-          "name": "t:names.product_card",
-          "static": true,
-          "settings": {
-            "product_card_gap": 8
-          },
-          "blocks": {
-            "product-card-gallery": {
-              "type": "_product-card-gallery",
-              "name": "t:names.product_card_media",
-              "settings": {
-                "image_ratio": "square",
-                "border_radius": 8
-              },
-              "blocks": {}
-            },
-            "product_title": {
-              "type": "product-title",
-              "name": "t:names.product_title",
-              "settings": {
-                "width": "100%",
-                "type_preset": "custom",
-                "font": "var(--font-subheading--family)",
-                "font_size": "0.875rem",
-                "wrap": "pretty",
-                "padding-block-start": 4
-              },
-              "blocks": {}
-            },
-            "price": {
-              "type": "price",
-              "name": "t:names.product_price",
-              "settings": {
-                "type_preset": "paragraph"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product-card-gallery",
-            "product_title",
-            "price"
-          ]
-        }
-      },
-      "settings": {
-        "collection": "new-products",
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "max_products": 8,
-        "columns_gap": 16,
-        "rows_gap": 24,
-        "icons_shape": "circle",
-        "gap": 24,
-        "padding-block-start": 64,
-        "padding-block-end": 64
-      }
-    },
-    "fpg_training": {
-      "type": "section",
-      "blocks": {
-        "training_text": {
-          "type": "group",
-          "settings": {
-            "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 6,
-            "width": "fit-content"
-          },
-          "blocks": {
-            "training_eyebrow": {
-              "type": "text",
-              "settings": {
-                "text": "<p>FPG Training</p>",
-                "width": "100%",
-                "type_preset": "h6",
-                "wrap": "pretty",
-                "text_color": "#5F7D6D"
-              },
-              "blocks": {}
-            },
-            "training_title": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>Get qualified with NPTC and City &amp; Guilds courses</h2>",
-                "width": "100%",
-                "type_preset": "h3",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "training_eyebrow",
-            "training_title"
-          ]
-        },
-        "training_btn": {
-          "type": "button",
-          "settings": {
-            "label": "Visit FPG Training",
-            "link": "https://fpgtraining.co.uk/",
-            "open_in_new_tab": true
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "training_text",
-        "training_btn"
-      ],
-      "name": "Training band",
-      "settings": {
-        "content_direction": "row",
-        "horizontal_alignment": "space-between",
-        "gap": 24,
-        "background_color": "#E2E9E5",
-        "padding-block-start": 48,
-        "padding-block-end": 48
-      }
-    },
-    "fpg_finder": {
-      "type": "section",
-      "blocks": {
-        "finder_head": {
-          "type": "group",
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "center",
-            "gap": 8
-          },
-          "blocks": {
-            "finder_eyebrow": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Common parts look up</p>",
-                "width": "100%",
-                "alignment": "center",
-                "type_preset": "h6",
-                "wrap": "pretty",
-                "text_color": "#5F7D6D"
-              },
-              "blocks": {}
-            },
-            "finder_title": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>Find the parts that fit your machine</h2>",
-                "width": "100%",
-                "alignment": "center",
-                "type_preset": "h2",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            },
-            "finder_text": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Choose the make, type and model to see the chains, bars, filters and plugs that fit.</p>",
-                "width": "100%",
-                "max_width": "narrow",
-                "alignment": "center",
-                "wrap": "pretty"
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "finder_eyebrow",
-            "finder_title",
-            "finder_text"
-          ]
-        },
-        "finder_box": {
-          "type": "group",
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "center",
-            "gap": 0,
-            "background_color": "#FFFFFF",
-            "border": "solid",
-            "border_color": "#D6DED9",
-            "border_radius": 16,
-            "padding-block-start": 24,
-            "padding-block-end": 28,
-            "padding-inline-start": 28,
-            "padding-inline-end": 28
-          },
-          "blocks": {
-            "finder_ymm": {
-              "type": "shopify://apps/c-year-make-model-search/blocks/ymm-searchbox-basic/ce35ea35-ef50-4f43-8cb6-7c34cae4c285",
-              "settings": {
-                "searchbox_title": "Search By Year, Make and Model",
-                "searchbox_style": "horizontal"
-              }
-            }
-          },
-          "block_order": [
-            "finder_ymm"
-          ]
-        }
-      },
-      "block_order": [
-        "finder_head",
-        "finder_box"
-      ],
-      "name": "Common parts look up",
-      "settings": {
-        "horizontal_alignment_flex_direction_column": "center",
-        "gap": 28,
-        "background_color": "#E2E9E5",
-        "padding-block-start": 64,
-        "padding-block-end": 64
+        "finder_url": "shopify://pages/fpg-part-finder",
+        "eyebrow": "Spare parts",
+        "heading": "Find the right part for your machine",
+        "text": "Search your model, or pick the brand. Every part is listed in the section of the machine it belongs to.",
+        "placeholder": "Model or part number, e.g. MS 261",
+        "button": "Find parts",
+        "brands_heading": "Or start with the brand",
+        "all_label": "All brands",
+        "extra_label": "Looking for a chain, bar, filter or plug? Use the common parts look up",
+        "extra_url": "shopify://pages/bar-and-chain-finder",
+        "hidden_brands": "Apache\nB&Q\nDexter\nFort\nGermania\nGreenmech\nZgonc\nHerkules\nIXES\nKama\nKity\nLawnmaster\nMacAllister\nMatrix\nMeec\nMorrison\nMTX\nPowertec\nPractixx\nPrimaster\nRedstone\nShindaiwa\nSimplicity\nSnapper\nStürmer\nSunseeker\nTemver\nTimberwolf\nToolson\nUtool\nWoodster\nWoodtec",
+        "padding-block-start": 56,
+        "padding-block-end": 56
       }
     },
     "fpg_help_cards": {
@@ -974,6 +708,7 @@
         "help_0": {
           "type": "card",
           "settings": {
+            "image": "shopify://shop_images/fpg-help-parts.jpg",
             "icon": "part",
             "title": "Find a part",
             "text": "Parts diagrams and genuine spares for STIHL, Husqvarna and more.",
@@ -983,6 +718,7 @@
         "help_1": {
           "type": "card",
           "settings": {
+            "image": "shopify://shop_images/fpg-help-chain.jpg",
             "icon": "chain",
             "title": "Common parts look up",
             "text": "Chains, bars, filters and plugs matched to your machine.",
@@ -992,6 +728,7 @@
         "help_2": {
           "type": "card",
           "settings": {
+            "image": "shopify://shop_images/img_065124c2-16c4-4599-9cd7-98f3c2b57e5c.jpg",
             "icon": "service",
             "title": "Book a service",
             "text": "Servicing and repairs in our Treforest workshop.",
@@ -1001,6 +738,7 @@
         "help_3": {
           "type": "card",
           "settings": {
+            "image": "shopify://shop_images/fpg-help-chipper.jpg",
             "icon": "hire",
             "title": "Hire a machine",
             "text": "Chippers, stump grinders, mowers and more, by the day or week.",
@@ -1010,10 +748,21 @@
         "help_4": {
           "type": "card",
           "settings": {
+            "image": "shopify://shop_images/fpg-help-arborist.jpg",
             "icon": "kit",
             "title": "Build a climbing kit",
             "text": "Pick a harness, ropes and hardware, checked against the minimum kit.",
             "link": "shopify://collections/kit-creator"
+          }
+        },
+        "help_5": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/photo-1790514202254-f26ae7887210.jpg",
+            "icon": "kit",
+            "title": "Training courses",
+            "text": "City & Guilds NPTC chainsaw, climbing and tree work courses.",
+            "link": "https://fpgtraining.co.uk/"
           }
         }
       },
@@ -1022,11 +771,13 @@
         "help_1",
         "help_2",
         "help_3",
-        "help_4"
+        "help_4",
+        "help_5"
       ],
       "settings": {
-        "eyebrow": "Parts · Servicing · Hire · Kit",
+        "eyebrow": "Parts · Servicing · Hire · Kit · Training",
         "heading": "How can we help?",
+        "background_color": "",
         "padding-block-start": 64,
         "padding-block-end": 64
       }
@@ -1149,23 +900,1360 @@
         "eyebrow": "Approved dealer",
         "heading": "Brands we stock",
         "speed": 30,
+        "background_color": "#002d37",
         "padding-block-start": 56,
-        "padding-block-end": 56,
-        "background_color": "#002D37"
+        "padding-block-end": 56
       }
+    },
+    "fpg_categories": {
+      "type": "collection-list",
+      "blocks": {
+        "cat_head": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-end",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "cat_head_left": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 4,
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "cat_head_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h2>Shop by category</h2>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h2",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "cat_head_title"
+              ]
+            },
+            "cat_head_link": {
+              "type": "button",
+              "settings": {
+                "label": "All products",
+                "link": "shopify://collections/all",
+                "open_in_new_tab": false,
+                "style_class": "button-secondary",
+                "custom_button_background": "{{ settings.color_palette.foreground }}",
+                "custom_button_text": "{{ settings.color_palette.background }}",
+                "custom_button_border": "{{ settings.color_palette.background }}",
+                "link_text_color": "",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "cat_head_left",
+            "cat_head_link"
+          ]
+        },
+        "static-collection-card": {
+          "type": "_collection-card",
+          "static": true,
+          "settings": {
+            "placement": "below_image",
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-start",
+            "collection_card_gap": 12,
+            "background_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 12
+          },
+          "blocks": {
+            "collection-title": {
+              "type": "collection-title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h4",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "background": false,
+                "background_color": "{{ settings.color_palette.background }}",
+                "text_color": "{{ settings.color_palette.foreground }}",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "collection-card-image": {
+              "type": "_collection-card-image",
+              "static": true,
+              "settings": {
+                "image_ratio": "landscape",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 12
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "collection-title"
+          ]
+        }
+      },
+      "block_order": [
+        "cat_head"
+      ],
+      "settings": {
+        "collection_list": [
+          "all-chainsaws",
+          "all-lawnmowers",
+          "automowers",
+          "garden-tractors",
+          "hedge-trimmers-cordless",
+          "brushcutters-strimmers-petrol",
+          "wood-chippers",
+          "all-clothing-and-ppe"
+        ],
+        "layout_type": "grid",
+        "carousel_on_mobile": false,
+        "columns": 4,
+        "mobile_columns": "2",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 16,
+        "bento_gap": 8,
+        "rows_gap": 24,
+        "max_collections": 8,
+        "icons_style": "arrow",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "gap": 24,
+        "background_color": "#f3f6f4",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "fpg_offers": {
+      "type": "product-list",
+      "blocks": {
+        "static-header": {
+          "type": "_product-list-content",
+          "static": true,
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-end",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "offers_head_left": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 4,
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "offers_head_eyebrow": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>This month</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h6",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#5f7d6d",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "offers_head_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h2>Offers & promotions</h2>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h2",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "offers_countdown": {
+                  "type": "fpg-countdown",
+                  "settings": {
+                    "label": "Offer ends in",
+                    "end_date": "",
+                    "end_time": "23:59",
+                    "when_finished": "hide",
+                    "finished_text": "This offer has ended",
+                    "style": "pill",
+                    "alignment": "start",
+                    "background_color": "",
+                    "text_color": ""
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "offers_head_eyebrow",
+                "offers_head_title",
+                "offers_countdown"
+              ]
+            },
+            "offers_head_link": {
+              "type": "_product-list-button",
+              "settings": {
+                "label": "View all offers",
+                "open_in_new_tab": false,
+                "style_class": "button-secondary",
+                "custom_button_background": "{{ settings.color_palette.foreground }}",
+                "custom_button_text": "{{ settings.color_palette.background }}",
+                "custom_button_border": "{{ settings.color_palette.background }}",
+                "link_text_color": "",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "offers_head_left",
+            "offers_head_link"
+          ]
+        },
+        "static-product-card": {
+          "type": "_product-card",
+          "name": "t:names.product_card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 8,
+            "background_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product-card-gallery": {
+              "type": "_product-card-gallery",
+              "name": "t:names.product_card_media",
+              "settings": {
+                "image_ratio": "square",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 8,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_title": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-subheading--family)",
+                "font_size": "0.875rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price": {
+              "type": "price",
+              "name": "t:names.product_price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "paragraph",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "text_color": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "product-card-gallery",
+            "product_title",
+            "price"
+          ]
+        }
+      },
+      "settings": {
+        "collection": "current-promotions",
+        "layout_type": "carousel",
+        "carousel_on_mobile": true,
+        "max_products": 8,
+        "columns": 4,
+        "mobile_columns": "2",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 16,
+        "rows_gap": 24,
+        "icons_style": "arrow",
+        "icons_shape": "circle",
+        "section_width": "page-width",
+        "horizontal_alignment": "flex-start",
+        "gap": 24,
+        "background_color": "",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "fpg_new": {
+      "type": "product-list",
+      "blocks": {
+        "static-header": {
+          "type": "_product-list-content",
+          "static": true,
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-end",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "new_head_left": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 4,
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "new_head_eyebrow": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Just landed</p>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h6",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "#5f7d6d",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "new_head_title": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h2>New in</h2>",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h2",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "new_head_eyebrow",
+                "new_head_title"
+              ]
+            },
+            "new_head_link": {
+              "type": "_product-list-button",
+              "settings": {
+                "label": "View all",
+                "open_in_new_tab": false,
+                "style_class": "button-secondary",
+                "custom_button_background": "{{ settings.color_palette.foreground }}",
+                "custom_button_text": "{{ settings.color_palette.background }}",
+                "custom_button_border": "{{ settings.color_palette.background }}",
+                "link_text_color": "",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "new_head_left",
+            "new_head_link"
+          ]
+        },
+        "static-product-card": {
+          "type": "_product-card",
+          "name": "t:names.product_card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 8,
+            "background_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product-card-gallery": {
+              "type": "_product-card-gallery",
+              "name": "t:names.product_card_media",
+              "settings": {
+                "image_ratio": "square",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 8,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_title": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-subheading--family)",
+                "font_size": "0.875rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price": {
+              "type": "price",
+              "name": "t:names.product_price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "paragraph",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "text_color": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "product-card-gallery",
+            "product_title",
+            "price"
+          ]
+        }
+      },
+      "settings": {
+        "collection": "new-products",
+        "layout_type": "carousel",
+        "carousel_on_mobile": true,
+        "max_products": 8,
+        "columns": 4,
+        "mobile_columns": "2",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 16,
+        "rows_gap": 24,
+        "icons_style": "arrow",
+        "icons_shape": "circle",
+        "section_width": "page-width",
+        "horizontal_alignment": "flex-start",
+        "gap": 24,
+        "background_color": "#f3f6f4",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "fpg_service": {
+      "type": "media-with-content",
+      "blocks": {
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
+          "settings": {
+            "media_type": "image",
+            "image": "shopify://shop_images/img_065124c2-16c4-4599-9cd7-98f3c2b57e5c.jpg",
+            "link": "",
+            "video_loop": true,
+            "video_autoplay": false,
+            "image_position": "cover",
+            "video_position": "cover"
+          },
+          "blocks": {}
+        },
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16
+          },
+          "blocks": {
+            "service_eyebrow": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Workshop</p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h6",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#5f7d6d",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "service_title": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Servicing and repairs in Treforest</h2>",
+                "width": "100%",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "h2",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "service_text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>We service and repair everything from chainsaws and hedge trimmers to robotic and ride-on mowers, using genuine parts. Book online or call us on 01443 230000.</p>",
+                "width": "100%",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "service_buttons": {
+              "type": "group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": false,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "service_btn0": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Book a service",
+                    "link": "shopify://collections/servicing-repair",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
+                    "custom_button_text": "{{ settings.color_palette.background }}",
+                    "custom_button_border": "{{ settings.color_palette.background }}",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                },
+                "service_btn1": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Find parts",
+                    "link": "shopify://pages/fpg-part-finder",
+                    "open_in_new_tab": false,
+                    "style_class": "button-secondary",
+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
+                    "custom_button_text": "{{ settings.color_palette.background }}",
+                    "custom_button_border": "{{ settings.color_palette.background }}",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "service_btn0",
+                "service_btn1"
+              ]
+            }
+          },
+          "block_order": [
+            "service_eyebrow",
+            "service_title",
+            "service_text",
+            "service_buttons"
+          ]
+        }
+      },
+      "settings": {
+        "media_position": "left",
+        "media_width": "medium",
+        "media_height": "60svh",
+        "section_width": "page-width",
+        "extend_media": false,
+        "background_color": "",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "fpg_hire": {
+      "type": "media-with-content",
+      "blocks": {
+        "media": {
+          "type": "_media-without-appearance",
+          "static": true,
+          "settings": {
+            "media_type": "image",
+            "image": "shopify://shop_images/Orange_Forestry_Equipment_Display.png",
+            "link": "",
+            "video_loop": true,
+            "video_autoplay": false,
+            "image_position": "cover",
+            "video_position": "cover"
+          },
+          "blocks": {}
+        },
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16
+          },
+          "blocks": {
+            "hire_eyebrow": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Machine hire</p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h6",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#5f7d6d",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "hire_title": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Hire professional machinery</h2>",
+                "width": "100%",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "h2",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "hire_text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Wood chippers, stump grinders, tracked carriers, mowers and more. Collect from Treforest by the day, weekend or week.</p>",
+                "width": "100%",
+                "max_width": "narrow",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "hire_buttons": {
+              "type": "group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": false,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "hire_btn0": {
+                  "type": "button",
+                  "settings": {
+                    "label": "View hire range",
+                    "link": "shopify://collections/for-hire",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
+                    "custom_button_text": "{{ settings.color_palette.background }}",
+                    "custom_button_border": "{{ settings.color_palette.background }}",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                },
+                "hire_btn1": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Ask about hire",
+                    "link": "shopify://pages/contact",
+                    "open_in_new_tab": false,
+                    "style_class": "button-secondary",
+                    "custom_button_background": "{{ settings.color_palette.foreground }}",
+                    "custom_button_text": "{{ settings.color_palette.background }}",
+                    "custom_button_border": "{{ settings.color_palette.background }}",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "hire_btn0",
+                "hire_btn1"
+              ]
+            }
+          },
+          "block_order": [
+            "hire_eyebrow",
+            "hire_title",
+            "hire_text",
+            "hire_buttons"
+          ]
+        }
+      },
+      "settings": {
+        "media_position": "right",
+        "media_width": "medium",
+        "media_height": "60svh",
+        "section_width": "page-width",
+        "extend_media": false,
+        "background_color": "#f3f6f4",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    },
+    "fpg_training": {
+      "type": "section",
+      "blocks": {
+        "training_text": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 6,
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "training_eyebrow": {
+              "type": "text",
+              "settings": {
+                "text": "<p>FPG Training</p>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h6",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#5f7d6d",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "training_title": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Get qualified with NPTC and City &amp; Guilds courses</h2>",
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h3",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "training_eyebrow",
+            "training_title"
+          ]
+        },
+        "training_btn": {
+          "type": "button",
+          "settings": {
+            "label": "Visit FPG Training",
+            "link": "https://fpgtraining.co.uk/",
+            "open_in_new_tab": true,
+            "style_class": "button",
+            "custom_button_background": "{{ settings.color_palette.foreground }}",
+            "custom_button_text": "{{ settings.color_palette.background }}",
+            "custom_button_border": "{{ settings.color_palette.background }}",
+            "link_text_color": "",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 100
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "training_text",
+        "training_btn"
+      ],
+      "name": "Training band",
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "#e2e9e5",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "pagefly-home": {
+      "type": "pagefly-home",
+      "disabled": true,
+      "settings": {}
     }
   },
   "order": [
     "fpg_hero",
     "fpg_usps",
+    "fpg_parts_widget",
     "fpg_help_cards",
-    "fpg_finder",
+    "fpg_brand_strip",
     "fpg_categories",
     "fpg_offers",
-    "fpg_service",
-    "fpg_brand_strip",
-    "fpg_hire",
     "fpg_new",
-    "fpg_training"
+    "fpg_service",
+    "fpg_hire",
+    "fpg_training",
+    "pagefly-home"
   ]
 }
