@@ -43,8 +43,8 @@ def save_view(url, path, spots=()):
         x0 = min(s[1] for s in spots); y0 = min(s[2] for s in spots)
         x1 = max(s[3] for s in spots); y1 = max(s[4] for s in spots)
         w, h = x1 - x0, y1 - y0
-        # A margin round the parts, and never smaller than 900 px, so there is context round small groups.
-        pw, ph = max(w * 0.12, (900 - w) / 2, 60), max(h * 0.12, (700 - h) / 2, 60)
+        # A tight margin round the group's own parts (so what shows is what can be clicked), at least 480 x 360.
+        pw, ph = max(w * 0.05, (480 - w) / 2, 24), max(h * 0.05, (360 - h) / 2, 24)
         box = (int(max(0, x0 - pw)), int(max(0, y0 - ph)), int(min(im.width, x1 + pw)), int(min(im.height, y1 + ph)))
     else:
         a = np.asarray(im).astype(int)
@@ -133,7 +133,7 @@ def main(files):
             name = ' › '.join(n['path'][-2:]) if n['path'] else 'Machine'
             pic, off, wh = '', (0, 0), None
             if n['url'] in d['asm']:
-                pic = f'forst-v2-{slug}-{i:02d}.webp'
+                pic = f'forst-v3-{slug}-{i:02d}.webp'
                 mine = [s for s in (d.get('spots') or {}).get(n['url'], []) if s[0].replace('_', '.') in {r[0] for r in rows}]
                 off, wh = save_view(d['asm'][n['url']], IMG / pic, mine)
             ref = {r[0]: str(k) for k, r in enumerate(rows, start=1)}
