@@ -438,6 +438,14 @@
 
 /* The wide stroke stays invisible (it only makes small parts easier to hit). What shows is a tint, a fine line and a
    glow, so a washer keeps its shape instead of vanishing under a thick outline. */
+/* A part that belongs to another section's list: a dashed line on hover says it leads elsewhere. */
+.fpg-pf-viewer .fpg-pf-v__part--to:hover,
+.fpg-pf-viewer .fpg-pf-v__part--to:focus-visible {
+  stroke: rgb(95 125 109 / 0.9);
+  stroke-width: 1.5px;
+  stroke-dasharray: 5 4;
+}
+
 /* is-front: the small part brought forward after the pointer rested on an overlap (assets/fpg-parts.js). */
 .fpg-pf-viewer .fpg-pf-v__part:hover,
 .fpg-pf-viewer .fpg-pf-v__part.is-front,

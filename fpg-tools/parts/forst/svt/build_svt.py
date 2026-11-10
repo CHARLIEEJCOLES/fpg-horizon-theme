@@ -94,7 +94,7 @@ def group_small(secs):
                     rows[no] = [None, no, name, qty]
         for k, no in enumerate(rows, start=1):
             rows[no][0] = str(k)
-        pics, ms, whs = [], [], []
+        pics, ms, whs, drawn = [], [], [], []
         for d in draws:
             if not d.get('pic'):
                 continue
@@ -102,11 +102,54 @@ def group_small(secs):
             pics.append(d['pic'])
             ms.append([[rows[old[e[0]]][0]] + e[1:] for e in (d.get('m') or []) if e[0] in old])
             whs.append(d.get('wh'))
+            drawn.append((d, {ref: rows[no][0] for ref, no in old.items()}))
         p = g['path']
         name = ' › '.join(p[-2:]) if p else 'Machine'
         out.append({'name': name, 'code': g['code'] or (draws[0].get('code', '') if len(draws) == 1 else ''), 'pics': pics, 'ms': ms, 'whs': whs,
-                    'parts': list(rows.values())})
+                    'parts': list(rows.values()), 'drawn': drawn})
+    neighbours(out)
     return out
+
+
+def neighbours(out):
+    """A drawing shows more than its own list: the catalogue draws a whole group from one camera, and each assembly's
+    picture is a window on that view (offsets.py: off, grp). Parts that fall inside a drawing's window but belong to
+    another assembly are added to it as shapes too, so nothing drawn is dead: one in the same parts list is an
+    ordinary shape; one listed in another section carries that section's index as a seventh value, and the parts
+    finder opens that section on the part when it is clicked."""
+    shift = lambda path, dx, dy: re.sub(r'(-?\d+) (-?\d+)', lambda m: f'{int(m.group(1)) + dx} {int(m.group(2)) + dy}', path)
+    every = []
+    for si, g in enumerate(out):
+        for d, refs in g['drawn']:
+            if d.get('off') is None:
+                continue
+            for e in d.get('m') or []:
+                if e[0] in refs:
+                    every.append((d, e, si, refs[e[0]]))
+    added = 0
+    for si, g in enumerate(out):
+        for k, (d, _) in enumerate(g['drawn']):
+            if d.get('off') is None:
+                continue
+            w, h = d['wh']
+            for d2, e, sj, ref in every:
+                if d2 is d or d2.get('grp') != d.get('grp'):
+                    continue
+                dx, dy = d2['off'][0] - d['off'][0], d2['off'][1] - d['off'][1]
+                x1, y1, x2, y2 = e[1] + dx, e[2] + dy, e[3] + dx, e[4] + dy
+                area = max(1, (x2 - x1) * (y2 - y1))
+                seen = max(0, min(x2, w) - max(x1, 0)) * max(0, min(y2, h) - max(y1, 0))
+                if seen < 0.6 * area:
+                    continue
+                # The same part can be listed under two assemblies: one shape for it is enough.
+                if any(o[0] == ref and len(o) == 6 and abs(o[1] - x1) < 6 and abs(o[2] - y1) < 6 and abs(o[3] - x2) < 6 and abs(o[4] - y2) < 6 for o in g['ms'][k]):
+                    continue
+                g['ms'][k].append([ref, x1, y1, x2, y2, shift(e[5], dx, dy)] + ([] if sj == si else [sj]))
+                added += 1
+            g['ms'][k].sort(key=lambda e: -((e[3] - e[1]) * (e[4] - e[2])))
+    for g in out:
+        del g['drawn']
+    return added
 
 
 def main():

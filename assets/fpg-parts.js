@@ -527,7 +527,8 @@ function sectionCode(/** @type {string} */ name) {
 
 /** Does a number box on a drawing point at this part? By part number first, else by its Ref. */
 function matchesPart(/** @type {any} */ box, /** @type {any} */ part) {
-  if (!box || !part) return false;
+  /* A shape that leads to another section carries that section's numbering, not this list's. */
+  if (!box || !part || box.to != null) return false;
   const pid = squash(box.pid);
   if (pid && (squash(part.partNumber) === pid || squash(part.sku) === pid)) return true;
   if (box.a === '' || box.a == null) return false;
@@ -967,12 +968,13 @@ class FpgPartsFinder extends HTMLElement {
       name: sec.name,
       diagrams: (sec.pics || []).map((/** @type {string} */ url, /** @type {number} */ i) => {
         /* The maker's number boxes (m: [number, x1, y1, x2, y2, shape path] on a drawing of wh: [width, height]) make
-           the drawing clickable: for its first drawing, or per drawing (ms, whs) when a section has several. */
+           the drawing clickable: for its first drawing, or per drawing (ms, whs) when a section has several.
+           A seventh value is another section's number: the part is drawn here but listed there, and a click opens it there. */
         const m = Array.isArray(sec.ms) ? sec.ms[i] : i === 0 ? sec.m : null;
         const wh = Array.isArray(sec.whs) ? sec.whs[i] : sec.wh;
         const inline =
           Array.isArray(m) && m.length && Array.isArray(wh)
-            ? { ok: true, image: url, w: wh[0], h: wh[1], clean: Array.isArray(sec.cs) && !!sec.cs[i], maps: m.map((/** @type {any[]} */ [a, x1, y1, x2, y2, d]) => ({ a: String(a), x1, y1, x2, y2, d: typeof d === 'string' ? d : '' })) }
+            ? { ok: true, image: url, w: wh[0], h: wh[1], clean: Array.isArray(sec.cs) && !!sec.cs[i], maps: m.map((/** @type {any[]} */ [a, x1, y1, x2, y2, d, to]) => ({ a: String(a), x1, y1, x2, y2, d: typeof d === 'string' ? d : '', ...(Number.isInteger(to) ? { to } : {}) })) }
             : null;
         return { view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600`, numbers: !!inline, inline };
       }),
@@ -2068,12 +2070,23 @@ class FpgPartsFinder extends HTMLElement {
       requestAnimationFrame(step);
     };
 
+    /* A part drawn here but listed in another section: open that section, on the drawing that shows the part. */
+    const jump = (/** @type {any} */ box) => {
+      const target = secs[box.to];
+      if (!target) return;
+      const pic = Math.max(0, (target.diagrams || []).findIndex((/** @type {any} */ d) => d.inline?.maps?.some((/** @type {any} */ b) => b.to == null && b.a === box.a)));
+      this.pendingPick = { sec: target, a: box.a };
+      shut();
+      this.openSection(box.to, pic);
+    };
+
     dialog.addEventListener('click', (e) => {
       const t = /** @type {HTMLElement} */ (e.target);
       if (t === dialog || t.closest('[data-v-close]')) return shut();
       const hot = t.closest('[data-hot]');
       if (hot instanceof HTMLElement || hot instanceof SVGElement) {
         const box = state.maps[Number(hot.dataset.hot)];
+        if (box?.to != null) return jump(box);
         this.showNumber(dialog, sec, box, state.maps, true, say);
         return frame([box]);
       }
@@ -2103,7 +2116,7 @@ class FpgPartsFinder extends HTMLElement {
         if (box) {
           this.showNumber(dialog, sec, box, state.maps, false, say);
           /* From the list: every copy of the part on the drawing, framed together. */
-          frame(state.maps.filter((b) => b.a === box.a));
+          frame(state.maps.filter((b) => b.to == null && b.a === box.a));
         }
       }
     });
@@ -2160,6 +2173,7 @@ class FpgPartsFinder extends HTMLElement {
       if (shape instanceof SVGElement && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
         const box = state.maps[Number(shape.dataset.hot)];
+        if (box?.to != null) return jump(box);
         this.showNumber(dialog, sec, box, state.maps, true, say);
         return frame([box]);
       }
@@ -2346,7 +2360,9 @@ class FpgPartsFinder extends HTMLElement {
       /* Parts traced to their exact shape (d: an SVG path on the drawing) are drawn as that shape; others as boxes. */
       const shapes = state.maps
         .map((/** @type {any} */ b, /** @type {number} */ i) =>
-          b.d ? `<path class="fpg-pf-v__part" d="${esc(b.d)}" data-hot="${i}" tabindex="0" role="button" aria-label="Part ${esc(b.a || '?')}"></path>` : '')
+          !b.d ? ''
+          : b.to == null ? `<path class="fpg-pf-v__part" d="${esc(b.d)}" data-hot="${i}" tabindex="0" role="button" aria-label="Part ${esc(b.a || '?')}"></path>`
+          : `<path class="fpg-pf-v__part fpg-pf-v__part--to" d="${esc(b.d)}" data-hot="${i}" tabindex="0" role="button" aria-label="Part of ${esc(sectionName(this.dealer?.sections[b.to]?.name || 'another section'))}: opens that section"><title>${esc(sectionName(this.dealer?.sections[b.to]?.name || ''))}: click to open it on this part</title></path>`)
         .join('');
       /* The parts themselves at full strength: the drawing again, shown only inside the traced shapes. */
       const clipId = `fpg-pf-clip-${run}`;
@@ -2364,6 +2380,13 @@ class FpgPartsFinder extends HTMLElement {
         img.addEventListener('load', () => layer.querySelector('.fpg-pf-v__solid')?.setAttribute('href', img.currentSrc || img.src));
       }
       say(shapes ? 'Tap a part on the drawing to find it in the list.' : 'Tap a number on the drawing to find its part.');
+      /* Arrived from another section's drawing by clicking a part that is listed here: show it. */
+      const want = this.pendingPick;
+      if (want && want.sec === sec) {
+        this.pendingPick = null;
+        const box = state.maps.find((/** @type {any} */ b) => b.to == null && b.a === want.a);
+        if (box) this.showNumber(dialog, sec, box, state.maps, true, say);
+      }
       return;
     }
     say('Tap a number on the drawing to find its part.');
@@ -2373,7 +2396,7 @@ class FpgPartsFinder extends HTMLElement {
     if (!box) return;
     dialog.querySelectorAll('[data-hot]').forEach((b) => {
       const other = maps[Number(/** @type {HTMLElement} */ (b).dataset.hot)];
-      b.classList.toggle('is-on', !!other && other.a === box.a);
+      b.classList.toggle('is-on', !!other && other.to == null && other.a === box.a);
     });
     /** @type {HTMLElement | null} */
     let first = null;
@@ -2569,6 +2592,8 @@ class FpgPartsFinder extends HTMLElement {
 
   pnToken = 0;
   pendingFilter = '';
+  /** A part to show once another section's drawing has opened (set when a part listed there is clicked on this one). @type {{sec: any, a: string} | null} */
+  pendingPick = null;
   /** @type {Map<number, Promise<any>>} */
   pnFiles = new Map();
   /** @type {any[]} */
