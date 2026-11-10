@@ -143,7 +143,7 @@ function sent() {
 }
 
 /**
- * The hero machine turns with the scroll. A short clip (data-fo-spin) is played through once out of sight and
+ * The hero machine turns with the scroll. A short clip (data-fo-spin) is read through once out of sight and
  * its frames kept, so scrolling can show any of them at once: stepping a video's own clock stutters.
  * Until the frames are ready, on a small screen, or with reduced motion, the still picture stays.
  */
@@ -159,21 +159,23 @@ function spin() {
   const COUNT = 48;
   /** @type {ImageBitmap[]} */
   const frames = [];
-  let taking = false;
-  /* Checked every screen frame while the clip plays: a video that isn't on the page gets no frame callbacks of its own. */
-  const take = async () => {
-    if (!taking && frames.length < COUNT && clip.currentTime >= (frames.length / COUNT) * clip.duration) {
-      taking = true;
+  /* Each frame is asked for by its time and kept once the clip has moved there. */
+  const collect = async () => {
+    for (let i = 0; i < COUNT; i++) {
+      await new Promise((done) => {
+        clip.addEventListener('seeked', done, { once: true });
+        clip.currentTime = (i / COUNT) * clip.duration;
+      });
       try {
-        frames.push(await createImageBitmap(clip, { resizeWidth: 720, resizeHeight: Math.round((720 * clip.videoHeight) / clip.videoWidth), resizeQuality: 'medium' }));
+        frames.push(await createImageBitmap(clip, { resizeWidth: 720, resizeHeight: Math.round((720 * clip.videoHeight) / clip.videoWidth) }));
       } catch {
         /* a frame that can't be read is skipped */
       }
-      taking = false;
     }
-    if (!clip.ended) requestAnimationFrame(take);
+    ready();
   };
-  clip.addEventListener('ended', () => {
+  const ready = () => {
+
     if (frames.length < 12) return;
     const canvas = document.createElement('canvas');
     canvas.width = frames[0].width;
@@ -208,11 +210,8 @@ function spin() {
       running = true;
       requestAnimationFrame(draw);
     }, { passive: true });
-  }, { once: true });
-  clip.addEventListener('loadeddata', () => {
-    requestAnimationFrame(take);
-    clip.play().catch(() => {});
-  }, { once: true });
+  };
+  clip.addEventListener('loadeddata', collect, { once: true });
   clip.src = pic.dataset.foSpin;
 }
 
