@@ -880,6 +880,14 @@
             "logo": "shopify://shop_images/Etesia.png",
             "link": "shopify://collections/etesia"
           }
+        },
+"brand_forst": {
+          "type": "brand",
+          "settings": {
+            "name": "Forst",
+            "logo": "shopify://shop_images/Forst.png",
+            "link": "/pages/contact?view=forst"
+          }
         }
       },
       "block_order": [
@@ -893,6 +901,7 @@
         "brand_darlac",
         "brand_ohashi",
         "brand_toro",
+        "brand_forst",
         "brand_ferris",
         "brand_etesia"
       ],
