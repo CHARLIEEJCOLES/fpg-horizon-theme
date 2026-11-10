@@ -1,11 +1,11 @@
 """Turn version 2 captures (svt2-<slug>.json, from runner_v2.js) into sections, part outlines and pictures.
 
 For each machine, every assembly with parts becomes a section:
-  img/forst-3d-<slug>-<nn>.webp   the assembly's 3D view, full resolution, background trimmed
+  img2/forst-v2-<slug>-<nn>.webp  the group's exploded 3D view, full resolution, framed on its parts
   m: [ref, x0, y0, x1, y1, path]  each part's exact shape on that view (SVG path in image pixels)
 Each part number gets one picture, cut out of its highlighted view onto white:
-  img/forst-part-<part no>.webp
-Writes sections.json ({slug: [...]}) and part_pics.json ({part no: file}), keeping other machines' entries.
+  img2/forst-pt-<part no>.webp
+Writes sections_v2.json ({slug: [...]}) and part_pics_v2.json ({part no: file}), keeping other machines' entries.
 """
 import base64
 import io
@@ -21,7 +21,7 @@ from PIL import Image
 from cutout import cutout
 
 HERE = Path(__file__).parent
-IMG = HERE / 'img'
+IMG = HERE / 'img2'
 
 
 def part_no(href):
@@ -35,19 +35,24 @@ def data_image(url):
     return Image.open(io.BytesIO(base64.b64decode(url.split(',', 1)[1])))
 
 
-def save_view(url, path):
-    """Saves an assembly view with its empty background trimmed (a margin kept). Returns offset and size."""
+def save_view(url, path, spots=()):
+    """Saves a group's view framed on its own parts (the catalogue shows the whole machine round them), or with
+    the empty background trimmed when there are none. Returns the crop's offset and the saved size."""
     im = data_image(url).convert('RGB')
-    a = np.asarray(im).astype(int)
-    bg = a[3, 3]
-    diff = np.abs(a - bg).max(axis=2) > 12
-    ys, xs = np.where(diff)
-    if len(xs):
-        pad = 40
-        box = (int(max(0, xs.min() - pad)), int(max(0, ys.min() - pad)), int(min(im.width, xs.max() + pad + 1)), int(min(im.height, ys.max() + pad + 1)))
-        im = im.crop(box)
+    if spots:
+        x0 = min(s[1] for s in spots); y0 = min(s[2] for s in spots)
+        x1 = max(s[3] for s in spots); y1 = max(s[4] for s in spots)
+        w, h = x1 - x0, y1 - y0
+        # A margin round the parts, and never smaller than 900 px, so there is context round small groups.
+        pw, ph = max(w * 0.12, (900 - w) / 2, 60), max(h * 0.12, (700 - h) / 2, 60)
+        box = (int(max(0, x0 - pw)), int(max(0, y0 - ph)), int(min(im.width, x1 + pw)), int(min(im.height, y1 + ph)))
     else:
-        box = (0, 0)
+        a = np.asarray(im).astype(int)
+        diff = np.abs(a - a[3, 3]).max(axis=2) > 12
+        ys, xs = np.where(diff)
+        pad = 40
+        box = (int(max(0, xs.min() - pad)), int(max(0, ys.min() - pad)), int(min(im.width, xs.max() + pad + 1)), int(min(im.height, ys.max() + pad + 1))) if len(xs) else (0, 0, im.width, im.height)
+    im = im.crop(box)
     im.save(path, 'WEBP', quality=86, method=6)
     return (box[0], box[1]), im.size
 
@@ -92,8 +97,8 @@ def shape(spot, off):
 
 def main(files):
     IMG.mkdir(exist_ok=True)
-    sections_all = json.loads((HERE / 'sections.json').read_text()) if (HERE / 'sections.json').exists() else {}
-    pics = json.loads((HERE / 'part_pics.json').read_text()) if (HERE / 'part_pics.json').exists() else {}
+    sections_all = json.loads((HERE / 'sections_v2.json').read_text()) if (HERE / 'sections_v2.json').exists() else {}
+    pics = json.loads((HERE / 'part_pics_v2.json').read_text()) if (HERE / 'part_pics_v2.json').exists() else {}
     for f in files:
         d = json.loads(Path(f).read_text())
         slug = d['slug']
@@ -128,8 +133,9 @@ def main(files):
             name = ' › '.join(n['path'][-2:]) if n['path'] else 'Machine'
             pic, off, wh = '', (0, 0), None
             if n['url'] in d['asm']:
-                pic = f'forst-3d-{slug}-{i:02d}.webp'
-                off, wh = save_view(d['asm'][n['url']], IMG / pic)
+                pic = f'forst-v2-{slug}-{i:02d}.webp'
+                mine = [s for s in (d.get('spots') or {}).get(n['url'], []) if s[0].replace('_', '.') in {r[0] for r in rows}]
+                off, wh = save_view(d['asm'][n['url']], IMG / pic, mine)
             ref = {r[0]: str(k) for k, r in enumerate(rows, start=1)}
             m = []
             for spot in (d.get('spots') or {}).get(n['url'], []):
@@ -150,7 +156,7 @@ def main(files):
             no = base.replace('_', '.')
             if no.startswith('Copy.'):
                 continue
-            fn = 'forst-part-' + re.sub(r'[^0-9A-Za-z-]', '-', no) + '.webp'
+            fn = 'forst-pt-' + re.sub(r'[^0-9A-Za-z-]', '-', no) + '.webp'
             src = data_image(url).convert('RGB')
             out = cutout(src, out=min(1024, max(512, src.width)))
             if out is not None:
@@ -159,8 +165,8 @@ def main(files):
             pics[no] = fn
         sections_all[slug] = secs
         print(f'{slug}: {len(secs)} sections, {nlines} lines, {nshapes} part shapes, {len(d["part"])} part pictures ({cut} cut out)')
-    (HERE / 'sections.json').write_text(json.dumps(sections_all, indent=1, ensure_ascii=False))
-    (HERE / 'part_pics.json').write_text(json.dumps(pics, indent=1, sort_keys=True))
+    (HERE / 'sections_v2.json').write_text(json.dumps(sections_all, indent=1, ensure_ascii=False))
+    (HERE / 'part_pics_v2.json').write_text(json.dumps(pics, indent=1, sort_keys=True))
 
 
 if __name__ == '__main__':

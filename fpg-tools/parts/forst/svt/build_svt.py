@@ -39,8 +39,10 @@ def norm(sku):
 
 
 def main():
-    sections = json.loads((HERE / 'sections.json').read_text())
-    pics = json.loads((HERE / 'part_pics.json').read_text())
+    # Version 2 captures (exact part outlines, high resolution) where there are any.
+    v = '_v2' if (HERE / 'sections_v2.json').exists() else ''
+    sections = json.loads((HERE / f'sections{v}.json').read_text())
+    pics = json.loads((HERE / f'part_pics{v}.json').read_text())
     skus = json.loads((HERE / 'shop_skus.json').read_text()) if (HERE / 'shop_skus.json').exists() else {}
     models, used = {}, set()
     for slug, secs in sections.items():
