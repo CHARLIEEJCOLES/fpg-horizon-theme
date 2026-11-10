@@ -230,8 +230,9 @@
 .fpg-fo-hero {
   position: relative;
   padding-top: 22px;
+  /* A studio spotlight behind the machine: Först's black machines need it as much as the orange ones. */
   background:
-    radial-gradient(58% 70% at 76% 46%, #33393c 0%, rgb(51 57 60 / 0) 72%),
+    radial-gradient(46% 62% at 75% 48%, #a6adb1 0%, #666e72 36%, rgb(23 25 26 / 0) 76%),
     var(--fo-black);
   color: #fff;
   overflow: hidden;
@@ -242,6 +243,14 @@
   gap: 8px;
   align-items: center;
   padding-block: clamp(20px, 3vw, 40px) clamp(24px, 4vw, 48px);
+}
+
+@media (max-width: 989px) {
+  .fpg-fo-hero {
+    background:
+      radial-gradient(70% 34% at 50% 68%, #a6adb1 0%, #666e72 40%, rgb(23 25 26 / 0) 80%),
+      var(--fo-black);
+  }
 }
 
 @media (min-width: 990px) {
@@ -278,6 +287,8 @@
   font-family: var(--font-body--family);
   font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
   font-weight: 500;
+  font-style: normal;
+  letter-spacing: 0;
   color: var(--fo-ash);
 }
 
@@ -709,7 +720,7 @@
   color: var(--fo-soft);
 }
 
-.fpg-fo-kit__price {
+.fpg-fo-kit__cost {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -745,9 +756,6 @@
   text-underline-offset: 4px;
 }
 
-.fpg-fo-kit__buy {
-  margin: 0;
-}
 
 @media (min-width: 750px) {
   .fpg-fo-kit__row {
@@ -758,11 +766,11 @@
     grid-column: auto;
   }
 
-  .fpg-fo-kit__price {
+  .fpg-fo-kit__cost {
     justify-content: flex-end;
   }
 
-  .fpg-fo-kit__buy .fpg-fo-btn,
+  .fpg-fo-kit__row > .fpg-fo-btn,
   .fpg-fo-kit__ask {
     justify-self: end;
     width: 100%;
@@ -1147,7 +1155,7 @@
 .fpg-fo-card__pic {
   display: block;
   padding: 22px 18px 10px;
-  background: radial-gradient(70% 80% at 50% 55%, #3a4144 0%, var(--fo-black) 78%);
+  background: radial-gradient(64% 74% at 50% 56%, #a6adb1 0%, #666e72 40%, var(--fo-black) 84%);
 }
 
 .fpg-fo-card__pic img {

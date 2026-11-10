@@ -1,7 +1,7 @@
 /*
  * The Först pages (sections/fpg-forst-machine.liquid, sections/fpg-forst-range.liquid).
- * - Service kit: "Add" puts a part in the basket without leaving the page, and "Add the whole kit" adds every
- *   part on sale at once. Without this file each Add is an ordinary form that goes to the basket.
+ * - Service kit: each part's link becomes an "Add" button that puts it in the basket without leaving the page,
+ *   and "Add the whole kit" adds every part on sale at once. Without this file the links go to the parts' pages.
  * - Photos open enlarged, with arrow keys to move between them.
  * - After the enquiry form is sent, the thank-you is brought into view.
  * The basket is updated through FPGTools.addItemsToCart (assets/fpg-cart.js), so the cart icon and drawer follow.
@@ -31,12 +31,23 @@ function kits() {
     const say = (/** @type {string} */ text) => {
       if (status) status.textContent = text;
     };
-    const buttons = /** @type {HTMLButtonElement[]} */ ([...kit.querySelectorAll('[data-fo-add]')]);
+    /* Each part on sale arrives as a link to its product; here it becomes an Add button. */
+    const buttons = [...kit.querySelectorAll('a[data-fo-add]')].map((a) => {
+      const link = /** @type {HTMLAnchorElement} */ (a);
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = link.className;
+      b.textContent = 'Add';
+      b.dataset.foAdd = link.dataset.foAdd;
+      b.dataset.foQty = link.dataset.foQty;
+      b.setAttribute('aria-label', `Add ${link.dataset.foName || 'this part'} to basket`);
+      link.replaceWith(b);
+      return b;
+    });
     const item = (/** @type {HTMLButtonElement} */ b) => ({ id: Number(b.dataset.foAdd), quantity: Number(b.dataset.foQty) || 1 });
 
     for (const b of buttons) {
-      b.form?.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      b.addEventListener('click', async () => {
         const label = b.textContent;
         b.disabled = true;
         b.textContent = 'Adding…';

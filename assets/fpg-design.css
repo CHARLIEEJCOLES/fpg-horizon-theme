@@ -1087,6 +1087,12 @@ html:has([data-fpg-skin='forst']) {
   --fpg-forst: #f05a22;
 }
 
+html:has([data-fpg-skin='forst']) .shopify-section-group-header-group :is(.header__row, .section-background, .mega-menu__link) {
+  --color-background: #17191a;
+  --color-background-rgb: 23 25 26;
+  background-color: #17191a;
+}
+
 html:has([data-fpg-skin='forst']) .content-for-layout::before {
   content: '';
   display: block;

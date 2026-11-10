@@ -1,6 +1,6 @@
 {%- doc -%}
   One line of a Först machine's service kit (snippets/fpg-forst-m-*.liquid). Shows what the part is and its
-  number; when the part is on sale online it adds our price, stock and an Add button, otherwise "Ask us".
+  number; when the part is on sale online it adds our price, stock and a link to the part (an Add button once assets/fpg-forst.js has loaded), otherwise "Ask us".
 
   @param {string} handle - Our product's handle for the part
   @param {string} sku - The Först part number
@@ -26,8 +26,9 @@
     <strong>{{ label }}{% if count > 1 %} <span class="fpg-fo-kit__qty">× {{ count }}</span>{% endif %}</strong>
     <span>Part no. {% if buyable %}<a href="{{ part.url }}">{{ sku }}</a>{% else %}{{ sku }}{% endif %}{% if note != blank %} · {{ note }}{% endif %}</span>
   </div>
+  {%- comment -%} No class here may contain "price": the quote-request app strips such elements on quote-only machines' pages. {%- endcomment -%}
   {%- if buyable -%}
-    <div class="fpg-fo-kit__price">
+    <div class="fpg-fo-kit__cost">
       <span class="fpg-fo-kit__money">{% render 'fpg-vat-price', amount: variant.price, taxable: variant.taxable %}</span>
       {%- if variant.inventory_quantity > 0 -%}
         <span class="fpg-fo-kit__stock is-in">{{ variant.inventory_quantity }} in stock</span>
@@ -38,16 +39,13 @@
       {%- endif -%}
     </div>
     {%- if variant.available -%}
-      <form class="fpg-fo-kit__buy" action="{{ routes.cart_add_url }}" method="post">
-        <input type="hidden" name="id" value="{{ variant.id }}">
-        <input type="hidden" name="quantity" value="{{ count }}">
-        <button type="submit" class="fpg-fo-btn fpg-fo-btn--dark fpg-fo-btn--sm" data-fo-add="{{ variant.id }}" data-fo-qty="{{ count }}" aria-label="Add {{ label | escape }} {{ sku | escape }} to basket">Add</button>
-      </form>
+      {%- comment -%} A link, not a product form: the quote-request app rewrites add-to-cart forms on quote-only machines' pages. assets/fpg-forst.js turns it into an Add button. {%- endcomment -%}
+      <a class="fpg-fo-btn fpg-fo-btn--dark fpg-fo-btn--sm" href="{{ part.url }}" data-fo-add="{{ variant.id }}" data-fo-qty="{{ count }}" data-fo-name="{{ label | escape }} {{ sku | escape }}">View</a>
     {%- else -%}
       <a class="fpg-fo-kit__ask" href="#enquire">Ask us</a>
     {%- endif -%}
   {%- else -%}
-    <div class="fpg-fo-kit__price"><span class="fpg-fo-kit__stock">Price on request</span></div>
+    <div class="fpg-fo-kit__cost"><span class="fpg-fo-kit__stock">Price on request</span></div>
     <a class="fpg-fo-kit__ask" href="#enquire">Ask us</a>
   {%- endif -%}
 </li>
