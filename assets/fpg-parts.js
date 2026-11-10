@@ -2172,6 +2172,22 @@ class FpgPartsFinder extends HTMLElement {
       }, 1500);
     });
     dialog.addEventListener('pointerleave', () => window.clearTimeout(rest));
+    /* Over a part that belongs to another section: say where a click goes. */
+    let hintWas = '';
+    dialog.addEventListener('pointerover', (e) => {
+      const to = e.target instanceof SVGElement ? e.target.closest('.fpg-pf-v__part--to') : null;
+      const hint = dialog.querySelector('[data-v-hint]');
+      if (!hint) return;
+      if (to instanceof SVGElement) {
+        const target = secs[state.maps[Number(to.dataset.hot)]?.to];
+        if (!target) return;
+        if (!hintWas) hintWas = hint.textContent || ' ';
+        hint.textContent = `In ${sectionName(target.name)}: click to open it there.`;
+      } else if (hintWas) {
+        hint.textContent = hintWas.trim();
+        hintWas = '';
+      }
+    });
     dialog.addEventListener('pointerup', endDrag);
     dialog.addEventListener('pointercancel', endDrag);
     dialog.addEventListener('keydown', (e) => {

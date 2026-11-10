@@ -459,6 +459,36 @@
   }
 }
 
+/* Three across leaves one or two over on some machines (r1, r2: the count's remainder). The first feature then
+   takes the spare room, as a wide lead, so the last row is always full. */
+@media (min-width: 990px) {
+  .fpg-fo-feats--r2 > :first-child {
+    grid-column: span 2;
+  }
+
+  .fpg-fo-feats--r1 > :first-child {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(20px, 3vw, 44px);
+  }
+
+  .fpg-fo-feats--r1 > :first-child img,
+  .fpg-fo-feats--r2 > :first-child img {
+    aspect-ratio: 21 / 9;
+  }
+
+  .fpg-fo-feats--r1 > :first-child h3 {
+    margin-top: 0;
+    font-size: 1.75rem;
+  }
+
+  .fpg-fo-feats--r1 > :first-child p {
+    font-size: 1.0625rem;
+  }
+}
+
 .fpg-fo-feat img {
   width: 100%;
   aspect-ratio: 4 / 3;
