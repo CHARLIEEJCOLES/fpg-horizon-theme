@@ -376,6 +376,15 @@
   inset: 0;
 }
 
+/* A drawing shown as its parts only: everything that isn't a traced part is faded right back. */
+.fpg-pf-v__stage.is-clean > img {
+  opacity: 0.12;
+}
+
+.fpg-pf-v__solid {
+  pointer-events: none;
+}
+
 .fpg-pf-viewer .fpg-pf-v__num {
   position: absolute;
   min-width: 0;

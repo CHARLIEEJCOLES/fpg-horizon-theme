@@ -1979,8 +1979,22 @@ class FpgPartsFinder extends HTMLElement {
       if (!w || !h) return;
       const fit = Math.min((scroll.clientWidth - 16) / w, (scroll.clientHeight - 16) / h);
       const shown = Math.max(40, Math.round(w * fit * state.zoom));
-      img.style.width = `${shown}px`;
-      if (!state.flying) sharpen(img, shown);
+      /* A drawing cut down to its parts (data-crop: left, top, full width): the stage is the window, the image slides behind it. */
+      const crop = img.dataset.crop ? img.dataset.crop.split(',').map(Number) : null;
+      const stage = img.parentElement;
+      if (crop && stage) {
+        const k = shown / w;
+        stage.style.width = `${shown}px`;
+        stage.style.height = `${Math.round(h * k)}px`;
+        stage.style.overflow = 'hidden';
+        img.style.width = `${crop[2] * k}px`;
+        img.style.marginLeft = `${-crop[0] * k}px`;
+        img.style.marginTop = `${-crop[1] * k}px`;
+        if (!state.flying) sharpen(img, crop[2] * k);
+      } else {
+        img.style.width = `${shown}px`;
+        if (!state.flying) sharpen(img, shown);
+      }
       scroll.dataset.zoomed = String(state.zoom > 1);
       const label = dialog.querySelector('[data-v-zoom-label]');
       if (label) label.textContent = state.zoom <= 1 ? '' : `${Math.round(state.zoom * 100)}%`;
@@ -2286,20 +2300,46 @@ class FpgPartsFinder extends HTMLElement {
       if (run !== state.run) return;
     }
     state.maps = data.maps;
+    /* A drawing with traced parts is shown as those parts only: cut to where they are, the rest faded right back. */
+    const traced = data.maps.filter((/** @type {any} */ b) => b.d);
+    const view = { x: 0, y: 0, w: Number(data.w), h: Number(data.h) };
+    if (traced.length) {
+      const pad = Math.max(view.w, view.h) * 0.04;
+      const x0 = Math.max(0, Math.min(...traced.map((/** @type {any} */ b) => b.x1)) - pad);
+      const y0 = Math.max(0, Math.min(...traced.map((/** @type {any} */ b) => b.y1)) - pad);
+      const x1 = Math.min(view.w, Math.max(...traced.map((/** @type {any} */ b) => b.x2)) + pad);
+      const y1 = Math.min(view.h, Math.max(...traced.map((/** @type {any} */ b) => b.y2)) + pad);
+      Object.assign(view, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 });
+      state.maps = data.maps.map((/** @type {any} */ b) => ({ ...b, x1: b.x1 - x0, x2: b.x2 - x0, y1: b.y1 - y0, y2: b.y2 - y0 }));
+      img.dataset.w = String(view.w);
+      img.dataset.h = String(view.h);
+      img.dataset.crop = `${x0},${y0},${data.w}`;
+      img.parentElement?.classList.add('is-clean');
+      size();
+    }
     const layer = dialog.querySelector('[data-v-hot]');
     const pct = (/** @type {number} */ v, /** @type {number} */ of) => `${((100 * v) / of).toFixed(3)}%`;
     if (layer) {
       /* Parts traced to their exact shape (d: an SVG path on the drawing) are drawn as that shape; others as boxes. */
-      const shapes = data.maps
+      const shapes = state.maps
         .map((/** @type {any} */ b, /** @type {number} */ i) =>
           b.d ? `<path class="fpg-pf-v__part" d="${esc(b.d)}" data-hot="${i}" tabindex="0" role="button" aria-label="Part ${esc(b.a || '?')}"></path>` : '')
         .join('');
+      /* The parts themselves at full strength: the drawing again, shown only inside the traced shapes. */
+      const clipId = `fpg-pf-clip-${run}`;
+      const solid = traced.length
+        ? `<defs><clipPath id="${clipId}">${traced.map((/** @type {any} */ b) => `<path d="${esc(b.d)}"></path>`).join('')}</clipPath></defs><image class="fpg-pf-v__solid" href="${esc(img.currentSrc || img.src)}" x="0" y="0" width="${esc(data.w)}" height="${esc(data.h)}" preserveAspectRatio="none" clip-path="url(#${clipId})"></image>`
+        : '';
       layer.innerHTML =
-        data.maps
+        state.maps
           .map((/** @type {any} */ b, /** @type {number} */ i) =>
-            b.d ? '' : `<button type="button" class="fpg-pf-v__num" data-hot="${i}" aria-label="Number ${esc(b.a || '?')}" style="left:${pct(b.x1, data.w)};top:${pct(b.y1, data.h)};width:${pct(b.x2 - b.x1, data.w)};height:${pct(b.y2 - b.y1, data.h)}"></button>`)
+            b.d ? '' : `<button type="button" class="fpg-pf-v__num" data-hot="${i}" aria-label="Number ${esc(b.a || '?')}" style="left:${pct(b.x1, view.w)};top:${pct(b.y1, view.h)};width:${pct(b.x2 - b.x1, view.w)};height:${pct(b.y2 - b.y1, view.h)}"></button>`)
           .join('') +
-        (shapes ? `<svg class="fpg-pf-v__shapes" viewBox="0 0 ${esc(data.w)} ${esc(data.h)}" preserveAspectRatio="none" focusable="false">${shapes}</svg>` : '');
+        (shapes ? `<svg class="fpg-pf-v__shapes" viewBox="${view.x} ${view.y} ${view.w} ${view.h}" preserveAspectRatio="none" focusable="false">${solid}${shapes}</svg>` : '');
+      if (solid) {
+        /* When a sharper copy of the drawing arrives, the parts take it too. */
+        img.addEventListener('load', () => layer.querySelector('.fpg-pf-v__solid')?.setAttribute('href', img.currentSrc || img.src));
+      }
       say(shapes ? 'Tap a part on the drawing to find it in the list.' : 'Tap a number on the drawing to find its part.');
       return;
     }
