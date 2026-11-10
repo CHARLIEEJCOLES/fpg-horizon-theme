@@ -1910,7 +1910,7 @@ class FpgPartsFinder extends HTMLElement {
       if (on) dialog.querySelector(`[data-v-row="${i}"]`)?.classList.add('is-on');
     });
 
-    const state = { zoom: 1, maps: /** @type {any[]} */ ([]), run: 0, drag: /** @type {any} */ (null) };
+    const state = { zoom: 1, maps: /** @type {any[]} */ ([]), run: 0, drag: /** @type {any} */ (null), fly: 0, flying: false };
     const secs = this.dealer?.sections || [];
     const secLabel = (/** @type {any} */ s) => sectionCode(sectionName(s?.name || '')).label;
     const foot =
@@ -1980,7 +1980,7 @@ class FpgPartsFinder extends HTMLElement {
       const fit = Math.min((scroll.clientWidth - 16) / w, (scroll.clientHeight - 16) / h);
       const shown = Math.max(40, Math.round(w * fit * state.zoom));
       img.style.width = `${shown}px`;
-      sharpen(img, shown);
+      if (!state.flying) sharpen(img, shown);
       scroll.dataset.zoomed = String(state.zoom > 1);
       const label = dialog.querySelector('[data-v-zoom-label]');
       if (label) label.textContent = state.zoom <= 1 ? '' : `${Math.round(state.zoom * 100)}%`;
@@ -1998,6 +1998,8 @@ class FpgPartsFinder extends HTMLElement {
       const before = stage.getBoundingClientRect();
       const fx = before.width ? (a.x - before.left) / before.width : 0.5;
       const fy = before.height ? (a.y - before.top) / before.height : 0.5;
+      state.fly++;
+      state.flying = false;
       state.zoom = Math.max(1, Math.min(ZOOM_MAX, z));
       size();
       const after = stage.getBoundingClientRect();
@@ -2005,11 +2007,63 @@ class FpgPartsFinder extends HTMLElement {
       scroll.scrollTop += after.top + fy * after.height - a.y;
     };
 
+    /* A picked part: zoom and pan so it (or all its copies) sits mid-drawing with room around it. Traced parts only. */
+    const frame = (/** @type {any[]} */ picked) => {
+      const scroll = dialog.querySelector('[data-v-scroll]');
+      const stage = dialog.querySelector('[data-v-stage]');
+      const img = dialog.querySelector('[data-v-stage] img');
+      const boxes = picked.filter((b) => b && b.d);
+      if (!(scroll instanceof HTMLElement) || !(stage instanceof HTMLElement) || !(img instanceof HTMLImageElement) || !boxes.length) return;
+      const w = Number(img.dataset.w) || img.naturalWidth;
+      const h = Number(img.dataset.h) || img.naturalHeight;
+      if (!w || !h) return;
+      const x1 = Math.min(...boxes.map((b) => b.x1));
+      const y1 = Math.min(...boxes.map((b) => b.y1));
+      const x2 = Math.max(...boxes.map((b) => b.x2));
+      const y2 = Math.max(...boxes.map((b) => b.y2));
+      /* Room around the part: never less than a fifth of the drawing, so a washer isn't blown up to fill the screen. */
+      const least = Math.min(w, h) * 0.22;
+      const fw = Math.max((x2 - x1) * 1.8, least);
+      const fh = Math.max((y2 - y1) * 1.8, least);
+      const fit = Math.min((scroll.clientWidth - 16) / w, (scroll.clientHeight - 16) / h);
+      const to = Math.max(1, Math.min(ZOOM_MAX, scroll.clientWidth / (fit * fw), scroll.clientHeight / (fit * fh)));
+      const cx = (x1 + x2) / 2 / w;
+      const cy = (y1 + y2) / 2 / h;
+      const place = (/** @type {number} */ z, /** @type {number} */ fx, /** @type {number} */ fy) => {
+        state.zoom = z;
+        size();
+        const s = stage.getBoundingClientRect();
+        const r = scroll.getBoundingClientRect();
+        scroll.scrollLeft += s.left + fx * s.width - (r.left + scroll.clientWidth / 2);
+        scroll.scrollTop += s.top + fy * s.height - (r.top + scroll.clientHeight / 2);
+      };
+      const s0 = stage.getBoundingClientRect();
+      const r0 = scroll.getBoundingClientRect();
+      const from = { z: state.zoom, x: (r0.left + scroll.clientWidth / 2 - s0.left) / (s0.width || 1), y: (r0.top + scroll.clientHeight / 2 - s0.top) / (s0.height || 1) };
+      const run = ++state.fly;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return place(to, cx, cy);
+      const t0 = performance.now();
+      state.flying = true;
+      const step = (/** @type {number} */ now) => {
+        if (run !== state.fly || !dialog.isConnected) return;
+        const k = Math.min(1, (now - t0) / 340);
+        const e = 1 - Math.pow(1 - k, 3);
+        if (k >= 1) state.flying = false;
+        place(from.z + (to - from.z) * e, from.x + (cx - from.x) * e, from.y + (cy - from.y) * e);
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
     dialog.addEventListener('click', (e) => {
       const t = /** @type {HTMLElement} */ (e.target);
       if (t === dialog || t.closest('[data-v-close]')) return shut();
       const hot = t.closest('[data-hot]');
-      if (hot instanceof HTMLElement || hot instanceof SVGElement) return this.showNumber(dialog, sec, state.maps[Number(hot.dataset.hot)], state.maps, true, say);
+      if (hot instanceof HTMLElement || hot instanceof SVGElement) {
+        const box = state.maps[Number(hot.dataset.hot)];
+        this.showNumber(dialog, sec, box, state.maps, true, say);
+        return frame([box]);
+      }
       const secStep = t.closest('[data-v-sec]');
       if (secStep instanceof HTMLElement) {
         const to = index + Number(secStep.dataset.vSec);
@@ -2033,7 +2087,11 @@ class FpgPartsFinder extends HTMLElement {
       if (row instanceof HTMLElement && !t.closest('a,button')) {
         const part = (sec.parts || [])[Number(row.dataset.vRow)];
         const box = state.maps.find((b) => matchesPart(b, part));
-        if (box) this.showNumber(dialog, sec, box, state.maps, false, say);
+        if (box) {
+          this.showNumber(dialog, sec, box, state.maps, false, say);
+          /* From the list: every copy of the part on the drawing, framed together. */
+          frame(state.maps.filter((b) => b.a === box.a));
+        }
       }
     });
     dialog.addEventListener('wheel', (e) => {
@@ -2066,7 +2124,9 @@ class FpgPartsFinder extends HTMLElement {
       const shape = e.target instanceof SVGElement ? e.target.closest('[data-hot]') : null;
       if (shape instanceof SVGElement && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
-        return this.showNumber(dialog, sec, state.maps[Number(shape.dataset.hot)], state.maps, true, say);
+        const box = state.maps[Number(shape.dataset.hot)];
+        this.showNumber(dialog, sec, box, state.maps, true, say);
+        return frame([box]);
       }
       if (e.key === 'ArrowRight' && at < pics.length - 1) {
         at++;
@@ -2260,8 +2320,6 @@ class FpgPartsFinder extends HTMLElement {
       row.classList.toggle('is-on', on);
       if (on && !first) first = /** @type {HTMLElement} */ (row);
     });
-    /* Picked from the list: bring its place on a zoomed drawing into view. */
-    if (!scrollList) dialog.querySelector('.fpg-pf-v__part.is-on')?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
     if (scrollList) {
       /** @type {HTMLElement | null} */ (first)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       const what = box.d ? 'Part' : 'Number';
