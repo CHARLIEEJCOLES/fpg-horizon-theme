@@ -438,7 +438,9 @@
 
 /* The wide stroke stays invisible (it only makes small parts easier to hit). What shows is a tint, a fine line and a
    glow, so a washer keeps its shape instead of vanishing under a thick outline. */
+/* is-front: the small part brought forward after the pointer rested on an overlap (assets/fpg-parts.js). */
 .fpg-pf-viewer .fpg-pf-v__part:hover,
+.fpg-pf-viewer .fpg-pf-v__part.is-front,
 .fpg-pf-viewer .fpg-pf-v__part:focus-visible {
   fill: rgb(95 125 109 / 0.26);
   filter: drop-shadow(0 0 2px rgb(95 125 109 / 0.9));

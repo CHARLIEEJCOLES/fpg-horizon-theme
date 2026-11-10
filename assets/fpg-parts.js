@@ -2129,6 +2129,28 @@ class FpgPartsFinder extends HTMLElement {
       if (state.drag) delete state.drag.scroll.dataset.dragging;
       state.drag = null;
     };
+    /* Where traced parts overlap, the one on top takes the click. Rest the pointer for a second and a half and the
+       smallest part under it comes to the front, so a bolt sitting on a panel can be picked. */
+    let rest = 0;
+    dialog.addEventListener('pointermove', (e) => {
+      window.clearTimeout(rest);
+      if (state.drag || !(e.target instanceof SVGElement) || !e.target.closest('.fpg-pf-v__part')) return;
+      const { clientX: x, clientY: y } = e;
+      rest = window.setTimeout(() => {
+        if (!dialog.isConnected) return;
+        const under = document.elementsFromPoint(x, y).filter((el) => el instanceof SVGGraphicsElement && el.classList.contains('fpg-pf-v__part'));
+        if (under.length < 2) return;
+        const area = (/** @type {Element} */ el) => {
+          const r = el.getBoundingClientRect();
+          return r.width * r.height;
+        };
+        const smallest = under.reduce((a, b) => (area(b) < area(a) ? b : a));
+        dialog.querySelectorAll('.fpg-pf-v__part.is-front').forEach((el) => el.classList.remove('is-front'));
+        smallest.classList.add('is-front');
+        if (smallest !== under[0]) smallest.parentNode?.append(smallest);
+      }, 1500);
+    });
+    dialog.addEventListener('pointerleave', () => window.clearTimeout(rest));
     dialog.addEventListener('pointerup', endDrag);
     dialog.addEventListener('pointercancel', endDrag);
     dialog.addEventListener('keydown', (e) => {
