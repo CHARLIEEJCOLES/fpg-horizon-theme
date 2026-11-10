@@ -136,7 +136,7 @@ def machine_snippet(m):
     o.append('<nav class="fpg-fo-jump" aria-label="On this page"><div class="fpg-fo-wrap"><ul>' + ''.join(f'<li><a href="{h}">{t}</a></li>' for h, t in jumps) + '</ul></div></nav>')
 
     # ---- features
-    o.append(f'<section class="fpg-fo-sec" id="features"><div class="fpg-fo-wrap"><h2 class="fpg-fo-h2">How the {e(name)} is built</h2><ul class="fpg-fo-feats fpg-fo-feats--r{len(m["features"]) % 3}" role="list">')
+    o.append(f'<section class="fpg-fo-sec" id="features"><div class="fpg-fo-wrap"><h2 class="fpg-fo-h2">How the {e(name)} is built</h2><ul class="fpg-fo-feats fpg-fo-feats--r{len(m["features"]) % 3}{" fpg-fo-feats--odd" if len(m["features"]) % 2 else ""}" role="list">')
     for k in m['features']:
         title, text, _ = FEATURES[k]
         o.append('<li class="fpg-fo-feat">' + img(feature_file(k), [400, 768], '(min-width: 990px) 30vw, (min-width: 600px) 46vw, 92vw', w=768, h=576)

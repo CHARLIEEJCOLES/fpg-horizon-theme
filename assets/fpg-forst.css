@@ -459,6 +459,21 @@
   }
 }
 
+/* Two across on a tablet: an odd count gives the first feature the full row. */
+@media (min-width: 600px) and (max-width: 989px) {
+  .fpg-fo-feats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fpg-fo-feats--odd > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .fpg-fo-feats--odd > :first-child img {
+    aspect-ratio: 21 / 9;
+  }
+}
+
 /* Three across leaves one or two over on some machines (r1, r2: the count's remainder). The first feature then
    takes the spare room, as a wide lead, so the last row is always full. */
 @media (min-width: 990px) {
