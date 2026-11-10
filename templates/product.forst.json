@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "forst": {
+      "type": "fpg-forst-machine",
+      "settings": {}
+    },
+    "fpg_recent": {
+      "type": "fpg-recently-viewed",
+      "settings": {}
+    }
+  },
+  "order": [
+    "forst",
+    "fpg_recent"
+  ]
+}

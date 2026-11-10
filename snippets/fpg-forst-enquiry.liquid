@@ -1,0 +1,70 @@
+{%- doc -%}
+  The Först enquiry form (machine pages and the range page). Sent to the shop through the contact form, with the
+  machine and what the customer wants in the message. Beside it: how to reach us and what happens next.
+
+  @param {string} [machine] - The machine the page is about; empty shows a machine picker
+  @param {string} [heading] - The section's heading
+
+  @example
+  {% render 'fpg-forst-enquiry', machine: 'ST6P', heading: 'Ask about the ST6P' %}
+{%- enddoc -%}
+
+{%- liquid
+  assign phone = shop.phone | default: '01443 230000'
+  assign form_id = 'FpgForstEnquiry-' | append: section.id
+-%}
+<section class="fpg-fo-sec fpg-fo-sec--dark fpg-fo-enq" id="enquire">
+  <div class="fpg-fo-wrap fpg-fo-enq__grid">
+    <div class="fpg-fo-enq__side">
+      <h2 class="fpg-fo-h2">{{ heading | default: 'Talk to us about a Först' }}</h2>
+      <p class="fpg-fo-lead">Tell us what you're chipping and where. We'll come back with a price, what's in stock, and a demonstration if you want to see it work first.</p>
+      <ol class="fpg-fo-steps">
+        <li><strong>Send the form or call.</strong> It reaches our machinery team in Treforest.</li>
+        <li><strong>We call you back.</strong> Price, availability, and answers on finance or part exchange.</li>
+        <li><strong>See it chip.</strong> We arrange a demonstration before you commit.</li>
+      </ol>
+      <p class="fpg-fo-enq__call">Prefer to talk? <a href="tel:{{ phone | remove: ' ' }}">{{ phone }}</a></p>
+      <p class="fpg-fo-small">Forest Park &amp; Garden, Coed Court, Treforest. Sales, workshop servicing and parts under one roof.</p>
+    </div>
+    {%- form 'contact', id: form_id, class: 'fpg-fo-form' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="fpg-fo-form__sent" role="status" tabindex="-1" data-fo-sent>Thanks. Your enquiry is with our machinery team and we'll be in touch.</p>
+      {%- endif -%}
+      {%- if form.errors -%}
+        <div class="fpg-fo-form__error" role="alert">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+      <input type="hidden" name="contact[Enquiry]" value="Först woodchipper">
+      {%- if machine != blank -%}
+        <input type="hidden" name="contact[Machine]" value="Först {{ machine | escape }}">
+      {%- else -%}
+        <label class="fpg-fo-field">
+          <span>Which machine?</span>
+          <select name="contact[Machine]">
+            <option value="Not sure yet">Not sure yet</option>
+            <option>Först ST6P</option><option>Först ST6P HD</option><option>Först ST6D 24</option><option>Först ST6D 42</option><option>Först ST8D</option>
+            <option>Först TR6P</option><option>Först TR6D 24</option><option>Först TR6D 42</option><option>Först TR8D</option><option>Först XR8D</option>
+          </select>
+        </label>
+      {%- endif -%}
+      <fieldset class="fpg-fo-checks">
+        <legend>I'd like</legend>
+        <label><input type="checkbox" name="contact[Wants a price]" value="Yes" checked> <span>A price</span></label>
+        <label><input type="checkbox" name="contact[Wants a demonstration]" value="Yes"> <span>A demonstration</span></label>
+        <label><input type="checkbox" name="contact[Wants finance]" value="Yes"> <span>Finance</span></label>
+        <label><input type="checkbox" name="contact[Has a part exchange]" value="Yes"> <span>Part exchange</span></label>
+      </fieldset>
+      <div class="fpg-fo-fields">
+        <label class="fpg-fo-field"><span>Name</span><input type="text" name="contact[name]" autocomplete="name" required value="{{ form.name | escape }}"></label>
+        <label class="fpg-fo-field"><span>Phone</span><input type="tel" name="contact[Phone]" autocomplete="tel" required></label>
+        <label class="fpg-fo-field"><span>Email</span><input type="email" name="contact[email]" autocomplete="email" required value="{{ form.email | escape }}"></label>
+        <label class="fpg-fo-field"><span>Postcode <small>(for demonstrations)</small></span><input type="text" name="contact[Postcode]" autocomplete="postal-code"></label>
+      </div>
+      <label class="fpg-fo-field">
+        <span>Anything we should know? <small>(optional)</small></span>
+        <textarea name="contact[body]" rows="4" placeholder="What you chip, how often, any part exchange"></textarea>
+      </label>
+      <button type="submit" class="fpg-fo-btn fpg-fo-btn--go">Send enquiry</button>
+      <p class="fpg-fo-small">We only use your details to answer this enquiry.</p>
+    {%- endform -%}
+  </div>
+</section>

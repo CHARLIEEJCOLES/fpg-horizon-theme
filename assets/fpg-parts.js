@@ -1310,7 +1310,7 @@ class FpgPartsFinder extends HTMLElement {
         </li>`;
     const kind = brand.types.length === 1 ? brand.types[0].name.toLowerCase() : 'machine';
     this.view.innerHTML = `
-      <div class="fpg-pf-show">
+      <div class="fpg-pf-show"${maker.skin ? ` data-fpg-skin="${esc(maker.skin)}"` : ''}>
         <div class="fpg-pf-head">
           ${brand.logo || brand.photo ? `<span class="fpg-pf-head__logo">${this.brandPic(brand)}</span>` : ''}
           <div>
@@ -1538,7 +1538,7 @@ class FpgPartsFinder extends HTMLElement {
     const hosted = !unavailable && this.hasMaker(model);
     const expectDiagrams = !unavailable && (hosted || !!supplier || !model.type.id);
     this.view.innerHTML = `
-      <div class="fpg-pf-machine">
+      <div class="fpg-pf-machine"${this.modelMaker.get(String(model.id))?.skin ? ` data-fpg-skin="${esc(this.modelMaker.get(String(model.id)).skin)}"` : ''}>
         ${
           this.modelMaker.get(String(model.id))?.mi?.[String(model.id)]
             ? `<span class="fpg-pf-machine__icon fpg-pf-machine__icon--photo"><img src="${esc(this.makerImage(this.modelMaker.get(String(model.id)).mi[String(model.id)], 300, this.modelMaker.get(String(model.id))))}" alt="${esc(`${brand.name} ${model.name}`)}" width="84" height="84"></span>`

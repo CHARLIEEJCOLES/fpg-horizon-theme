@@ -162,6 +162,7 @@ def main():
         # The brand's page in the finder: a photo card per machine (our own product photos), and the same photo on the machine's page.
         'lead': "Pick your chipper to open Forst's own 3D parts drawings. Click a part on the drawing to see its price and add it to the basket.",
         'cards': CARDS,
+        'skin': 'forst',  # the site takes Först's colours on these pages (assets/fpg-design.css)
         'mi': {mid: c['pic'] for mid, c in CARDS.items()},
         # The brands page quotes this: every Forst part number across the machines' lists.
         'counts': {'Forst': len({r[1] for m in models.values() for sec in m['sections'] for r in sec['parts']})},

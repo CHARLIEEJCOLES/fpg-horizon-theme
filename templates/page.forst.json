@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "forst": {
+      "type": "fpg-forst-range",
+      "settings": {}
+    }
+  },
+  "order": [
+    "forst"
+  ]
+}

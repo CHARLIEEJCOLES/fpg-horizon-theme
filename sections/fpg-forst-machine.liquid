@@ -1,0 +1,53 @@
+{%- comment -%}
+  A Först chipper's page (templates/product.forst.json). Each machine's content is its own snippet, built by
+  fpg-tools/forst/pages/build.py; this section picks the one for the product. A Först product without a snippet
+  gets the range page link and the enquiry form.
+{%- endcomment -%}
+{{ 'fpg-forst.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign range_url = section.settings.range_url | default: '/pages/forst-woodchippers'
+  if theme.role != 'main' and section.settings.range_url == blank
+    assign range_url = '/pages/contact?view=forst'
+  endif
+-%}
+{%- render 'fpg-product-jsonld', product: product -%}
+{%- case product.handle -%}
+  {%- when 'forst-st6p-wheeled-woodchipper' -%}
+    {%- render 'fpg-forst-m-st6p', product: product, range_url: range_url -%}
+  {%- when 'forst-st6p-hd-wheeled-woodchipper' -%}
+    {%- render 'fpg-forst-m-st6p-hd', product: product, range_url: range_url -%}
+  {%- when 'forst-st6d24-wheeled-woodchipper' -%}
+    {%- render 'fpg-forst-m-st6d-24', product: product, range_url: range_url -%}
+  {%- when 'forst-st6d42-wheeled-woodchipper' -%}
+    {%- render 'fpg-forst-m-st6d-42', product: product, range_url: range_url -%}
+  {%- when 'forst-st8d-wheeled-woodchipper' -%}
+    {%- render 'fpg-forst-m-st8d', product: product, range_url: range_url -%}
+  {%- when 'forst-tr6p-tracked-woodchipper' -%}
+    {%- render 'fpg-forst-m-tr6p', product: product, range_url: range_url -%}
+  {%- when 'forst-tr6d24-tracked-woodchipper' -%}
+    {%- render 'fpg-forst-m-tr6d-24', product: product, range_url: range_url -%}
+  {%- when 'forst-tr6d42-tracked-woodchipper' -%}
+    {%- render 'fpg-forst-m-tr6d-42', product: product, range_url: range_url -%}
+  {%- when 'forst-tr8d-tracked-woodchipper' -%}
+    {%- render 'fpg-forst-m-tr8d', product: product, range_url: range_url -%}
+  {%- when 'forst-xr8d-tracked-woodchipper' -%}
+    {%- render 'fpg-forst-m-xr8d', product: product, range_url: range_url -%}
+  {%- when 'forst-tt6-turntable-wheeled-woodchipper' -%}
+    {%- render 'fpg-forst-m-tt6', product: product, range_url: range_url -%}
+  {%- when 'forst-st8p-wheeled-woodchipper' -%}
+    {%- render 'fpg-forst-m-st8p', product: product, range_url: range_url -%}
+  {%- else -%}
+    <div class="fpg-fo" data-fpg-skin="forst"><div class="fpg-fo-wrap fpg-fo-sec"><h1 class="fpg-fo-h2">{{ product.title | escape }}</h1><div class="rte">{{ product.description }}</div><p><a class="fpg-fo-link" href="{{ range_url }}">See the Först range</a></p></div>{%- render 'fpg-forst-enquiry', machine: product.title, heading: 'Ask about this machine' -%}</div>
+{%- endcase -%}
+<script src="{{ 'fpg-cart.js' | asset_url }}" type="module"></script>
+<script src="{{ 'fpg-forst.js' | asset_url }}" type="module"></script>
+{% schema %}
+{
+  "name": "FP&G Först machine",
+  "tag": "section",
+  "class": "fpg-forst-section",
+  "settings": [
+    { "type": "url", "id": "range_url", "label": "Först range page", "info": "Where \"Först woodchippers\" in the breadcrumb goes. Empty: /pages/forst-woodchippers." }
+  ]
+}
+{% endschema %}

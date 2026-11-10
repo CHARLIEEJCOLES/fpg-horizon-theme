@@ -1,0 +1,53 @@
+{%- doc -%}
+  One line of a Först machine's service kit (snippets/fpg-forst-m-*.liquid). Shows what the part is and its
+  number; when the part is on sale online it adds our price, stock and an Add button, otherwise "Ask us".
+
+  @param {string} handle - Our product's handle for the part
+  @param {string} sku - The Först part number
+  @param {string} label - What the part is, e.g. "Engine oil filter"
+  @param {string} [note] - A service note, e.g. when to change it
+  @param {number} [qty] - How many the machine takes (default 1)
+
+  @example
+  {% render 'fpg-forst-kit-row', handle: '6484', sku: '24-99-003', label: 'Engine oil filter', qty: 1 %}
+{%- enddoc -%}
+
+{%- liquid
+  assign part = all_products[handle]
+  assign variant = part.selected_or_first_available_variant
+  assign count = qty | default: 1
+  assign buyable = false
+  if part.id != blank and variant.price > 0
+    assign buyable = true
+  endif
+-%}
+<li class="fpg-fo-kit__row">
+  <div class="fpg-fo-kit__what">
+    <strong>{{ label }}{% if count > 1 %} <span class="fpg-fo-kit__qty">× {{ count }}</span>{% endif %}</strong>
+    <span>Part no. {% if buyable %}<a href="{{ part.url }}">{{ sku }}</a>{% else %}{{ sku }}{% endif %}{% if note != blank %} · {{ note }}{% endif %}</span>
+  </div>
+  {%- if buyable -%}
+    <div class="fpg-fo-kit__price">
+      <span class="fpg-fo-kit__money">{% render 'fpg-vat-price', amount: variant.price, taxable: variant.taxable %}</span>
+      {%- if variant.inventory_quantity > 0 -%}
+        <span class="fpg-fo-kit__stock is-in">{{ variant.inventory_quantity }} in stock</span>
+      {%- elsif variant.available -%}
+        <span class="fpg-fo-kit__stock">Order in</span>
+      {%- else -%}
+        <span class="fpg-fo-kit__stock is-out">Out of stock</span>
+      {%- endif -%}
+    </div>
+    {%- if variant.available -%}
+      <form class="fpg-fo-kit__buy" action="{{ routes.cart_add_url }}" method="post">
+        <input type="hidden" name="id" value="{{ variant.id }}">
+        <input type="hidden" name="quantity" value="{{ count }}">
+        <button type="submit" class="fpg-fo-btn fpg-fo-btn--dark fpg-fo-btn--sm" data-fo-add="{{ variant.id }}" data-fo-qty="{{ count }}" aria-label="Add {{ label | escape }} {{ sku | escape }} to basket">Add</button>
+      </form>
+    {%- else -%}
+      <a class="fpg-fo-kit__ask" href="#enquire">Ask us</a>
+    {%- endif -%}
+  {%- else -%}
+    <div class="fpg-fo-kit__price"><span class="fpg-fo-kit__stock">Price on request</span></div>
+    <a class="fpg-fo-kit__ask" href="#enquire">Ask us</a>
+  {%- endif -%}
+</li>

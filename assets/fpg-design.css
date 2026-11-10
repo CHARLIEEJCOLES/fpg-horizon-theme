@@ -1071,3 +1071,25 @@ product-card product-price .fpg-vat,
 [id$='__fpg_finder'] .cws_ymm_box_cont {
   width: 100%;
 }
+
+/* ---------- Först skin ----------
+   Pages about Först (a chipper's page, the range page, Först in the parts finder) carry data-fpg-skin="forst".
+   On those pages the site's teal gives way to Först's charcoal, with a strip of their orange hazard chevrons
+   under the header. Everything else about the theme stays as it is. */
+html:has([data-fpg-skin='forst']) {
+  --fpg-teal: #17191a;
+  --fpg-teal-2: #2b3033;
+  --fpg-sage: #6b7276;
+  --fpg-pale: #e3e5e4;
+  --fpg-mist: #f3f4f3;
+  --fpg-line: #dcdfde;
+  --fpg-ink: #17191a;
+  --fpg-forst: #f05a22;
+}
+
+html:has([data-fpg-skin='forst']) .content-for-layout::before {
+  content: '';
+  display: block;
+  height: 8px;
+  background: repeating-linear-gradient(-45deg, #f05a22 0 14px, #17191a 14px 28px);
+}
