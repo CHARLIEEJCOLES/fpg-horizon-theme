@@ -26,11 +26,16 @@ MODELS = {
 
 def our_sku(no, skus):
     """Our SKU for a Forst part number: the same (any letter case), or with/without a trailing .P/.B style suffix."""
-    low = {k.lower(): k for k in skus}
+    low = {norm(k): k for k in skus}
     for cand in (no, re.sub(r'\.[A-Z]+$', '', no), no + '.P', no + '.B'):
-        if cand.lower() in low:
-            return low[cand.lower()]
+        if norm(cand) in low:
+            return low[norm(cand)]
     return None
+
+
+def norm(sku):
+    """A SKU without case or punctuation, so 12-19-051B, 12-19-051.B and D1855 / D18.55 meet."""
+    return re.sub(r'[^0-9a-z]', '', sku.lower())
 
 
 def main():
