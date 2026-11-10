@@ -99,7 +99,7 @@ def main(files):
         for base, url in d['part'].items():
             no = base.replace('_', '.')
             if no not in pics:
-                fn = 'forst-part-' + re.sub(r'[^0-9A-Za-z.-]', '-', no) + '.webp'
+                fn = 'forst-part-' + re.sub(r'[^0-9A-Za-z-]', '-', no) + '.webp'
                 save_webp(url, IMG / fn)
                 pics[no] = fn
         sections_all[slug] = secs
