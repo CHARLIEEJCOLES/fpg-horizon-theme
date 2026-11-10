@@ -2068,6 +2068,13 @@ class FpgPartsFinder extends HTMLElement {
         if (k < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
+      /* If the browser isn't drawing frames (a tab in the background), still end up on the part. */
+      setTimeout(() => {
+        if (run !== state.fly || !dialog.isConnected || !state.flying) return;
+        state.fly++;
+        state.flying = false;
+        place(to, cx, cy);
+      }, 900);
     };
 
     state.frame = frame;
