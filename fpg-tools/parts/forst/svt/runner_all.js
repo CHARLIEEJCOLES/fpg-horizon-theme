@@ -168,7 +168,8 @@ async function runMachine(slug, S) {
         const mesh = (p.href.match(/[?&]mesh=([^&]+)/) || [])[1];
         const base = mesh ? decodeURIComponent(mesh).replace(/_\d{3}$/, '') : '';
         // Each part once per assembly, for its place on the assembly's picture; its own picture once overall.
-        if (!mesh || SMALL.test(p.name) || here.has(base)) continue;
+        // Track units list their maker's CAD pieces ("Copy_of_..."): not Forst parts, so no pictures.
+        if (!mesh || SMALL.test(p.name) || here.has(base) || /^Copy_of_/.test(base)) continue;
         here.add(base);
         todo.push({ kind: 'part', url: p.href, base, asm: n.url, pic: !seen.has(base) });
         seen.add(base);
