@@ -1093,6 +1093,12 @@ html:has([data-fpg-skin='forst']) .shopify-section-group-header-group :is(.heade
   background-color: #17191a;
 }
 
+/* The header paints its rows a second time on an underlay (seen when it sticks or a menu opens), from colours set inline. */
+html:has([data-fpg-skin='forst']) #header-component {
+  --color-background-top-row: #17191a !important;
+  --color-background-bottom-row: #17191a !important;
+}
+
 html:has([data-fpg-skin='forst']) .content-for-layout::before {
   content: '';
   display: block;

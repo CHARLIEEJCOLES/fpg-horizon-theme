@@ -1142,13 +1142,26 @@
   font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
 }
 
+/* One, two, then three across: each group is five machines and a note, so every row is full. */
 .fpg-fo-range {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(14px, 2vw, 24px);
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+@media (min-width: 600px) {
+  .fpg-fo-range {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 990px) {
+  .fpg-fo-range {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .fpg-fo-card {
@@ -1183,9 +1196,10 @@
   transform: scale(1.04);
 }
 
+/* The description takes the slack, so figures and buttons line up along a row of cards. */
 .fpg-fo-card__body {
-  display: grid;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   padding: 18px 20px 20px;
 }
@@ -1204,6 +1218,7 @@
 }
 
 .fpg-fo-card__body > p {
+  flex: 1;
   margin: 0;
   color: var(--fo-soft);
 }
@@ -1242,6 +1257,32 @@
   text-decoration-color: var(--fo-orange);
   text-decoration-thickness: 2px;
   text-underline-offset: 4px;
+}
+
+/* The sixth card in a group: no machine, so it is set on charcoal with its words at the foot. */
+.fpg-fo-card--note {
+  grid-template-rows: 1fr;
+  border-color: var(--fo-black);
+  background: var(--fo-black);
+  color: #fff;
+}
+
+.fpg-fo-card--note:hover {
+  border-color: var(--fo-black);
+  box-shadow: none;
+  transform: none;
+}
+
+.fpg-fo-card--note .fpg-fo-card__body {
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 28px 24px;
+}
+
+.fpg-fo-card--note .fpg-fo-card__body > p {
+  flex: 0 1 auto;
+  max-width: 34ch;
+  color: var(--fo-ash);
 }
 
 /* The comparison, on charcoal. */
@@ -1346,6 +1387,19 @@
 
 .fpg-fo-older td {
   white-space: normal;
+}
+
+/* The oil grade stays on one line. */
+.fpg-fo-older td:nth-child(2) {
+  white-space: nowrap;
+}
+
+.fpg-fo-older td a {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--fo-orange);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }
 
 .fpg-fo-older tr:last-child :is(th, td) {

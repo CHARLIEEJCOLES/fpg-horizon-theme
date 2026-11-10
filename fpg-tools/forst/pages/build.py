@@ -226,6 +226,16 @@ def range_section():
                      f'<dl><div><dt>Opening</dt><dd>{e(m["cap"])}</dd></div><div><dt>Engine</dt><dd>{e(m["power"])} {e(m["engine"].split(" V-twin")[0].replace("Briggs & Stratton ", ""))}</dd></div><div><dt>Weight</dt><dd>{e(m["weight"])}</dd></div></dl>'
                      f'<div class="fpg-fo-card__links"><a class="fpg-fo-btn fpg-fo-btn--dark fpg-fo-btn--sm" href="{product_url(m)}">See the {e(m["name"])}</a>'
                      f'<a href="{product_url(m)}#service-kit">Service kit</a><a href="{finder_url(m)}">Parts</a></div></div></li>')
+        # Five machines in each group: a sixth card closes the row and says something a card for a machine can't.
+        if kind == 'wheeled':
+            note = ('TT6 and ST8P', 'Two more wheeled machines: the TT6 turntable chipper and the 8-inch petrol ST8P. Ask us what’s available.',
+                    [(product_url(x), f'See the {x["name"]}') for x in LEGACY])
+        else:
+            note = ('Not sure which one?', 'Tell us what you chip, how often, and where the machine has to get to. We’ll point you at the right chipper.',
+                    [('#enquire', 'Ask us'), ('#compare', 'Compare the range')])
+        o.append(f'<li class="fpg-fo-card fpg-fo-card--note"><div class="fpg-fo-card__body"><h3>{e(note[0])}</h3><p>{e(note[1])}</p><div class="fpg-fo-card__links">'
+                 + ''.join(f'<a class="fpg-fo-btn fpg-fo-btn--{"go" if i == 0 else "line"} fpg-fo-btn--sm" href="{h}">{e(t)}</a>' for i, (h, t) in enumerate(note[2]))
+                 + '</div></div></li>')
         o.append('</ul></div></section>')
 
     # comparison
@@ -260,7 +270,8 @@ def range_section():
     for label, key in OLDER_KITS:
         oil, items = KITS[key]
         o.append(f'<tr><th scope="row">{e(label)}</th><td>{e(oil)}</td><td>' + ', '.join(
-            f'{e(KIT_PARTS[s][0])} <a href="/products/{KIT_PARTS[s][2]}">{e(s)}</a>{" × " + str(q) if q > 1 else ""}' for s, q in items) + '</td></tr>')
+            f'{e(KIT_PARTS[s][0])} ' + "{% assign part = all_products['" + KIT_PARTS[s][2] + "'] %}{% if part.id %}<a href=\"{{ part.url }}\">" + e(s) + "</a>{% else %}" + e(s) + "{% endif %}"
+            + (" × " + str(q) if q > 1 else "") for s, q in items) + '</td></tr>')
     o.append('</tbody></table></div></details></div></section>')
 
     o.append("{%- render 'fpg-forst-enquiry', machine: '', heading: 'Talk to us about a Först' -%}")
