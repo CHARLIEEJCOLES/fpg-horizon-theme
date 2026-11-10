@@ -919,6 +919,8 @@ class FpgPartsFinder extends HTMLElement {
 
   /** A maker's photo at a given size (maker.pimg: an address with {s} for the size and {p} for the picture). */
   makerImage(/** @type {string} */ path, /** @type {number} */ size, /** @type {any} */ maker = this.maker) {
+    /* A full address (our own product photo on Shopify's CDN) is sized with ?width= instead. */
+    if (path && /^https?:\/\//.test(path)) return sizedUrl(path, size);
     return path && maker?.pimg ? String(maker.pimg).replace(/\{s\}/g, String(size)).replace('{p}', path) : '';
   }
 
