@@ -133,7 +133,7 @@ def main(files):
             name = ' › '.join(n['path'][-2:]) if n['path'] else 'Machine'
             pic, off, wh = '', (0, 0), None
             if n['url'] in d['asm']:
-                pic = f'forst-v3-{slug}-{i:02d}.webp'
+                pic = f'forst-v4-{slug}-{i:02d}.webp'
                 mine = [s for s in (d.get('spots') or {}).get(n['url'], []) if s[0].replace('_', '.') in {r[0] for r in rows}]
                 off, wh = save_view(d['asm'][n['url']], IMG / pic, mine)
             ref = {r[0]: str(k) for k, r in enumerate(rows, start=1)}
