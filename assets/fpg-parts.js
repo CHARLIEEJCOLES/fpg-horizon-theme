@@ -907,8 +907,9 @@ class FpgPartsFinder extends HTMLElement {
     const brand = this.data?.models.find((m) => String(m.id) === String(id))?.type.brand.name || maker.brand || '';
     /* An entry is the model's sections, or the ids of its parts lists (one section each), kept in shared files of maker.per lists. */
     let secs = entry?.sections || [];
+    /* The maker's picture of each part (part number -> picture, sized through maker.pimg), for makers whose lists sit in the file itself (Forst). */
     /** @type {Record<string, string>} */
-    let imgs = {};
+    let imgs = { ...(maker.pi || {}) };
     if (Array.isArray(entry)) {
       /* Each list is its id, or [id, which machines it's for] when the model has several. */
       const ids = entry.map((e) => (Array.isArray(e) ? e : [e, '']));
@@ -919,7 +920,7 @@ class FpgPartsFinder extends HTMLElement {
       /** @type {Record<string, any>} */
       const lists = Object.assign({}, ...got.map((f) => f?.lists || {}));
       /* The maker's photo of each part (part number -> picture), where it has one. */
-      imgs = Object.assign({}, ...got.map((f) => f?.img || {}));
+      imgs = Object.assign(imgs, ...got.map((f) => f?.img || {}));
       const img = (/** @type {string} */ pic) => (/^(https?:)?\/\//.test(pic) ? pic : String(maker.img || '').replace('{id}', pic));
       secs = ids
         .filter(([l]) => lists[String(l)])
