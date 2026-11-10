@@ -185,31 +185,19 @@ function spin() {
     canvas.setAttribute('aria-label', pic.querySelector('img')?.alt || '');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    let at = 0;
     let shown = -1;
-    let running = false;
-    const target = () => Math.max(0, Math.min(1, window.scrollY / (window.innerHeight * 1.1))) * (frames.length - 1);
+    /* The whole turn over the first screen-and-a-bit of scrolling, drawn as each scroll arrives. */
     const draw = () => {
-      /* Ease towards where the scroll is, so a flick of the wheel still turns the machine smoothly. */
-      const to = target();
-      at += (to - at) * 0.18;
-      if (Math.abs(to - at) < 0.05) at = to;
-      const i = Math.round(at);
-      if (i !== shown) {
-        shown = i;
-        ctx.drawImage(frames[i], 0, 0);
-      }
-      running = at !== to;
-      if (running) requestAnimationFrame(draw);
+      const i = Math.round(Math.max(0, Math.min(1, window.scrollY / (window.innerHeight * 1.1))) * (frames.length - 1));
+      if (i === shown) return;
+      shown = i;
+      ctx.drawImage(frames[i], 0, 0);
+      canvas.dataset.frame = String(i);
     };
     draw();
     pic.classList.add('has-spin');
     pic.append(canvas);
-    window.addEventListener('scroll', () => {
-      if (running) return;
-      running = true;
-      requestAnimationFrame(draw);
-    }, { passive: true });
+    window.addEventListener('scroll', draw, { passive: true });
   };
   clip.addEventListener('loadeddata', collect, { once: true });
   clip.src = pic.dataset.foSpin;

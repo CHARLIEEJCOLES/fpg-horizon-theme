@@ -18,6 +18,12 @@ FILES = 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/'
 FINDER = '/pages/fpg-part-finder'
 maker = json.loads((ROOT / 'assets' / 'fpg-maker-forst.json').read_text())
 ALL = MACHINES + LEGACY
+# Pictures of service kit parts already in Shopify Files (our product photos, or Först's from the parts drawings).
+KIT_PICS = {k: FILES + v for k, v in {
+    '12-24-049': '12-24-049.png', '24-99-002': '24-99-002.png', '24-99-001': '24-99-001.png', '24-99-004': '24-99-004.png',
+    '12-24-047': '12-24-047.png', '12-24-054': '12-24-054.png', '12-01-052': '12-01-052.png', 'JP29-100': 'JP29-100.png',
+    '24-99-005': '24-99-005.png', '24-99-003': 'forst-pt-24-99-003.webp', 'JP01-100': 'forst-pt-JP01-100.webp', '50-99-001': 'forst-pt-50-99-001.webp',
+}.items()}
 # Machines with a turning clip in Shopify Files.
 SPINS = {'st6p': 'fpgf-st6p-spin.mp4'}
 BY_SLUG = {m['slug']: m for m in ALL}
@@ -75,7 +81,7 @@ def kit_rows(kit_key):
     rows = []
     for sku, qty in items:
         label, note, handle = KIT_PARTS[sku]
-        rows.append("{%- render 'fpg-forst-kit-row', handle: '" + handle + "', sku: '" + sku + "', label: '" + label.replace("'", '’') + "', note: '" + note.replace("'", '’') + "', qty: " + str(qty) + " -%}")
+        rows.append("{%- render 'fpg-forst-kit-row', handle: '" + handle + "', sku: '" + sku + "', label: '" + label.replace("'", '’') + "', note: '" + note.replace("'", '’') + "', qty: " + str(qty) + ", image: '" + KIT_PICS.get(sku, '') + "' -%}")
     return oil, rows
 
 

@@ -7,6 +7,7 @@
   @param {string} label - What the part is, e.g. "Engine oil filter"
   @param {string} [note] - A service note, e.g. when to change it
   @param {number} [qty] - How many the machine takes (default 1)
+  @param {string} [image] - A picture of the part (a Shopify Files address); a plain tile is shown without one
 
   @example
   {% render 'fpg-forst-kit-row', handle: '6484', sku: '24-99-003', label: 'Engine oil filter', qty: 1 %}
@@ -23,6 +24,13 @@
 -%}
 <li class="fpg-fo-kit__row">
   <div class="fpg-fo-kit__what">
+    <span class="fpg-fo-kit__pic">
+      {%- if image != blank -%}
+        <img src="{{ image }}{% if image contains '?' %}&{% else %}?{% endif %}width=160" alt="" width="80" height="80" loading="lazy" decoding="async">
+      {%- else -%}
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path d="M7 4h10v3H7zM8 7v12a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V7M11 10v7M13 10v7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      {%- endif -%}
+    </span>
     <strong>{{ label }}{% if count > 1 %} <span class="fpg-fo-kit__qty">× {{ count }}</span>{% endif %}</strong>
     <span>Part no. {% if buyable %}<a href="{{ part.url }}">{{ sku }}</a>{% else %}{{ sku }}{% endif %}{% if note != blank %}, {{ note | downcase }}{% endif %}</span>
   </div>
