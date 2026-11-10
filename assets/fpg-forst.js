@@ -164,7 +164,8 @@ function spin() {
     for (let i = 0; i < COUNT; i++) {
       await new Promise((done) => {
         clip.addEventListener('seeked', done, { once: true });
-        clip.currentTime = (i / COUNT) * clip.duration;
+        /* Never exactly where the clip already is, or it would not report arriving. */
+        clip.currentTime = ((i + 0.5) / COUNT) * clip.duration;
       });
       try {
         frames.push(await createImageBitmap(clip, { resizeWidth: 720, resizeHeight: Math.round((720 * clip.videoHeight) / clip.videoWidth) }));
@@ -175,7 +176,6 @@ function spin() {
     ready();
   };
   const ready = () => {
-
     if (frames.length < 12) return;
     const canvas = document.createElement('canvas');
     canvas.width = frames[0].width;
