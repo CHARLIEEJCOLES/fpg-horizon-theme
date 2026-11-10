@@ -147,6 +147,8 @@ def main():
         'pi': {no: fn for no, fn in pics.items() if no in used},
         'models': models,
         'h': h,
+        # The brands page quotes this: every Forst part number across the machines' lists.
+        'counts': {'Forst': len({r[1] for m in models.values() for sec in m['sections'] for r in sec['parts']})},
     }
     out = HERE.parent.parent.parent.parent / 'assets' / 'fpg-maker-forst.json'
     out.write_text(json.dumps(maker, ensure_ascii=False, separators=(',', ':')))

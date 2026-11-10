@@ -668,12 +668,12 @@
             "brand_id": 6
           }
         },
-        "pw_scheppach": {
+        "pw_forst": {
           "type": "brand",
           "settings": {
-            "name": "Scheppach",
-            "logo": "shopify://shop_images/scheppach_logo.png",
-            "brand_id": 10
+            "name": "Forst",
+            "logo": "shopify://shop_images/Forst.png",
+            "brand_id": 16
           }
         }
       },
@@ -684,7 +684,7 @@
         "pw_toro",
         "pw_echo",
         "pw_mitox",
-        "pw_scheppach"
+        "pw_forst"
       ],
       "settings": {
         "finder_url": "shopify://pages/fpg-part-finder",
