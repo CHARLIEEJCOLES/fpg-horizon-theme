@@ -972,7 +972,7 @@ class FpgPartsFinder extends HTMLElement {
         const wh = Array.isArray(sec.whs) ? sec.whs[i] : sec.wh;
         const inline =
           Array.isArray(m) && m.length && Array.isArray(wh)
-            ? { ok: true, image: url, w: wh[0], h: wh[1], maps: m.map((/** @type {any[]} */ [a, x1, y1, x2, y2, d]) => ({ a: String(a), x1, y1, x2, y2, d: typeof d === 'string' ? d : '' })) }
+            ? { ok: true, image: url, w: wh[0], h: wh[1], clean: Array.isArray(sec.cs) && !!sec.cs[i], maps: m.map((/** @type {any[]} */ [a, x1, y1, x2, y2, d]) => ({ a: String(a), x1, y1, x2, y2, d: typeof d === 'string' ? d : '' })) }
             : null;
         return { view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600`, numbers: !!inline, inline };
       }),
@@ -2300,8 +2300,9 @@ class FpgPartsFinder extends HTMLElement {
       if (run !== state.run) return;
     }
     state.maps = data.maps;
-    /* A drawing with traced parts is shown as those parts only: cut to where they are, the rest faded right back. */
-    const traced = data.maps.filter((/** @type {any} */ b) => b.d);
+    /* A drawing whose traced parts account for nearly all of it (clean, set by clean_flags.py) is shown as those parts
+       only: cut to where they are, the rest faded right back. Any other drawing is left whole, or real parts would vanish. */
+    const traced = data.clean ? data.maps.filter((/** @type {any} */ b) => b.d) : [];
     const view = { x: 0, y: 0, w: Number(data.w), h: Number(data.h) };
     if (traced.length) {
       const pad = Math.max(view.w, view.h) * 0.04;
