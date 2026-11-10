@@ -23125,5 +23125,3186 @@
     ]
    ]
   }
+ ],
+ "tr6p-37": [
+  {
+   "name": "Chassis",
+   "code": "",
+   "pic": "forst-3d-tr6p-37-01.webp",
+   "wh": [
+    1372,
+    1620
+   ],
+   "m": [
+    [
+     "1",
+     476,
+     1320,
+     499,
+     1349
+    ],
+    [
+     "2",
+     460,
+     1226,
+     721,
+     1361
+    ],
+    [
+     "3",
+     330,
+     1186,
+     587,
+     1313
+    ],
+    [
+     "4",
+     1226,
+     1024,
+     1253,
+     1043
+    ],
+    [
+     "5",
+     286,
+     622,
+     411,
+     733
+    ],
+    [
+     "6",
+     316,
+     558,
+     383,
+     623
+    ],
+    [
+     "7",
+     292,
+     804,
+     423,
+     839
+    ],
+    [
+     "8",
+     158,
+     844,
+     1005,
+     1113
+    ],
+    [
+     "9",
+     768,
+     830,
+     809,
+     865
+    ],
+    [
+     "10",
+     1088,
+     1036,
+     1369,
+     1207
+    ],
+    [
+     "12",
+     552,
+     642,
+     781,
+     673
+    ],
+    [
+     "41",
+     1002,
+     1054,
+     1037,
+     1083
+    ],
+    [
+     "42",
+     784,
+     948,
+     967,
+     1025
+    ],
+    [
+     "43",
+     218,
+     1228,
+     869,
+     1589
+    ],
+    [
+     "44",
+     1118,
+     918,
+     1369,
+     1005
+    ],
+    [
+     "45",
+     1042,
+     1102,
+     1077,
+     1131
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-10-258",
+     "50mm Black Square Plastic Insert",
+     4
+    ],
+    [
+     "2",
+     "13-19-063",
+     "6\" Front Track Interface Fabrication",
+     1
+    ],
+    [
+     "3",
+     "13-19-109",
+     "6\" Rear Track Interface - Hy-pro",
+     1
+    ],
+    [
+     "4",
+     "30-10-001",
+     "AV Mount",
+     4
+    ],
+    [
+     "5",
+     "12-10-375",
+     "Battery 068 12v 70ah",
+     1
+    ],
+    [
+     "6",
+     "12-10-376",
+     "Battery Strap - 12\"",
+     1
+    ],
+    [
+     "7",
+     "12-05-007",
+     "Battery Tray Rubber Mat 180x280x6mm",
+     1
+    ],
+    [
+     "8",
+     "13-19-052",
+     "Chassis Assy for 6\" Tracked Machine in RAL 9005 Satin Black",
+     1
+    ],
+    [
+     "9",
+     "29-10-006",
+     "Engine AV - 70 Shore",
+     4
+    ],
+    [
+     "10",
+     "30-19-004",
+     "Foot Plate Outer Frame Fabrication",
+     1
+    ],
+    [
+     "11",
+     "13-05-029",
+     "Footplate Mounting Sleeve",
+     2
+    ],
+    [
+     "12",
+     "12-10-079",
+     "Fully Damped Gas Spring with clevis pin fixing at each end",
+     1
+    ],
+    [
+     "13",
+     "12-14-022",
+     "M10 Flat Washer Form G Bzp",
+     8
+    ],
+    [
+     "14",
+     "12-99-008",
+     "M10 Serrated Washer",
+     8
+    ],
+    [
+     "15",
+     "12-14-009",
+     "M10 STANDARD WASHER DIN 125A",
+     2
+    ],
+    [
+     "16",
+     "12-12-506",
+     "M10 X 25 Hex Set Screw 8.8 Bzp Din 933",
+     8
+    ],
+    [
+     "17",
+     "12-14-032",
+     "M12 Deep Washer x 5mm Thick DIN 6340",
+     2
+    ],
+    [
+     "18",
+     "12-13-003.P",
+     "M12 NYLOC NUT BZP DIN 982 Type P",
+     6
+    ],
+    [
+     "19",
+     "12-14-039",
+     "M12 Nylon Washer",
+     2
+    ],
+    [
+     "20",
+     "12-14-004",
+     "M12 PENNY WASHER OD37 X 3 THICK",
+     6
+    ],
+    [
+     "21",
+     "12-99-007",
+     "M12 Serrated / Schnorr Washer Zinc",
+     12
+    ],
+    [
+     "22",
+     "12-14-003",
+     "M12 Standard Washer",
+     22
+    ],
+    [
+     "23",
+     "12-12-1119",
+     "M12 X 110 8.8 DIN931 HEX BOLT BZP",
+     2
+    ],
+    [
+     "24",
+     "12-12-603",
+     "M12 X 30 HEX SET SCREW 8.8 BZP DIN 933",
+     8
+    ],
+    [
+     "25",
+     "WCM12X35",
+     "M12 x 35 Hex Head Screw",
+     6
+    ],
+    [
+     "26",
+     "12-12-606",
+     "M12 X 40 HEX SET SCREW 8.8 BZP DIN 933",
+     2
+    ],
+    [
+     "27",
+     "12-13-005.P",
+     "M16 Nyloc Type P",
+     4
+    ],
+    [
+     "28",
+     "12-14-001",
+     "M16 Washer Extra Large Od 50 X 3 Thk",
+     8
+    ],
+    [
+     "29",
+     "12-14-005",
+     "M16 Washer ISO 7089",
+     4
+    ],
+    [
+     "30",
+     "12-12-1105",
+     "M16 x 110 Hex Bolt HT",
+     4
+    ],
+    [
+     "31",
+     "12-13-015",
+     "M5 NYLOC NUT Type T",
+     6
+    ],
+    [
+     "32",
+     "12-14-011",
+     "M5 WASHER",
+     4
+    ],
+    [
+     "33",
+     "12-99-004",
+     "M5 X 16 SOCKET C/SUNK SCREW 10.9",
+     10
+    ],
+    [
+     "34",
+     "12-13-011",
+     "M8 NYLOC NUT BZP DIN 985 Type T",
+     14
+    ],
+    [
+     "35",
+     "12-14-013",
+     "M8 Plain Washer",
+     28
+    ],
+    [
+     "36",
+     "12-14-024",
+     "M8 Serrated / Schnorr Washer Zinc",
+     7
+    ],
+    [
+     "37",
+     "12-12-640",
+     "M8 X 20 Hex Head Screw 8.8",
+     10
+    ],
+    [
+     "38",
+     "12-12-623",
+     "M8 x 20 Socket CSK 10.9 BZP",
+     4
+    ],
+    [
+     "39",
+     "12-12-401",
+     "M8 X 25 Hex Set Screw 8.8 Bzp Din 933",
+     6
+    ],
+    [
+     "40",
+     "10-30-124",
+     "Petrol Decal",
+     1
+    ],
+    [
+     "41",
+     "12-10-387",
+     "Rubber Buffer 50 X 45 M10",
+     2
+    ],
+    [
+     "42",
+     "13-19-062",
+     "Silencer Mount fabrication",
+     1
+    ],
+    [
+     "43",
+     "12-10-059GEMMO",
+     "TR6 VariableTrack Undercarriage with two cylinders",
+     1
+    ],
+    [
+     "44",
+     "30-19-003",
+     "Tread Plate Inner Fabrication",
+     1
+    ],
+    [
+     "45",
+     "13-10-342",
+     "Two Piece Foot Plate/Engine Cover AV Mount",
+     2
+    ]
+   ]
+  },
+  {
+   "name": "Chassis › 35L Petrol Fuel Tank Assembly",
+   "code": "24-A-003",
+   "pic": "forst-3d-tr6p-37-02.webp",
+   "wh": [
+    1372,
+    1620
+   ],
+   "m": [
+    [
+     "1",
+     186,
+     436,
+     423,
+     601
+    ],
+    [
+     "4",
+     178,
+     408,
+     207,
+     437
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "24-02-003",
+     "Forst Clear Petrol Tank 35ltr (Includes Fuel Cap)",
+     1
+    ],
+    [
+     "2",
+     "12-10-027",
+     "Fuel Banjo M12",
+     2
+    ],
+    [
+     "3",
+     "12-14-008",
+     "M12 Bonded Washer (Dowty)",
+     2
+    ],
+    [
+     "4",
+     "10-02-001",
+     "PETROL FUEL CAP FOR FORST CLEAR PETROL TANK",
+     3
+    ]
+   ]
+  },
+  {
+   "name": "Chassis › 500kg Zinc Plated Over-centre Catch With Receiver/flange Nut",
+   "code": "12-10-037",
+   "pic": "forst-3d-tr6p-37-03.webp",
+   "wh": [
+    1372,
+    1620
+   ],
+   "m": [],
+   "parts": [
+    [
+     "1",
+     "12-10-037",
+     "500kg Zinc Plated Over-centre Catch With Receiver/flange Nut",
+     2
+    ]
+   ]
+  },
+  {
+   "name": "Chassis › Fuse Board Assembly",
+   "code": "12-A-106",
+   "pic": "forst-3d-tr6p-37-04.webp",
+   "wh": [
+    1372,
+    1620
+   ],
+   "m": [
+    [
+     "1",
+     552,
+     738,
+     669,
+     849
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-19-275",
+     "Fuse Board Bracket Fabrication",
+     1
+    ],
+    [
+     "2",
+     "10-76-503",
+     "Fuse board with fuses & decal for Briggs, Yanmar & Kubota Engines.",
+     1
+    ],
+    [
+     "3",
+     "12-13-015",
+     "M6 NYLOC NUT Type T",
+     4
+    ],
+    [
+     "4",
+     "12-14-017",
+     "M6 Washer",
+     4
+    ]
+   ]
+  },
+  {
+   "name": "Chassis › Hopper Support Assembly",
+   "code": "12-A-060",
+   "pic": "forst-3d-tr6p-37-05.webp",
+   "wh": [
+    1376,
+    1620
+   ],
+   "m": [
+    [
+     "1",
+     78,
+     756,
+     197,
+     819
+    ],
+    [
+     "4",
+     34,
+     704,
+     231,
+     859
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-03-254",
+     "Hopper Support Shadow Plate",
+     1
+    ],
+    [
+     "2",
+     "12-13-015",
+     "M6 NYLOC NUT Type T",
+     4
+    ],
+    [
+     "3",
+     "12-14-017",
+     "M6 Washer",
+     4
+    ],
+    [
+     "4",
+     "12-19-204",
+     "Rear Hopper Support for ST6D/TR6D/ST6P",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Chassis › ST6 Hydraulic Tank Assembly",
+   "code": "29-A-016",
+   "pic": "forst-3d-tr6p-37-06.webp",
+   "wh": [
+    1372,
+    1620
+   ],
+   "m": [
+    [
+     "2",
+     388,
+     182,
+     447,
+     187
+    ],
+    [
+     "5",
+     380,
+     40,
+     451,
+     155
+    ],
+    [
+     "6",
+     402,
+     222,
+     443,
+     227
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "22-02-001",
+     "Forst Hydraulic Tank for ST6D/TR6D/TR6P - 20 Litre With Four Hole Bolting Flange for Tank Filter.",
+     2
+    ],
+    [
+     "2",
+     "24-01-089",
+     "Hydraulic Filter Adaptor Plate",
+     1
+    ],
+    [
+     "3",
+     "12-99-008",
+     "M10 Serrated Washer",
+     4
+    ],
+    [
+     "4",
+     "12-12-1117",
+     "M10 x 30 SKT CAP SCRW 12.9 BZP",
+     4
+    ],
+    [
+     "5",
+     "12-24-044",
+     "MP Filtri 1\" BSP Tank Return Filter Complete 10 Micron With Breather. Branded Forst",
+     1
+    ],
+    [
+     "6",
+     "10-10-015",
+     "O-Ring 91mm ID x 4mm CS Nitrile BLA 70 Shaw",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Chassis › Valve Mounting Plate",
+   "code": "13-A-053",
+   "pic": "forst-3d-tr6p-37-07.webp",
+   "wh": [
+    1372,
+    1620
+   ],
+   "m": [
+    [
+     "1",
+     374,
+     1042,
+     449,
+     1089
+    ],
+    [
+     "5",
+     426,
+     1032,
+     487,
+     1075
+    ],
+    [
+     "6",
+     366,
+     1072,
+     493,
+     1111
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "10-44-007",
+     "Double Section Valve Block- Cylinder + Motor",
+     1
+    ],
+    [
+     "2",
+     "12-14-013",
+     "M8 Plain Washer",
+     8
+    ],
+    [
+     "3",
+     "12-14-024",
+     "M8 Serrated / Schnorr Washer Zinc",
+     8
+    ],
+    [
+     "4",
+     "12-12-404",
+     "M8 X 16 HEX SET SCREW 8.8 BZP DIN 933",
+     8
+    ],
+    [
+     "5",
+     "10-44-004",
+     "Single Section Valve Block- Motor + PCO",
+     1
+    ],
+    [
+     "6",
+     "13-03-191",
+     "Valve Fixing Plate",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Chipping Chamber › Chamber Assembly",
+   "code": "13-A-020",
+   "pic": "forst-3d-tr6p-37-08.webp",
+   "wh": [
+    1506,
+    1582
+   ],
+   "m": [
+    [
+     "1",
+     646,
+     771,
+     655,
+     784
+    ],
+    [
+     "2",
+     410,
+     969,
+     507,
+     1024
+    ],
+    [
+     "3",
+     394,
+     787,
+     423,
+     892
+    ],
+    [
+     "4",
+     676,
+     1201,
+     733,
+     1272
+    ],
+    [
+     "5",
+     754,
+     1175,
+     787,
+     1204
+    ],
+    [
+     "8",
+     392,
+     853,
+     495,
+     926
+    ],
+    [
+     "18",
+     18,
+     1089,
+     69,
+     1174
+    ],
+    [
+     "19",
+     72,
+     1061,
+     121,
+     1116
+    ],
+    [
+     "20",
+     0,
+     1141,
+     11,
+     1178
+    ],
+    [
+     "21",
+     562,
+     787,
+     603,
+     836
+    ],
+    [
+     "22",
+     602,
+     763,
+     645,
+     810
+    ],
+    [
+     "25",
+     628,
+     1405,
+     653,
+     1420
+    ],
+    [
+     "69",
+     296,
+     957,
+     331,
+     998
+    ],
+    [
+     "71",
+     572,
+     963,
+     613,
+     990
+    ],
+    [
+     "74",
+     128,
+     1051,
+     167,
+     1082
+    ],
+    [
+     "76",
+     424,
+     571,
+     453,
+     598
+    ],
+    [
+     "77",
+     624,
+     1245,
+     643,
+     1288
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-10-094",
+     "04mm OD X 1/8\" BSPP Male Stud Elbow/ Compression Coupling (Right Angled)",
+     1
+    ],
+    [
+     "2",
+     "12-03-045",
+     "6\" Feed Roller Cover",
+     1
+    ],
+    [
+     "3",
+     "12-15-002",
+     "6\" FEED ROLLER TENSION SPRING",
+     2
+    ],
+    [
+     "4",
+     "12-01-013",
+     "6\" Main Anvil",
+     1
+    ],
+    [
+     "5",
+     "12-01-003",
+     "Anvil Clamp",
+     1
+    ],
+    [
+     "6",
+     "12-10-193",
+     "B74 Classic V Belt",
+     2
+    ],
+    [
+     "7",
+     "13-19-057",
+     "Bolt-on Hopper Fabrication",
+     2
+    ],
+    [
+     "8",
+     "24-19-138",
+     "Bottom Feed Roller and Shaft (6'' new style)",
+     1
+    ],
+    [
+     "9",
+     "12-15-021",
+     "CNE60 Neoprene Washer 16mm X 30mm X 3mmTHK",
+     2
+    ],
+    [
+     "10",
+     "22-03-071",
+     "Curtain Clamp ST6 V2",
+     1
+    ],
+    [
+     "11",
+     "12-30-001",
+     "DO NOT ATTEMPT INSPECTION/CAUTION MOVING ROLLERS DECAL",
+     1
+    ],
+    [
+     "12",
+     "24-19-071",
+     "E Stop Pipe Fab Assembly",
+     1
+    ],
+    [
+     "13",
+     "14-01-031",
+     "E-Stop Box Connector-brass Insert",
+     1
+    ],
+    [
+     "14",
+     "12-19-247",
+     "E-stop Button Bracket Fabrication",
+     1
+    ],
+    [
+     "15",
+     "10-30-125",
+     "E-Stop Decal",
+     2
+    ],
+    [
+     "16",
+     "12-10-391",
+     "Eaton Mushroom Head E-stop Switch Assembly",
+     1
+    ],
+    [
+     "17",
+     "12-12-613",
+     "Eye Bolt M12 X 140",
+     2
+    ],
+    [
+     "18",
+     "12-19-132D",
+     "Feed Motor Bracket Fab Assy (WITH 14MM THREAD STUD ATTACHED)",
+     1
+    ],
+    [
+     "19",
+     "12-19-133",
+     "Feed Motor Clamp",
+     1
+    ],
+    [
+     "20",
+     "12-03-422",
+     "Feed Motor Mount Shim",
+     1
+    ],
+    [
+     "21",
+     "12-03-042",
+     "Feed Roller Bearing Shim",
+     1
+    ],
+    [
+     "22",
+     "12-11-005",
+     "Feed Roller Tri-bearing Kit",
+     1
+    ],
+    [
+     "23",
+     "12-24-005",
+     "HYDRAULIC MOTOR 200cc (FOR FEED ROLLERS)",
+     1
+    ],
+    [
+     "24",
+     "12-10-072",
+     "Inductive Proximity Sensor - Orange Tip",
+     1
+    ],
+    [
+     "25",
+     "12-10-071",
+     "Inductive Proximity Sensor - White Tip",
+     2
+    ],
+    [
+     "26",
+     "10-30-008",
+     "Loading Area Decal",
+     2
+    ],
+    [
+     "27",
+     "12-13-006",
+     "M10 Plain Nut",
+     2
+    ],
+    [
+     "28",
+     "12-99-008",
+     "M10 Serrated Washer",
+     9
+    ],
+    [
+     "29",
+     "12-14-009",
+     "M10 STANDARD WASHER DIN 125A",
+     2
+    ],
+    [
+     "30",
+     "12-12-504",
+     "M10 X 20 Hex Set Screw 8.8 Bzp Din 933",
+     2
+    ],
+    [
+     "31",
+     "12-12-505",
+     "M10 X 20 SOCKET CSK BZP 10.9",
+     2
+    ],
+    [
+     "32",
+     "12-12-506",
+     "M10 X 25 Hex Set Screw 8.8 Bzp Din 933",
+     3
+    ],
+    [
+     "33",
+     "12-12-509",
+     "M10 X 35 HEX HEAD SCREW 8.8 BZP",
+     2
+    ],
+    [
+     "34",
+     "12-12-503",
+     "M10 X 40 Hex Setscrew 8.8",
+     2
+    ],
+    [
+     "35",
+     "12-14-032",
+     "M12 Deep Washer x 5mm Thick DIN 6340",
+     2
+    ],
+    [
+     "36",
+     "12-13-002",
+     "M12 FULL NUT BZP DIN 934",
+     4
+    ],
+    [
+     "37",
+     "12-13-003.P",
+     "M12 NYLOC NUT BZP DIN 982 Type P",
+     2
+    ],
+    [
+     "38",
+     "12-99-007",
+     "M12 Serrated / Schnorr Washer Zinc",
+     13
+    ],
+    [
+     "39",
+     "12-14-003",
+     "M12 Standard Washer",
+     14
+    ],
+    [
+     "40",
+     "12-12-603",
+     "M12 X 30 HEX SET SCREW 8.8 BZP DIN 933",
+     8
+    ],
+    [
+     "41",
+     "12-12-606",
+     "M12 X 45 Hex Head With 15mm Shank - 10.9",
+     4
+    ],
+    [
+     "42",
+     "12-12-609",
+     "M12 x 45 Socket Cap Screw",
+     2
+    ],
+    [
+     "43",
+     "12-12-601",
+     "M12 X 50 Hex Set Screw 8.8 Bzp Din 933",
+     1
+    ],
+    [
+     "44",
+     "12-13-021",
+     "M14 Half Nut",
+     1
+    ],
+    [
+     "45",
+     "12-13-018.P",
+     "M14 Nyloc Type P",
+     1
+    ],
+    [
+     "46",
+     "12-10-195",
+     "M14 Spherical Seat Washer (parts C & D)",
+     1
+    ],
+    [
+     "47",
+     "12-13-007",
+     "M16 FULL NUT GR 10.9 BZP",
+     2
+    ],
+    [
+     "48",
+     "12-14-006",
+     "M16 Serrated / Schnorr Washer Zinc",
+     5
+    ],
+    [
+     "49",
+     "12-01-008",
+     "M16 x 14 SHOULDER BOLT",
+     4
+    ],
+    [
+     "50",
+     "12-12-1100",
+     "M16 X 35 HEX HEAD SCREW 10.9 BZP DIN 933",
+     2
+    ],
+    [
+     "51",
+     "12-12-616",
+     "M16 X 45 HEX HEAD SCREW 10.9 BZP DIN 933",
+     2
+    ],
+    [
+     "52",
+     "12-12-1103",
+     "M16 x 50mm - 8.8 Hex Head Screw Cone Point DIN 564",
+     2
+    ],
+    [
+     "53",
+     "12-14-011",
+     "M5 WASHER",
+     3
+    ],
+    [
+     "54",
+     "12-12-202",
+     "M5 X 20 SOCKET CAP SCREW 12.9 BZP",
+     7
+    ],
+    [
+     "55",
+     "12-12-663",
+     "M5 x 25 Pan Head Pozi Screw",
+     2
+    ],
+    [
+     "56",
+     "12-14-025",
+     "M6 Serrated / Schnorr Washer Zinc",
+     1
+    ],
+    [
+     "57",
+     "WCM6X16",
+     "M6 x 16 Hex Head Screw",
+     1
+    ],
+    [
+     "58",
+     "12-13-011",
+     "M8 NYLOC NUT BZP DIN 985 Type T",
+     4
+    ],
+    [
+     "59",
+     "12-14-013",
+     "M8 Plain Washer",
+     11
+    ],
+    [
+     "60",
+     "12-14-024",
+     "M8 Serrated / Schnorr Washer Zinc",
+     6
+    ],
+    [
+     "61",
+     "M8.Washer",
+     "M8 Washer",
+     2
+    ],
+    [
+     "62",
+     "12-14-029",
+     "M8 Washer - Form C",
+     3
+    ],
+    [
+     "63",
+     "12-12-404",
+     "M8 X 16 HEX SET SCREW 8.8 BZP DIN 933",
+     1
+    ],
+    [
+     "64",
+     "12-12-640",
+     "M8 X 20 Hex Head Screw 8.8",
+     2
+    ],
+    [
+     "65",
+     "12-12-407",
+     "M8 X 20 SOCKET BUTTON SCREW",
+     4
+    ],
+    [
+     "66",
+     "12-12-401",
+     "M8 X 25 Hex Set Screw 8.8 Bzp Din 933",
+     4
+    ],
+    [
+     "67",
+     "12-99-001",
+     "M8 X 35 Hex Setscrew 8.8",
+     1
+    ],
+    [
+     "68",
+     "12-05-023",
+     "Nylon Clamp, Screw Mount - Natural (P Clip)",
+     3
+    ],
+    [
+     "69",
+     "12-01-073",
+     "Phosphor Bronze Bearing Assembly",
+     1
+    ],
+    [
+     "70",
+     "22-05-003",
+     "PVC Safety Curtain for ST6D/TR6D/ST6P",
+     1
+    ],
+    [
+     "71",
+     "12-01-072",
+     "Rear Flywheel Bearing Bolting Plate for 6\" Machine",
+     1
+    ],
+    [
+     "72",
+     "12-20-004",
+     "Retangular Key 30 X 8 X 7 (Shaft To Coupling)",
+     1
+    ],
+    [
+     "73",
+     "12-20-022",
+     "RETANGULAR KEY 32 X 8 X 7 (FOR 200/250CC HYD MOTOR SHAFTS)",
+     1
+    ],
+    [
+     "74",
+     "12-01-049",
+     "Rigid Shaft Coupling 75 X 45",
+     1
+    ],
+    [
+     "75",
+     "10-30-009",
+     "Risk on access to infeed decal",
+     1
+    ],
+    [
+     "76",
+     "12-01-061",
+     "Top Feed Roller Assembly Spring Adjusting Collar",
+     2
+    ],
+    [
+     "77",
+     "12-01-002",
+     "Two Holed Side Anvil",
+     1
+    ],
+    [
+     "78",
+     "10-30-010",
+     "Use only tight fitting gloves and ear protection Decal",
+     1
+    ],
+    [
+     "79",
+     "22-03-090",
+     "Washer Plate for 6\" Machines (Front End)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Chamber Assembly › 6\" Belt Tensioner Mod kit",
+   "code": "11-A-076",
+   "pic": "forst-3d-tr6p-37-09.webp",
+   "wh": [
+    1506,
+    1581
+   ],
+   "m": [
+    [
+     "1",
+     1114,
+     1197,
+     1131,
+     1224
+    ],
+    [
+     "2",
+     808,
+     1241,
+     863,
+     1294
+    ],
+    [
+     "3",
+     1034,
+     1171,
+     1085,
+     1216
+    ],
+    [
+     "4",
+     976,
+     1167,
+     991,
+     1182
+    ],
+    [
+     "13",
+     934,
+     1153,
+     963,
+     1234
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-11-011",
+     "Adjusting Pulley Bearing",
+     2
+    ],
+    [
+     "2",
+     "24-19-142",
+     "Belt Tensioner Foot Bracket",
+     1
+    ],
+    [
+     "3",
+     "24-01-092",
+     "Belt Tensioner Pulley - New Style",
+     1
+    ],
+    [
+     "4",
+     "24-05-003",
+     "Belt Tensioner Spacer",
+     2
+    ],
+    [
+     "5",
+     "10-12-132",
+     "M12 Clevis Joint with Retension Clip",
+     1
+    ],
+    [
+     "6",
+     "10-12-137",
+     "M12 LOCKNUT BZP DIN 439B",
+     2
+    ],
+    [
+     "7",
+     "24-01-093",
+     "M12 Tensioner Rod",
+     1
+    ],
+    [
+     "8",
+     "12-14-006",
+     "M16 Serrated / Schnorr Washer Zinc",
+     1
+    ],
+    [
+     "9",
+     "12-14-005",
+     "M16 Washer ISO 7089",
+     1
+    ],
+    [
+     "10",
+     "12-12-1101",
+     "M16 X 50 HEX HEAD SCREW 8.8 BZP DIN 933",
+     1
+    ],
+    [
+     "11",
+     "12-14-007.B",
+     "M20 STEEL FLAT WASHER THIN",
+     1
+    ],
+    [
+     "12",
+     "12-12-211",
+     "M20 x 100 Gr8.8 Hex Bolt",
+     1
+    ],
+    [
+     "13",
+     "24-19-141",
+     "Tensioner Arm Fab",
+     1
+    ],
+    [
+     "14",
+     "13-03-183",
+     "Tensioner Friction Washer",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Chamber Assembly › Chamber and Throat Fabrication",
+   "code": "13-19-055",
+   "pic": "forst-3d-tr6p-37-10.webp",
+   "wh": [
+    1506,
+    1582
+   ],
+   "m": [
+    [
+     "2",
+     574,
+     1267,
+     597,
+     1312
+    ],
+    [
+     "3",
+     176,
+     1231,
+     247,
+     1274
+    ],
+    [
+     "4",
+     372,
+     1095,
+     727,
+     1548
+    ],
+    [
+     "24",
+     338,
+     1355,
+     391,
+     1404
+    ],
+    [
+     "25",
+     188,
+     641,
+     381,
+     806
+    ],
+    [
+     "26",
+     552,
+     1283,
+     617,
+     1380
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-10-068",
+     "20 X 15mm M6 M/F AV MOUNT",
+     5
+    ],
+    [
+     "2",
+     "24-19-052",
+     "Anvil Retainer Fixing",
+     1
+    ],
+    [
+     "3",
+     "13-10-100",
+     "Ava/ifm Split Harness With Waterproof Connecting Plug and Socket",
+     1
+    ],
+    [
+     "4",
+     "13-19-055",
+     "Chamber and Throat Fabrication",
+     1
+    ],
+    [
+     "5",
+     "12-24-036",
+     "Hy-Pro G1/2 Valve Assembly Relief Valve Set At 185 Bar",
+     6
+    ],
+    [
+     "6",
+     "10-30-126",
+     "Hydraulic Sight Glass Decal",
+     1
+    ],
+    [
+     "7",
+     "12-99-008",
+     "M10 Serrated Washer",
+     1
+    ],
+    [
+     "8",
+     "12-14-009",
+     "M10 STANDARD WASHER DIN 125A",
+     1
+    ],
+    [
+     "9",
+     "12-12-502",
+     "M10 X 30 Hex Set Screw 8.8 Bzp Din 933",
+     1
+    ],
+    [
+     "10",
+     "12-14-032",
+     "M12 Deep Washer x 5mm Thick DIN 6340",
+     4
+    ],
+    [
+     "11",
+     "12-99-007",
+     "M12 Serrated / Schnorr Washer Zinc",
+     4
+    ],
+    [
+     "12",
+     "12-12-606",
+     "M12 X 40 HEX SET SCREW 8.8 BZP DIN 933",
+     4
+    ],
+    [
+     "13",
+     "12-14-026",
+     "M5 Serrated / Schnorr Washer Zinc",
+     4
+    ],
+    [
+     "14",
+     "12-14-011",
+     "M5 WASHER",
+     6
+    ],
+    [
+     "15",
+     "12-12-201",
+     "M5 X 16 Socket Head Cap Screw 12.9 BZP",
+     4
+    ],
+    [
+     "16",
+     "12-12-202",
+     "M5 X 20 SOCKET CAP SCREW 12.9 BZP",
+     2
+    ],
+    [
+     "17",
+     "12-14-013",
+     "M8 Plain Washer",
+     6
+    ],
+    [
+     "18",
+     "12-14-024",
+     "M8 Serrated / Schnorr Washer Zinc",
+     12
+    ],
+    [
+     "19",
+     "12-14-029",
+     "M8 Washer - Form C",
+     6
+    ],
+    [
+     "20",
+     "12-12-404",
+     "M8 X 16 HEX SET SCREW 8.8 BZP DIN 933",
+     4
+    ],
+    [
+     "21",
+     "12-12-640",
+     "M8 X 20 Hex Head Screw 8.8",
+     6
+    ],
+    [
+     "22",
+     "12-12-401",
+     "M8 X 25 Hex Set Screw 8.8 Bzp Din 933",
+     2
+    ],
+    [
+     "23",
+     "12-05-023",
+     "Nylon Clamp, Screw Mount - Natural (P Clip)",
+     2
+    ],
+    [
+     "24",
+     "13-01-006",
+     "Return Manifold",
+     1
+    ],
+    [
+     "25",
+     "13-19-059",
+     "Side Panel Fabrication",
+     1
+    ],
+    [
+     "26",
+     "24-03-292",
+     "TENSION SPRING MOUNT BRACKET",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Chamber and Throat Fabrication › 13-A-052",
+   "code": "13-A-052",
+   "pic": "forst-3d-tr6p-37-11.webp",
+   "wh": [
+    1505,
+    1581
+   ],
+   "m": [],
+   "parts": [
+    [
+     "1",
+     "10-30-021",
+     "2 pumps per grease nipple per week Decal",
+     1
+    ],
+    [
+     "2",
+     "12-10-243",
+     "4 Position Ignition Switch (with 2 x Keys)",
+     1
+    ],
+    [
+     "3",
+     "13-19-105",
+     "DSE Control Panel Fabrication",
+     1
+    ],
+    [
+     "4",
+     "10-75-003",
+     "DSE Screen - Programmed",
+     1
+    ],
+    [
+     "5",
+     "10-30-023",
+     "Ensure all rotating parts have stopped before maintanence Decal",
+     1
+    ],
+    [
+     "6",
+     "10-30-148",
+     "Feed Roller Speed Decal",
+     1
+    ],
+    [
+     "7",
+     "12-A-018",
+     "Grease Manifold Assy",
+     11
+    ],
+    [
+     "8",
+     "12-14-025",
+     "M6 Serrated / Schnorr Washer Zinc",
+     2
+    ],
+    [
+     "9",
+     "WCM6X20",
+     "M6 x 20 Hex Head Screw",
+     2
+    ],
+    [
+     "10",
+     "10-30-022",
+     "Read manual before operating Decal",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Chamber Assembly › Flywheel Assembly",
+   "code": "24-A-013",
+   "pic": "forst-3d-tr6p-37-12.webp",
+   "wh": [
+    1506,
+    1581
+   ],
+   "m": [
+    [
+     "1",
+     794,
+     923,
+     803,
+     938
+    ],
+    [
+     "2",
+     702,
+     655,
+     763,
+     736
+    ],
+    [
+     "4",
+     1008,
+     1039,
+     1047,
+     1056
+    ],
+    [
+     "6",
+     1358,
+     1093,
+     1373,
+     1128
+    ],
+    [
+     "7",
+     834,
+     973,
+     849,
+     1000
+    ],
+    [
+     "8",
+     630,
+     925,
+     657,
+     954
+    ],
+    [
+     "9",
+     702,
+     943,
+     727,
+     972
+    ],
+    [
+     "13",
+     760,
+     947,
+     811,
+     1010
+    ],
+    [
+     "14",
+     570,
+     901,
+     617,
+     962
+    ],
+    [
+     "15",
+     1146,
+     957,
+     1259,
+     1192
+    ],
+    [
+     "16",
+     578,
+     909,
+     613,
+     948
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-10-094",
+     "04mm OD X 1/8\" BSPP Male Stud Elbow/ Compression Coupling (Right Angled)",
+     2
+    ],
+    [
+     "2",
+     "12-01-009",
+     "6\" Flywheel Blade - Single",
+     2
+    ],
+    [
+     "3",
+     "12-19-203",
+     "6\" Flywheel Fabrication (with square blade bolt holes)",
+     1
+    ],
+    [
+     "4",
+     "24-01-051",
+     "6\" Flywheel Shaft",
+     2
+    ],
+    [
+     "5",
+     "12-20-024",
+     "Fitting Key 40 X 14 X 9",
+     1
+    ],
+    [
+     "6",
+     "12-19-063",
+     "Flywheel Pulley Retainer",
+     1
+    ],
+    [
+     "7",
+     "12-10-306",
+     "Flywheel Shaft Shims 50 x 62 x 4mm",
+     1
+    ],
+    [
+     "8",
+     "12-01-012",
+     "Flywheel Shaft Spacer Thick (40mm)",
+     1
+    ],
+    [
+     "9",
+     "12-01-046",
+     "Flywheel Shaft Spacer Thin (34mm)",
+     1
+    ],
+    [
+     "10",
+     "12-99-008",
+     "M10 Serrated Washer",
+     2
+    ],
+    [
+     "11",
+     "12-12-502",
+     "M10 X 30 Hex Set Screw 8.8 Bzp Din 933",
+     2
+    ],
+    [
+     "12",
+     "12-14-006",
+     "M16 Serrated / Schnorr Washer Zinc",
+     2
+    ],
+    [
+     "13",
+     "12-11-020",
+     "Main Flywheel Bearing Ass. Blue (Front End)",
+     1
+    ],
+    [
+     "14",
+     "12-01-064",
+     "Pillow Block Bearing Housing (50mm ID) - Steel Housing Only",
+     1
+    ],
+    [
+     "15",
+     "12-10-040",
+     "Pulley 500 x 2 Groove (6 SPOKE) HEAVY WEIGHT",
+     1
+    ],
+    [
+     "16",
+     "12-01-064.1",
+     "SNR Bearing for Pillow Block - 50mm ID",
+     1
+    ],
+    [
+     "17",
+     "10-100-100M",
+     "SQUARE LOCATOR FORST BLADE BOLT SET **INCLUDES NUT, BOLT & WASHER) **NEW TORQUE SETTING = 265NM**",
+     4
+    ],
+    [
+     "18",
+     "12-10-038",
+     "Taperlock Bush 3020 - 50mm (Includes 2 x Grub Screws)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Chamber Assembly › Top Feed Roller Assembly",
+   "code": "24-A-012",
+   "pic": "forst-3d-tr6p-37-13.webp",
+   "wh": [
+    1505,
+    1581
+   ],
+   "m": [
+    [
+     "1",
+     644,
+     735,
+     655,
+     746
+    ],
+    [
+     "2",
+     336,
+     561,
+     409,
+     592
+    ],
+    [
+     "3",
+     14,
+     1011,
+     63,
+     1094
+    ],
+    [
+     "4",
+     72,
+     1011,
+     117,
+     1060
+    ],
+    [
+     "5",
+     0,
+     1077,
+     5,
+     1114
+    ],
+    [
+     "6",
+     272,
+     909,
+     305,
+     946
+    ],
+    [
+     "7",
+     556,
+     745,
+     599,
+     792
+    ],
+    [
+     "8",
+     598,
+     721,
+     641,
+     768
+    ],
+    [
+     "10",
+     412,
+     577,
+     425,
+     590
+    ],
+    [
+     "25",
+     536,
+     737,
+     579,
+     806
+    ],
+    [
+     "26",
+     302,
+     857,
+     349,
+     930
+    ],
+    [
+     "27",
+     400,
+     877,
+     411,
+     884
+    ],
+    [
+     "29",
+     126,
+     997,
+     165,
+     1028
+    ],
+    [
+     "30",
+     240,
+     925,
+     277,
+     964
+    ],
+    [
+     "31",
+     288,
+     547,
+     503,
+     666
+    ],
+    [
+     "32",
+     390,
+     807,
+     497,
+     878
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-10-094",
+     "04mm OD X 1/8\" BSPP Male Stud Elbow/ Compression Coupling (Right Angled)",
+     2
+    ],
+    [
+     "2",
+     "22-02-002",
+     "6\" Top Feed Roller AV Stop",
+     1
+    ],
+    [
+     "3",
+     "12-19-132D",
+     "Feed Motor Bracket Fab Assy (WITH 14MM THREAD STUD ATTACHED)",
+     1
+    ],
+    [
+     "4",
+     "12-19-133",
+     "Feed Motor Clamp",
+     1
+    ],
+    [
+     "5",
+     "12-03-422",
+     "Feed Motor Mount Shim",
+     1
+    ],
+    [
+     "6",
+     "12-03-102",
+     "Feed Roller 2 Hole Bearing Shim",
+     1
+    ],
+    [
+     "7",
+     "12-03-042",
+     "Feed Roller Bearing Shim",
+     1
+    ],
+    [
+     "8",
+     "12-11-005",
+     "Feed Roller Tri-bearing Kit",
+     1
+    ],
+    [
+     "9",
+     "12-24-005",
+     "HYDRAULIC MOTOR 200cc (FOR FEED ROLLERS)",
+     1
+    ],
+    [
+     "10",
+     "12-11-004",
+     "Iglidur M250 Flange Bearing",
+     2
+    ],
+    [
+     "11",
+     "12-13-010.P",
+     "M10 NYLOC NUT BZP DIN 982 Type P",
+     4
+    ],
+    [
+     "12",
+     "12-99-008",
+     "M10 Serrated Washer",
+     11
+    ],
+    [
+     "13",
+     "12-12-506",
+     "M10 X 25 Hex Set Screw 8.8 Bzp Din 933",
+     3
+    ],
+    [
+     "14",
+     "12-12-1115",
+     "M10 x 25 SKT CAP SCRW 12.9 BZP",
+     4
+    ],
+    [
+     "15",
+     "12-12-509",
+     "M10 X 35 HEX HEAD SCREW 8.8 BZP",
+     2
+    ],
+    [
+     "16",
+     "12-99-007",
+     "M12 Serrated / Schnorr Washer Zinc",
+     2
+    ],
+    [
+     "17",
+     "12-12-609",
+     "M12 x 45 Socket Cap Screw",
+     2
+    ],
+    [
+     "18",
+     "12-13-021",
+     "M14 Half Nut",
+     1
+    ],
+    [
+     "19",
+     "12-13-018.P",
+     "M14 Nyloc Type P",
+     1
+    ],
+    [
+     "20",
+     "12-10-195",
+     "M14 Spherical Seat Washer (parts C & D)",
+     1
+    ],
+    [
+     "21",
+     "12-12-202",
+     "M5 X 20 Socket Cap Screw Black 12.9",
+     4
+    ],
+    [
+     "22",
+     "12-14-024",
+     "M8 Serrated / Schnorr Washer Zinc",
+     2
+    ],
+    [
+     "23",
+     "12-14-029",
+     "M8 Washer - Form C",
+     2
+    ],
+    [
+     "24",
+     "12-99-001",
+     "M8 X 35 Hex Setscrew 8.8",
+     2
+    ],
+    [
+     "25",
+     "24-01-053",
+     "Nylon Feed Cheek LH 32mm Slot",
+     1
+    ],
+    [
+     "26",
+     "24-01-052",
+     "Nylon Feed Cheek RH 32mm Slot",
+     1
+    ],
+    [
+     "27",
+     "12-20-004",
+     "Retangular Key 30 X 8 X 7 (Shaft To Coupling)",
+     1
+    ],
+    [
+     "28",
+     "12-20-022",
+     "RETANGULAR KEY 32 X 8 X 7 (FOR 200/250CC HYD MOTOR SHAFTS)",
+     1
+    ],
+    [
+     "29",
+     "12-01-049",
+     "Rigid Shaft Coupling 75 X 45",
+     1
+    ],
+    [
+     "30",
+     "12-11-013",
+     "Self Aligning Feed Housing Middle Bearing",
+     1
+    ],
+    [
+     "31",
+     "24-19-060",
+     "Top Feed Housing Assembly",
+     1
+    ],
+    [
+     "32",
+     "24-19-139",
+     "Top Feed Roller and Shaft (6\" new style)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Chipping Chamber › Chipping Chamber Cover Assembly",
+   "code": "12-A-054",
+   "pic": "forst-3d-tr6p-37-14.webp",
+   "wh": [
+    1506,
+    1586
+   ],
+   "m": [
+    [
+     "2",
+     456,
+     34,
+     733,
+     309
+    ],
+    [
+     "8",
+     680,
+     182,
+     707,
+     229
+    ],
+    [
+     "10",
+     168,
+     58,
+     513,
+     257
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "10-30-017",
+     "Caution danger of cutting ***TORQUE 265NM*** Decal",
+     1
+    ],
+    [
+     "2",
+     "24-19-011",
+     "Chipping Chamber Cover Assembly Metal Part",
+     1
+    ],
+    [
+     "3",
+     "12-30-026",
+     "Forst FORSTGRIP Decal",
+     2
+    ],
+    [
+     "4",
+     "12-30-052",
+     "Forst Front Decal - Orange",
+     2
+    ],
+    [
+     "5",
+     "10-30-033",
+     "LWA 114 dB Decal",
+     1
+    ],
+    [
+     "6",
+     "12-13-011",
+     "M8 NYLOC NUT BZP DIN 985 Type T",
+     6
+    ],
+    [
+     "7",
+     "12-14-029",
+     "M8 Washer - Form C",
+     6
+    ],
+    [
+     "8",
+     "12-03-371",
+     "Manufacturer Plate",
+     1
+    ],
+    [
+     "9",
+     "12-18-001",
+     "Pop Rivet 5DIA X 12Lg Aluminium Alloy",
+     4
+    ],
+    [
+     "10",
+     "12-03-247",
+     "Top Feed Roller Chamber Cover",
+     1
+    ],
+    [
+     "11",
+     "10-30-038",
+     "UKCA and CE Sticker for machines",
+     1
+    ],
+    [
+     "12",
+     "10-30-025",
+     "When engine is running do not remove the chute - Decal",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Discharge Chute › Chute Assembly complete with all fittings, in Black",
+   "code": "12-A-007.B",
+   "pic": "forst-3d-tr6p-37-15.webp",
+   "wh": [
+    1506,
+    1416
+   ],
+   "m": [
+    [
+     "1",
+     0,
+     374,
+     35,
+     495
+    ],
+    [
+     "2",
+     218,
+     72,
+     851,
+     1147
+    ],
+    [
+     "5",
+     972,
+     52,
+     1279,
+     93
+    ],
+    [
+     "12",
+     372,
+     1096,
+     389,
+     1137
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-19-055.B",
+     "Chute Handle, Standard Size - Black",
+     1
+    ],
+    [
+     "2",
+     "12-19-051.B",
+     "Chute, Main Body, Standard Size - Black",
+     1
+    ],
+    [
+     "3",
+     "12-15-020",
+     "CNE60 Neoprene Washer 12mm X 25mm X 5mmTHK",
+     2
+    ],
+    [
+     "4",
+     "12-10-004",
+     "FEMALE SILVER HANDLE FOR CHUTE ADJUSTMENT",
+     1
+    ],
+    [
+     "5",
+     "12-01-043",
+     "Hood Hinge Pin",
+     1
+    ],
+    [
+     "6",
+     "12-11-007",
+     "Iglidur M250 Flange Bearing for Chute Hood",
+     4
+    ],
+    [
+     "7",
+     "12-12-1122",
+     "M12 FORM C WASHER BZP",
+     2
+    ],
+    [
+     "8",
+     "12-13-003.P",
+     "M12 NYLOC NUT BZP DIN 982 Type P",
+     3
+    ],
+    [
+     "9",
+     "12-14-004",
+     "M12 PENNY WASHER OD37 X 3 THICK",
+     2
+    ],
+    [
+     "10",
+     "12-14-003",
+     "M12 Standard Washer",
+     4
+    ],
+    [
+     "11",
+     "12-19-164",
+     "M16 Chute Clamp Assembly With 150mm Handle",
+     2
+    ],
+    [
+     "12",
+     "12-20-001",
+     "Spring Pin Slotted 10 DIA X 30Lg ISO 8752",
+     2
+    ]
+   ]
+  },
+  {
+   "name": "Chute Assembly complete with all fittings, in Black › Chute Clamp Fab Assy",
+   "code": "12-19-056",
+   "pic": "forst-3d-tr6p-37-16.webp",
+   "wh": [
+    1506,
+    1406
+   ],
+   "m": [],
+   "parts": [
+    [
+     "1",
+     "12-19-056.B",
+     "Chute Clamp - Black",
+     2
+    ]
+   ]
+  },
+  {
+   "name": "Chute Assembly complete with all fittings, in Black › Chute Hood Fab Assy",
+   "code": "12-19-151",
+   "pic": "forst-3d-tr6p-37-17.webp",
+   "wh": [
+    1506,
+    1406
+   ],
+   "m": [
+    [
+     "1",
+     1042,
+     132,
+     1505,
+     653
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-19-151.B",
+     "Chute Hood Assy - Black",
+     1
+    ],
+    [
+     "2",
+     "12-30-024",
+     "Forst Decal - Small Orange",
+     2
+    ]
+   ]
+  },
+  {
+   "name": "Engine Bay",
+   "code": "",
+   "pic": "forst-3d-tr6p-37-18.webp",
+   "wh": [
+    1404,
+    1294
+   ],
+   "m": [
+    [
+     "2",
+     96,
+     654,
+     235,
+     781
+    ],
+    [
+     "3",
+     778,
+     562,
+     919,
+     649
+    ],
+    [
+     "4",
+     182,
+     358,
+     321,
+     527
+    ],
+    [
+     "5",
+     1108,
+     582,
+     1313,
+     877
+    ],
+    [
+     "6",
+     150,
+     394,
+     179,
+     411
+    ],
+    [
+     "13",
+     964,
+     628,
+     1049,
+     695
+    ],
+    [
+     "14",
+     30,
+     350,
+     105,
+     425
+    ],
+    [
+     "15",
+     802,
+     878,
+     1111,
+     1265
+    ],
+    [
+     "16",
+     312,
+     736,
+     763,
+     1059
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-24-064",
+     "8cc HYDRAULIC TANDEM PUMP",
+     1
+    ],
+    [
+     "2",
+     "24-99-003",
+     "Briggs Engine Oil Filter **CHANGE EVERY 100HRS**",
+     1
+    ],
+    [
+     "3",
+     "24-01-057",
+     "Front Engine Spigot",
+     1
+    ],
+    [
+     "4",
+     "10-20-033",
+     "HD Engine Pulley - 180-2 Groove for ST6p HD",
+     1
+    ],
+    [
+     "5",
+     "24-03-036",
+     "Hydraulic Pump Mount",
+     1
+    ],
+    [
+     "6",
+     "12-20-027",
+     "Key (Square) for Bottom Engine Pulley",
+     1
+    ],
+    [
+     "7",
+     "12-12-302",
+     "M6 X 12 SOCKET CAP SCREW BZP 12.9",
+     4
+    ],
+    [
+     "8",
+     "12-13-011",
+     "M8 NYLOC NUT BZP DIN 985 Type T",
+     4
+    ],
+    [
+     "9",
+     "12-14-013",
+     "M8 Plain Washer",
+     24
+    ],
+    [
+     "10",
+     "12-14-024",
+     "M8 Serrated / Schnorr Washer Zinc",
+     8
+    ],
+    [
+     "11",
+     "12-12-1113",
+     "M8 x 40 SKT CAP SCRW 12.9 BZP",
+     4
+    ],
+    [
+     "12",
+     "12-12-1114",
+     "M8 x 50 SKT CAP SCRW 12.9 BZP",
+     4
+    ],
+    [
+     "13",
+     "24-10-001",
+     "Softex Coupling",
+     1
+    ],
+    [
+     "14",
+     "12-10-233",
+     "Taperlock for Engine Pulley",
+     1
+    ],
+    [
+     "15",
+     "13-19-041",
+     "TR6P Exhaust Silencer",
+     1
+    ],
+    [
+     "16",
+     "13-19-060",
+     "TR6P V2 engine cradle fabrication",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Engine Bay › BRIGGS & STRATTON 37HP DOUBLE PUMP ENGINE ASSY",
+   "code": "97-A-011",
+   "pic": "forst-3d-tr6p-37-19.webp",
+   "wh": [
+    1404,
+    1294
+   ],
+   "m": [
+    [
+     "1",
+     868,
+     678,
+     943,
+     719
+    ],
+    [
+     "2",
+     762,
+     172,
+     959,
+     621
+    ],
+    [
+     "3",
+     302,
+     30,
+     771,
+     715
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "22-10-002",
+     "50-52mm M6 P-clip",
+     1
+    ],
+    [
+     "2",
+     "22-10-001",
+     "51mm Black Lined Neoprene Hose (price per centimetre) ST6P/TR6P/TT6 REQUIRES 65CM, CADET REQUIRES 90CM",
+     1
+    ],
+    [
+     "3",
+     "24-20-001",
+     "Briggs and Stratton 37 HP EFI V Twin Engine",
+     1
+    ],
+    [
+     "4",
+     "24-99-006",
+     "Briggs Exhaust Manifold Gasket",
+     2
+    ],
+    [
+     "5",
+     "12-14-024",
+     "M8 Serrated / Schnorr Washer Zinc",
+     4
+    ],
+    [
+     "6",
+     "24-99-007",
+     "M8 X 25 SOCKET CAP SCREW 12.9 BZP DIN 912",
+     4
+    ],
+    [
+     "7",
+     "13-19-061",
+     "TR6P V2 Exhaust pipe fabrication",
+     1
+    ],
+    [
+     "8",
+     "12-10-290",
+     "U Bolt Clamp M8 X 42mm",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Hood",
+   "code": "",
+   "pic": "forst-3d-tr6p-37-20.webp",
+   "wh": [
+    1475,
+    1605
+   ],
+   "m": [
+    [
+     "1",
+     883,
+     1259,
+     908,
+     1302
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-10-343",
+     "Conical Buffer",
+     2
+    ],
+    [
+     "2",
+     "12-13-011",
+     "M8 NYLOC NUT BZP DIN 985 Type T",
+     2
+    ],
+    [
+     "3",
+     "12-14-013",
+     "M8 Plain Washer",
+     2
+    ]
+   ]
+  },
+  {
+   "name": "Hood › Bonnet Fabrication",
+   "code": "13-19-054",
+   "pic": "forst-3d-tr6p-37-21.webp",
+   "wh": [
+    1482,
+    1613
+   ],
+   "m": [
+    [
+     "1",
+     838,
+     725,
+     1013,
+     840
+    ],
+    [
+     "2",
+     362,
+     553,
+     1363,
+     1578
+    ],
+    [
+     "11",
+     170,
+     833,
+     677,
+     1332
+    ],
+    [
+     "13",
+     938,
+     123,
+     1021,
+     458
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "13-03-029.B",
+     "Binnacle Access Cover for TR6P/TR8P/XR8P in RAL 9005 Black Satin",
+     1
+    ],
+    [
+     "2",
+     "13-19-054.B",
+     "Engine Cover Assy for Tracked Machine in RAL 9005 BLACK SATIN",
+     1
+    ],
+    [
+     "3",
+     "12-30-052",
+     "Forst Front Decal - Orange",
+     1
+    ],
+    [
+     "4",
+     "12-30-007",
+     "Forst Yellow Arrow Decal",
+     1
+    ],
+    [
+     "5",
+     "12-14-026",
+     "M5 Serrated / Schnorr Washer Zinc",
+     8
+    ],
+    [
+     "6",
+     "12-14-011",
+     "M5 WASHER",
+     4
+    ],
+    [
+     "7",
+     "12-12-201",
+     "M5 X 16 Socket Head Cap Screw 12.9 BZP",
+     8
+    ],
+    [
+     "8",
+     "12-14-025",
+     "M6 Serrated / Schnorr Washer Zinc",
+     6
+    ],
+    [
+     "9",
+     "12-12-302",
+     "M6 X 12 SOCKET CAP SCREW BZP 12.9",
+     6
+    ],
+    [
+     "10",
+     "24-16-001",
+     "ORANGE TOP BONNET VENT DECAL - FOR TR6P",
+     1
+    ],
+    [
+     "11",
+     "12-10-329",
+     "THROTTLE CABLE ASS.- TR6P",
+     1
+    ],
+    [
+     "12",
+     "24-16-002",
+     "TR6P ORANGE/WHITE SIDE BONNET DECAL",
+     2
+    ],
+    [
+     "13",
+     "12-10-178",
+     "Track Lever & Box Complete",
+     3
+    ],
+    [
+     "14",
+     "12-30-023",
+     "Tracked Directional Instruction Decal for Vari Track",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "Tray",
+   "code": "",
+   "pic": "forst-3d-tr6p-37-22.webp",
+   "wh": [
+    1506,
+    1456
+   ],
+   "m": [
+    [
+     "1",
+     100,
+     653,
+     127,
+     694
+    ],
+    [
+     "2",
+     610,
+     1079,
+     997,
+     1338
+    ],
+    [
+     "4",
+     24,
+     689,
+     63,
+     820
+    ],
+    [
+     "5",
+     348,
+     993,
+     1497,
+     1170
+    ],
+    [
+     "6",
+     690,
+     975,
+     723,
+     1002
+    ],
+    [
+     "21",
+     844,
+     1195,
+     873,
+     1254
+    ],
+    [
+     "23",
+     100,
+     113,
+     1503,
+     1048
+    ],
+    [
+     "25",
+     266,
+     863,
+     967,
+     1034
+    ],
+    [
+     "26",
+     2,
+     31,
+     1299,
+     784
+    ],
+    [
+     "27",
+     794,
+     1045,
+     923,
+     1110
+    ],
+    [
+     "28",
+     780,
+     1141,
+     893,
+     1206
+    ]
+   ],
+   "parts": [
+    [
+     "1",
+     "12-10-090",
+     "BUFFER 20x15 X M6 for Folding Hopper",
+     2
+    ],
+    [
+     "2",
+     "12-03-443",
+     "Cable and CAN Node Cover",
+     1
+    ],
+    [
+     "3",
+     "12-10-480",
+     "Captron Touch & Hold Sensor Assy - (Orange Reverse < Button)",
+     4
+    ],
+    [
+     "4",
+     "12-10-383",
+     "Captron Touch Sensor Assy - (Green Forward > Button)",
+     4
+    ],
+    [
+     "5",
+     "22-01-008",
+     "Hopper Tray Hinge Pin",
+     1
+    ],
+    [
+     "6",
+     "12-10-072",
+     "Inductive Proximity Sensor - Orange Tip",
+     1
+    ],
+    [
+     "7",
+     "12-14-047",
+     "M10 Nylon Washer (for Drive Bar Bolts)",
+     4
+    ],
+    [
+     "8",
+     "12-13-004",
+     "M16 Domed Cap Nut DIN 1587",
+     2
+    ],
+    [
+     "9",
+     "12-13-009",
+     "M16 Hex Thin Nut ISO 4035",
+     2
+    ],
+    [
+     "10",
+     "12-14-001",
+     "M16 Washer Extra Large Od 50 X 3 Thk",
+     4
+    ],
+    [
+     "11",
+     "12-12-671",
+     "M20 X 50mm OD X 3MM Thick Nylon Washer",
+     6
+    ],
+    [
+     "12",
+     "12-99-006",
+     "M4 X 10 Pozi Pan Screw Bzp",
+     12
+    ],
+    [
+     "13",
+     "12-13-015",
+     "M6 NYLOC NUT Type T",
+     4
+    ],
+    [
+     "14",
+     "12-14-017",
+     "M6 Washer",
+     6
+    ],
+    [
+     "15",
+     "12-12-303",
+     "M6 X 16 SOCKET BUTTON SCREW",
+     2
+    ],
+    [
+     "16",
+     "12-14-013",
+     "M8 Plain Washer",
+     4
+    ],
+    [
+     "17",
+     "12-14-024",
+     "M8 Serrated / Schnorr Washer Zinc",
+     4
+    ],
+    [
+     "18",
+     "10-12-058",
+     "M8 x 10 HEX BOLT 8.8 BZP",
+     4
+    ],
+    [
+     "19",
+     "10-12-006",
+     "M8x12 Cap Head Shoulder Bolt (10mm Shoulder)",
+     4
+    ],
+    [
+     "20",
+     "12-30-017",
+     "Push to Stop Decal for Stop Bar",
+     1
+    ],
+    [
+     "21",
+     "12-10-262",
+     "Rubber AV Mount 20 X 20 Male / Female M8",
+     4
+    ],
+    [
+     "22",
+     "12-05-050",
+     "Security Nut",
+     2
+    ],
+    [
+     "23",
+     "24-19-054",
+     "Sensor Folding Hopper Tray Assembly",
+     1
+    ],
+    [
+     "24",
+     "12-05-081",
+     "Stop Bar Collar - 20x16x15mm",
+     2
+    ],
+    [
+     "25",
+     "24-19-077",
+     "Stop Bar Drive Bar Fabrication",
+     1
+    ],
+    [
+     "26",
+     "24-19-076",
+     "Stop Bar Fabrication",
+     1
+    ],
+    [
+     "27",
+     "12-A-061",
+     "STOP BAR SPRING LOADED DAMPER -REV B *** FIT TO MACHINE WITH RAM FACING DOWNWARDS***",
+     1
+    ],
+    [
+     "28",
+     "10-75-002",
+     "Wurth CAN IO Module",
+     1
+    ]
+   ]
+  }
  ]
 }
