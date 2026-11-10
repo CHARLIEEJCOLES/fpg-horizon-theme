@@ -34,6 +34,21 @@ def img(name, widths, sizes, alt='', cls='', w=None, h=None, lazy=True):
             f'{f" width=\"{w}\" height=\"{h}\"" if w else ""}{" loading=\"lazy\"" if lazy else " fetchpriority=\"high\""} decoding="async">')
 
 
+def shot_spans(n):
+    """Column spans (of 12) and whether the photo is two rows tall, so no row is left part empty."""
+    if n <= 2 or n == 4:
+        return [(12 if n == 1 else 6, False)] * n
+    # A large photo with four small ones beside it, or with two when four would leave one over.
+    head = [(8, True)] + [(4, False)] * 2 if n in (3, 6) else [(6, True)] + [(3, False)] * 4
+    rest = n - len(head)
+    out = list(head)
+    while rest:
+        take = next(t for t in (4, 3, 2) if t <= rest and rest - t != 1)
+        out += [(12 // take, False)] * take
+        rest -= take
+    return out
+
+
 def product_url(m):
     return f"/products/{m['handle']}{VIEW}"
 
@@ -118,16 +133,21 @@ def machine_snippet(m):
                  + f'<div><h3>{e(title)}</h3><p>{e(text)}</p></div></li>')
     o.append('</ul></div></section>')
 
-    # ---- photos: the wide working shot, then the gallery
+    # ---- photos: one large shot, then rows that always fill the grid
     if not legacy:
         o.append('<section class="fpg-fo-sec fpg-fo-sec--dark" id="photos"><div class="fpg-fo-wrap">')
-        o.append(f'<h2 class="fpg-fo-h2">The {e(name)} at work</h2>')
+        o.append(f'<h2 class="fpg-fo-h2">Photos of the {e(name)}</h2>')
         o.append('<div class="fpg-fo-shots">')
         shots = [n['hero']] + n['gallery']
+        spans = shot_spans(len(shots))
         for i, (fn, _) in enumerate(shots):
-            big = i == 0
-            o.append(f'<a class="fpg-fo-shot{" fpg-fo-shot--wide" if big else ""}" href="{FILES}{fn}?width=2048" data-fo-shot>'
-                     + img(fn, [480, 800, 1400] if big else [400, 800], '(min-width: 990px) 60vw, 92vw' if big else '(min-width: 990px) 30vw, 46vw', alt=f'Först {name}, photo {i + 1}', w=2048, h=1200 if big else 1536)
+            span, tall = spans[i]
+            # On a phone the grid is two columns: the first photo and an odd last one take the full row.
+            full = i == 0 or (i == len(shots) - 1 and len(shots) % 2 == 0)
+            cls = f'fpg-fo-shot fpg-fo-shot--c{span}' + (' fpg-fo-shot--tall' if tall else '') + (' fpg-fo-shot--full' if full else '')
+            vw = round(span / 12 * 92)
+            o.append(f'<a class="{cls}" href="{FILES}{fn}?width=2048" data-fo-shot>'
+                     + img(fn, [480, 800, 1400] if span >= 6 else [400, 800], f'(min-width: 990px) {vw}vw, {92 if full else 46}vw', alt=f'Först {name}, photo {i + 1}', w=2048, h=1536)
                      + '</a>')
         o.append('</div><p class="fpg-fo-credit">Photos: Först.</p></div></section>')
 
@@ -178,7 +198,7 @@ def machine_snippet(m):
         if x['slug'] == m['slug']:
             continue
         o.append(f'<li><a href="{product_url(x)}">' + img(names(x)['cut'][0], [320, 640], '(min-width: 990px) 16vw, 44vw', w=1406, h=955)
-                 + f'<strong>{e(x["name"])}</strong><span>{e(x["cap"])} · {e(x["power"])} {e(x["fuel"].lower())}</span></a></li>')
+                 + f'<strong>{e(x["name"])}</strong><span>{e(x["cap"])} opening, {e(x["power"])} {e(x["fuel"].lower())}</span></a></li>')
     o.append('</ul></div></section>')
     o.append('</article>')
     return '\n'.join(o)

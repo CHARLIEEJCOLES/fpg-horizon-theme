@@ -24,7 +24,7 @@
 <li class="fpg-fo-kit__row">
   <div class="fpg-fo-kit__what">
     <strong>{{ label }}{% if count > 1 %} <span class="fpg-fo-kit__qty">× {{ count }}</span>{% endif %}</strong>
-    <span>Part no. {% if buyable %}<a href="{{ part.url }}">{{ sku }}</a>{% else %}{{ sku }}{% endif %}{% if note != blank %} · {{ note }}{% endif %}</span>
+    <span>Part no. {% if buyable %}<a href="{{ part.url }}">{{ sku }}</a>{% else %}{{ sku }}{% endif %}{% if note != blank %}, {{ note | downcase }}{% endif %}</span>
   </div>
   {%- comment -%} No class here may contain "price": the quote-request app strips such elements on quote-only machines' pages. {%- endcomment -%}
   {%- if buyable -%}

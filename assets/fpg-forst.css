@@ -463,17 +463,12 @@
 }
 
 /* ---------- photos ---------- */
+/* Two columns on a phone; twelve from 990px, where the page builder gives each photo a span that fills its row. */
 .fpg-fo-shots {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-top: 28px;
-}
-
-@media (min-width: 990px) {
-  .fpg-fo-shots {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
 }
 
 .fpg-fo-shot {
@@ -483,12 +478,32 @@
   overflow: hidden;
 }
 
-.fpg-fo-shot--wide {
+.fpg-fo-shot--full {
   grid-column: span 2;
 }
 
 @media (min-width: 990px) {
-  .fpg-fo-shot--wide {
+  .fpg-fo-shots {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .fpg-fo-shot--c3 {
+    grid-column: span 3;
+  }
+
+  .fpg-fo-shot--c4 {
+    grid-column: span 4;
+  }
+
+  .fpg-fo-shot--c6 {
+    grid-column: span 6;
+  }
+
+  .fpg-fo-shot--c8 {
+    grid-column: span 8;
+  }
+
+  .fpg-fo-shot--tall {
     grid-row: span 2;
   }
 }
