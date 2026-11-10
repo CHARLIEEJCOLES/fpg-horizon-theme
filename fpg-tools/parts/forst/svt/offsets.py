@@ -38,8 +38,6 @@ for slug, secs in secs_all.items():
             continue
         rows = {part_no(p['href']) for p in n['parts']}
         mine = [sp for sp in d['spots'].get(n['url'], []) if sp[0].replace('_', '.') in rows]
-        if not mine:
-            continue
         if n['url'] not in size:
             full = data_image(d['asm'][n['url']])
             small = np.asarray(full.convert('L').resize((96, 69))).astype(int)
@@ -47,13 +45,20 @@ for slug, secs in secs_all.items():
             if hit is None:
                 views.append(small)
                 hit = len(views) - 1
-            size[n['url']] = (full.size, hit)
-        (W, H), view = size[n['url']]
-        x0 = min(sp[1] for sp in mine); y0 = min(sp[2] for sp in mine)
-        x1 = max(sp[3] for sp in mine); y1 = max(sp[4] for sp in mine)
-        w, h = x1 - x0, y1 - y0
-        pw, ph = max(w * 0.05, (480 - w) / 2, 24), max(h * 0.05, (360 - h) / 2, 24)
-        box = (int(max(0, x0 - pw)), int(max(0, y0 - ph)), int(min(W, x1 + pw)), int(min(H, y1 + ph)))
+            # With no parts of its own traced, the picture is the view with its empty background trimmed.
+            a = np.asarray(full.convert('RGB')).astype(int)
+            ys, xs = np.where(np.abs(a - a[3, 3]).max(axis=2) > 12)
+            trim = (int(max(0, xs.min() - 40)), int(max(0, ys.min() - 40)), int(min(full.width, xs.max() + 41)), int(min(full.height, ys.max() + 41))) if len(xs) else (0, 0, full.width, full.height)
+            size[n['url']] = (full.size, hit, trim)
+        (W, H), view, trim = size[n['url']]
+        if mine:
+            x0 = min(sp[1] for sp in mine); y0 = min(sp[2] for sp in mine)
+            x1 = max(sp[3] for sp in mine); y1 = max(sp[4] for sp in mine)
+            w, h = x1 - x0, y1 - y0
+            pw, ph = max(w * 0.05, (480 - w) / 2, 24), max(h * 0.05, (360 - h) / 2, 24)
+            box = (int(max(0, x0 - pw)), int(max(0, y0 - ph)), int(min(W, x1 + pw)), int(min(H, y1 + ph)))
+        else:
+            box = trim
         if [box[2] - box[0], box[3] - box[1]] != list(s.get('wh') or []):
             bad += 1
             continue

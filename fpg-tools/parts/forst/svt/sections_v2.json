@@ -827,7 +827,12 @@
      "Jockey wheel or prop stand clamp",
      1
     ]
-   ]
+   ],
+   "off": [
+    212,
+    6
+   ],
+   "grp": 0
   },
   {
    "name": "Rolling Chassis With Fixings › Light Board Assembly",
@@ -3909,7 +3914,12 @@
      "Rear Hopper Support for ST6D/TR6D/ST6P",
      1
     ]
-   ]
+   ],
+   "off": [
+    240,
+    0
+   ],
+   "grp": 1
   },
   {
    "name": "Chipping Chamber › ST6 E-Stop Assembly - Mushroom",
@@ -5262,7 +5272,12 @@
      "Captron Touch Sensor Assy - (Green Forward > Button)",
      2
     ]
-   ]
+   ],
+   "off": [
+    1,
+    133
+   ],
+   "grp": 5
   },
   {
    "name": "Tray Assembly › Hopper Tray Hinge Pin Assy",
@@ -6626,7 +6641,12 @@
      "Fuse Board Bracket Fabrication",
      1
     ]
-   ]
+   ],
+   "off": [
+    172,
+    44
+   ],
+   "grp": 0
   },
   {
    "name": "Chassis Assembly › Light Board Assembly",
@@ -10159,7 +10179,12 @@
      "Chute Clamp - Black",
      2
     ]
-   ]
+   ],
+   "off": [
+    27,
+    116
+   ],
+   "grp": 2
   },
   {
    "name": "Chute Assembly complete with all fittings, in Black › Chute Hood Fab Assy",
@@ -11497,7 +11522,12 @@
      "Captron Touch & Hold Sensor Assy - (Orange Reverse < Button)",
      2
     ]
-   ]
+   ],
+   "off": [
+    63,
+    145
+   ],
+   "grp": 5
   },
   {
    "name": "Tray Assembly › Captron Touch Sensor Assy - (Green Forward > Button)",
@@ -11520,7 +11550,12 @@
      "Captron Touch Sensor Assy - (Green Forward > Button)",
      2
     ]
-   ]
+   ],
+   "off": [
+    63,
+    145
+   ],
+   "grp": 5
   },
   {
    "name": "Tray Assembly › Hopper Tray Hinge Pin Assy",
@@ -16148,7 +16183,12 @@
      "E-stop Button Bracket Fabrication",
      1
     ]
-   ]
+   ],
+   "off": [
+    42,
+    39
+   ],
+   "grp": 1
   },
   {
    "name": "Discharge Chute › Chute Assembly complete with all fittings, in Black",
@@ -16361,7 +16401,12 @@
      "Chute Clamp - Black",
      2
     ]
-   ]
+   ],
+   "off": [
+    0,
+    110
+   ],
+   "grp": 2
   },
   {
    "name": "Chute Assembly complete with all fittings, in Black › Chute Hood Assy - Black",
@@ -17879,7 +17924,12 @@
      "Captron Touch & Hold Sensor Assy - (Orange Reverse < Button)",
      2
     ]
-   ]
+   ],
+   "off": [
+    13,
+    11
+   ],
+   "grp": 5
   },
   {
    "name": "Tray Assembly with CAN Node › Captron Touch Sensor Assy - (Green Forward > Button)",
@@ -17902,7 +17952,12 @@
      "Captron Touch Sensor Assy - (Green Forward > Button)",
      2
     ]
-   ]
+   ],
+   "off": [
+    13,
+    11
+   ],
+   "grp": 5
   }
  ],
  "st8d-55-doosan": [
@@ -20121,7 +20176,12 @@
      "ECU Mounting Plate Fabrication",
      1
     ]
-   ]
+   ],
+   "off": [
+    7,
+    0
+   ],
+   "grp": 1
   },
   {
    "name": "DSE Control Panel Assembly › Grease Manifold Assy",
@@ -21597,7 +21657,12 @@
      "Chipping Chamber for ST8 50hp Machine",
      1
     ]
-   ]
+   ],
+   "off": [
+    7,
+    0
+   ],
+   "grp": 1
   },
   {
    "name": "ST8 50 HP Chipping Chamber Assy › Flywheel Assy",
@@ -21924,7 +21989,12 @@
      "Taper Lock Bush 3525 - 60mm ID",
      1
     ]
-   ]
+   ],
+   "off": [
+    7,
+    0
+   ],
+   "grp": 1
   },
   {
    "name": "ST8 50 HP Chipping Chamber Assy › Flywheel Belt Tensioner Assy",
@@ -24740,7 +24810,12 @@
      "Captron Touch Sensor Assy - (Green Forward > Button)",
      3
     ]
-   ]
+   ],
+   "off": [
+    16,
+    135
+   ],
+   "grp": 6
   },
   {
    "name": "Tray Assembly With CAN Node › Hopper Tray Hinge Pin Assy",
@@ -28469,7 +28544,12 @@
      "Chute Clamp - Black",
      2
     ]
-   ]
+   ],
+   "off": [
+    0,
+    209
+   ],
+   "grp": 2
   },
   {
    "name": "Chute Assembly complete with all fittings, in Black › Chute Hood Fab Assy",
@@ -34337,7 +34417,12 @@
      "Chute Clamp - Black",
      2
     ]
-   ]
+   ],
+   "off": [
+    0,
+    205
+   ],
+   "grp": 2
   },
   {
    "name": "Chute Assembly complete with all fittings, in Black › Chute Hood Assy - Black",
@@ -36512,7 +36597,12 @@
      "500kg Zinc Plated Over-centre Catch With Receiver/flange Nut",
      2
     ]
-   ]
+   ],
+   "off": [
+    543,
+    0
+   ],
+   "grp": 0
   },
   {
    "name": "Chassis › Fuse Board Assembly",
@@ -39687,7 +39777,12 @@
      "Chute Clamp - Black",
      2
     ]
-   ]
+   ],
+   "off": [
+    0,
+    63
+   ],
+   "grp": 2
   },
   {
    "name": "Chute Assembly complete with all fittings, in Black › Chute Hood Fab Assy",
@@ -44849,7 +44944,12 @@
      "Chute Clamp - Black",
      1
     ]
-   ]
+   ],
+   "off": [
+    0,
+    87
+   ],
+   "grp": 2
   },
   {
    "name": "Chute Assembly complete with all fittings, in Black › Chute Hood Assy - Black",
