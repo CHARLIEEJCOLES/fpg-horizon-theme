@@ -2105,8 +2105,9 @@ class FpgPartsFinder extends HTMLElement {
     const stock = qty > 0
       ? `<span class="fpg-pf-stock fpg-pf-stock--in">${qty} in stock</span>`
       : orderable ? `<span class="fpg-pf-stock fpg-pf-stock--order">Order in</span>` : `<span class="fpg-pf-stock fpg-pf-stock--out">Out of stock</span>`;
+    /* The maker's picture of the part stays on a row we sell, linking to its product. */
     return `
-      <div class="fpg-pf-vrow" data-v-row="${i}">
+      <div class="fpg-pf-vrow${p.image ? ' fpg-pf-vrow--img' : ''}" data-v-row="${i}">
         <span class="fpg-pf-vrow__ref">${ref}</span>
         <div class="fpg-pf-vrow__body">
           <a class="fpg-pf-vrow__name" href="/products/${encodeURIComponent(p.handle)}">${esc(cleanTitle(p.title, p.sku, brand))}</a>
@@ -2117,6 +2118,7 @@ class FpgPartsFinder extends HTMLElement {
             ${this.buyHtml(variant, orderable)}
           </div>
         </div>
+        ${p.image ? `<a class="fpg-pf-vrow__img" href="${esc(p.imageLarge)}" target="_blank" rel="noopener" aria-label="Larger photo of this part"><img src="${esc(p.image)}" alt="" loading="lazy" width="72" height="72"></a>` : ''}
       </div>`;
   }
 
