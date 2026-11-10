@@ -228,25 +228,22 @@ def range_section():
              f'<a class="fpg-fo-btn fpg-fo-btn--line" href="{FINDER}?brand=16">Find Först parts</a></div></div></header>')
 
     for kind, title, lead in (('wheeled', 'Wheeled chippers', 'Road-tow machines, from the 745 kg ST6P to the 8-inch ST8D.'), ('tracked', 'Tracked chippers', 'For gardens, slopes and sites a truck can’t reach, up to the bank-climbing XR8D.')):
-        o.append(f'<section class="fpg-fo-sec" id="{kind}"><div class="fpg-fo-wrap"><h2 class="fpg-fo-h2">{title}</h2><p class="fpg-fo-lead">{lead}</p><ul class="fpg-fo-range" role="list">')
+        # A lineup, not a product grid: these are only ever chippers, so each gets a full row with its figures set large.
+        o.append(f'<section class="fpg-fo-sec" id="{kind}"><div class="fpg-fo-wrap"><h2 class="fpg-fo-h2">{title}</h2><p class="fpg-fo-lead">{lead}</p><ul class="fpg-fo-line" role="list">')
         for m in [x for x in MACHINES if x['kind'] == kind]:
-            o.append('<li class="fpg-fo-card"><a class="fpg-fo-card__pic" href="' + product_url(m) + '" tabindex="-1" aria-hidden="true">'
-                     + img(names(m)['cut'][0], [480, 800], '(min-width: 990px) 30vw, 92vw', w=1406, h=955) + '</a>'
-                     f'<div class="fpg-fo-card__body"><h3><a href="{product_url(m)}">{e(m["name"])}</a></h3><p>{e(m["title"][0].upper() + m["title"][1:])}</p>'
-                     f'<dl><div><dt>Opening</dt><dd>{e(m["cap"])}</dd></div><div><dt>Engine</dt><dd>{e(m["power"])} {e(m["engine"].split(" V-twin")[0].replace("Briggs & Stratton ", ""))}</dd></div><div><dt>Weight</dt><dd>{e(m["weight"])}</dd></div></dl>'
-                     f'<div class="fpg-fo-card__links"><a class="fpg-fo-btn fpg-fo-btn--dark fpg-fo-btn--sm" href="{product_url(m)}">See the {e(m["name"])}</a>'
-                     f'<a href="{product_url(m)}#service-kit">Service kit</a><a href="{finder_url(m)}">Parts</a></div></div></li>')
-        # Five machines in each group: a sixth card closes the row and says something a card for a machine can't.
+            engine = m["engine"].split(" V-twin")[0].replace("Briggs & Stratton ", "")
+            o.append('<li class="fpg-fo-row"><a class="fpg-fo-row__pic" href="' + product_url(m) + '" tabindex="-1" aria-hidden="true">'
+                     + img(names(m)['cut'][0], [480, 800], '(min-width: 990px) 26vw, (min-width: 600px) 40vw, 92vw', w=1406, h=955) + '</a>'
+                     f'<div class="fpg-fo-row__name"><h3><a href="{product_url(m)}">{e(m["name"])}</a></h3><p>{e(m["title"][0].upper() + m["title"][1:])}</p></div>'
+                     f'<dl class="fpg-fo-row__facts"><div><dt>Opening</dt><dd>{e(m["cap"])}</dd></div><div><dt>{e(engine)} {e(m["fuel"].lower())}</dt><dd>{e(m["power"].split(" ")[0])}</dd></div><div><dt>Weight</dt><dd>{e(m["weight"])}</dd></div></dl>'
+                     f'<div class="fpg-fo-row__go"><a class="fpg-fo-btn fpg-fo-btn--dark" href="{product_url(m)}">See the {e(m["name"])}</a>'
+                     f'<span><a href="{product_url(m)}#service-kit">Service kit</a><a href="{finder_url(m)}">Parts</a></span></div></li>')
+        o.append('</ul>')
         if kind == 'wheeled':
-            note = ('TT6 and ST8P', 'Two more wheeled machines: the TT6 turntable chipper and the 8-inch petrol ST8P. Ask us what’s available.',
-                    [(product_url(x), f'See the {x["name"]}') for x in LEGACY])
+            o.append('<p class="fpg-fo-line__note">Two more wheeled machines, the ' + ' and the '.join(f'<a href="{product_url(x)}">{e(x["name"])}{" turntable chipper" if x["slug"] == "tt6" else " 8-inch petrol"}</a>' for x in LEGACY) + ': ask us what’s available.</p>')
         else:
-            note = ('Not sure which one?', 'Tell us what you chip, how often, and where the machine has to get to. We’ll point you at the right chipper.',
-                    [('#enquire', 'Ask us'), ('#compare', 'Compare the range')])
-        o.append(f'<li class="fpg-fo-card fpg-fo-card--note"><div class="fpg-fo-card__body"><h3>{e(note[0])}</h3><p>{e(note[1])}</p><div class="fpg-fo-card__links">'
-                 + ''.join(f'<a class="fpg-fo-btn fpg-fo-btn--{"go" if i == 0 else "line"} fpg-fo-btn--sm" href="{h}">{e(t)}</a>' for i, (h, t) in enumerate(note[2]))
-                 + '</div></div></li>')
-        o.append('</ul></div></section>')
+            o.append('<p class="fpg-fo-line__note">Not sure which one? <a href="#enquire">Tell us what you chip and where</a>, or <a href="#compare">compare the range</a>.</p>')
+        o.append('</div></section>')
 
     # comparison
     cols = [('Opening', 'cap'), ('Engine', None), ('Fuel', 'fuel'), ('Weight', 'weight'), ('Width', 'width'), ('Length, hopper up', 'length'), ('Height', 'height'), ('Tank', 'tank')]

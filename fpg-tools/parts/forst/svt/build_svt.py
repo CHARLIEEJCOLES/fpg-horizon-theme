@@ -50,6 +50,7 @@ CARDS = {
     '1087': {'name': 'TR8D', 'line': '55hp Doosan diesel', 'group': 'Tracked chippers', 'pic': 'TR8D55-feat.jpg', 'handle': 'forst-tr8d-tracked-woodchipper'},
     '1089': {'name': 'XR8D', 'line': '55hp Doosan diesel', 'group': 'Tracked chippers', 'pic': 'Forst-XR8-Main.png', 'handle': 'forst-xr8d-tracked-woodchipper'},
 }
+CUTS = {'1097': 'fpgf-st6p-cut.png', '1085': 'fpgf-st6d-24-cut.png', '1096': 'fpgf-st6d-42-cut.png', '1095': 'fpgf-st8d-cut.png', '1098': 'fpgf-tr6p-cut.png', '1099': 'fpgf-tr6d-24-cut.png', '1110': 'fpgf-tr6d-42-cut.png', '1087': 'fpgf-tr8d-cut.png', '1089': 'fpgf-xr8d-cut.png'}
 MIN_LINES = 12
 
 
@@ -161,7 +162,8 @@ def main():
         'h': h,
         # The brand's page in the finder: a photo card per machine (our own product photos), and the same photo on the machine's page.
         'lead': "Pick your chipper to open Forst's own 3D parts drawings. Click a part on the drawing to see its price and add it to the basket.",
-        'cards': CARDS,
+        # Cards show Först's cut-out of the machine (Shopify Files, fpgf-<slug>-cut.*) on a studio panel.
+        'cards': {mid: {**c, 'pic': CUTS.get(mid, c['pic'])} for mid, c in CARDS.items()},
         'skin': 'forst',  # the site takes Först's colours on these pages (assets/fpg-design.css)
         'mi': {mid: c['pic'] for mid, c in CARDS.items()},
         # The brands page quotes this: every Forst part number across the machines' lists.

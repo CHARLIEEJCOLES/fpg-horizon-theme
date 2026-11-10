@@ -1739,3 +1739,19 @@ a.fpg-pf-mine__label:focus-visible {
     transform: none;
   }
 }
+
+/* Först's machines are cut-outs, many of them black: they sit on a lit studio panel instead of the pale one. */
+[data-fpg-skin='forst'] .fpg-pf-card__pic {
+  background: radial-gradient(62% 72% at 50% 58%, #a6adb1 0%, #666e72 40%, #17191a 88%);
+}
+
+[data-fpg-skin='forst'] .fpg-pf-card__pic img {
+  mix-blend-mode: normal;
+  filter: drop-shadow(0 12px 14px rgb(0 0 0 / 0.5));
+}
+
+[data-fpg-skin='forst'] .fpg-pf-card__name {
+  font-size: 2rem;
+  font-style: italic;
+  line-height: 1;
+}
