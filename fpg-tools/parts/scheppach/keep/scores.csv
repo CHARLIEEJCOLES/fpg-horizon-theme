@@ -496,10 +496,10 @@ rank,keep,machine,type,group,score,parts,parts available,UK plug parts,UK shop b
 495,yes,Art. 3901315973,Table Saw,Workshop,5.92,67,82%,,"Ferrex, MacAllister, Workzone","Dexter, Ferrex, Kity, MacAllister, Matrix, Primaster, Toolson, Utool, Woodtec, Workzone",workshop; also sold as Ferrex/MacAllister/Workzone; 10 other brands share the list; 82% of parts still available,802509
 496,yes,HS100S 230V50Hz,Table Saw,Workshop,5.92,257,68%,,Workzone,"Dexter, Herkules, Meec, Primaster, Toolson, Woodster, Woodtec, Workzone",workshop; also sold as Workzone; 8 other brands share the list; 68% of parts still available,802518
 497,yes,LMH53-6V,Lawn Mower,Outdoor power,5.91,146,92%,,,,outdoor power; 92% of parts still available,801459
-498,yes,/,Wet & Dry Vacuum,Site & building,5.9,170,80%,,Ferrex,Ferrex,site & building; also sold as Ferrex; 1 other brands share the list; 80% of parts still available,802710
+498,no,/,Wet & Dry Vacuum,Site & building,5.9,170,80%,,Ferrex,Ferrex,site & building; also sold as Ferrex; 1 other brands share the list; 80% of parts still available,802710
 499,yes,Basato 3 vario,Band Saw,Workshop,5.89,334,89%,yes,,Kity,workshop; UK plug parts; 1 other brands share the list; 89% of parts still available,800872
 500,yes,MS200-51VS,Lawn Mower,Outdoor power,5.89,188,90%,,,,outdoor power; 90% of parts still available,801527
-501,no,Mix125 Mecro,Cement Mixer,Site & building,5.88,94,84%,,"Ferrex, Parkside","Parkside, Ferrex",site & building; also sold as Ferrex/Parkside; 2 other brands share the list; 84% of parts still available,800981
+501,yes,Mix125 Mecro,Cement Mixer,Site & building,5.88,94,84%,,"Ferrex, Parkside","Parkside, Ferrex",site & building; also sold as Ferrex/Parkside; 2 other brands share the list; 84% of parts still available,800981
 502,no,SG7100,Generator,Outdoor power,5.88,70,96%,,,,outdoor power; 96% of parts still available,801339
 503,no,MS146-42,Lawn Mower,Outdoor power,5.88,104,93%,,,,outdoor power; 93% of parts still available,801489
 504,no,MS196-53B,Lawn Mower,Outdoor power,5.88,191,90%,,,,outdoor power; 90% of parts still available,801517

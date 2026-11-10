@@ -48,7 +48,9 @@ for r in rows:
         f"{round(stock * 100)}% of parts still available",
     ]))
 rows.sort(key=lambda r: (-r['polly'], -r['score']))
-keep = rows[:TARGET]
+# A name that isn't a model ("/", "AC") can't be matched to a rating plate: never kept.
+named = lambda r: sum(ch.isalnum() for ch in r['name']) >= 3
+keep = [r for r in rows if named(r)][:TARGET]
 for r in rows:
     r['keep'] = r in keep
 json.dump(sorted(r['mid'] for r in keep), open('keep.json', 'w'))
