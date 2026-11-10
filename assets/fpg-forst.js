@@ -187,8 +187,13 @@ function spin() {
     if (!ctx) return;
     let shown = -1;
     /* The whole turn over the first screen-and-a-bit of scrolling, drawn as each scroll arrives. */
+    /* The page scrolls inside the theme's page wrapper, not the window: take whichever has moved. */
+    const scrolled = () => {
+      for (let el = pic.parentElement; el; el = el.parentElement) if (el.scrollTop > 0) return el.scrollTop;
+      return window.scrollY;
+    };
     const draw = () => {
-      const i = Math.round(Math.max(0, Math.min(1, window.scrollY / (window.innerHeight * 1.1))) * (frames.length - 1));
+      const i = Math.round(Math.max(0, Math.min(1, scrolled() / (window.innerHeight * 1.1))) * (frames.length - 1));
       if (i === shown) return;
       shown = i;
       ctx.drawImage(frames[i], 0, 0);
@@ -197,7 +202,8 @@ function spin() {
     draw();
     pic.classList.add('has-spin');
     pic.append(canvas);
-    window.addEventListener('scroll', draw, { passive: true });
+    /* Scrolls of an inner box don't bubble, so they are caught on the way down. */
+    document.addEventListener('scroll', draw, { passive: true, capture: true });
   };
   clip.addEventListener('loadeddata', collect, { once: true });
   clip.src = pic.dataset.foSpin;
