@@ -6,7 +6,7 @@
     "Chassis"
    ],
    "code": "",
-   "pic": "forst-v3-24a000-st6p-01.webp",
+   "pic": "forst-v4-24a000-st6p-01.webp",
    "wh": [
     1050,
     401
@@ -121,7 +121,7 @@
     "Rolling Chassis With Fixings"
    ],
    "code": "24-A-021",
-   "pic": "forst-v3-24a000-st6p-02.webp",
+   "pic": "forst-v4-24a000-st6p-02.webp",
    "wh": [
     1690,
     1432
@@ -133,7 +133,7 @@
      598,
      1104,
      1033,
-     "M601 760L725 861L744 859L825 921L859 915L889 937L920 945L1038 909L990 860L971 864L965 858L960 864L925 840L919 830L936 808L820 724L798 728L794 716L761 720L773 730L761 738L753 734L757 727L743 724L721 730L731 740L724 747L703 734ZM692 725L636 682L533 706L587 751ZM447 659L448 685L687 887L879 1007L997 1005L1049 1033L1064 1011L1104 1012L1069 959L1104 940L1094 898L798 662L1092 900L1100 941L1057 955L1098 984L1095 1018L1061 1004L1055 1031L1006 1004L882 1006L689 886L448 679L458 655L700 599L740 623L709 598Z"
+     "M601 760L725 861L744 859L825 921L859 915L889 937L920 945L1038 909L990 860L971 864L965 858L960 864L925 840L919 830L936 808L820 724L798 728L794 716L761 720L773 730L761 738L753 734L757 727L743 724L721 730L731 740L724 747L703 734ZM692 725L636 682L533 706L587 751Z"
     ],
     [
      "4",
@@ -285,7 +285,7 @@
      644,
      508,
      657,
-     "M483 649L483 652L489 657L504 657L508 654L508 647L504 644L489 644Z"
+     "M505 646L508 653L508 647ZM483 649L483 652L489 657L500 657L500 654L494 656L489 654L488 646ZM500 644L497 644L495 647Z"
     ],
     [
      "6",
@@ -687,7 +687,7 @@
     "35L Petrol Fuel Tank Assembly"
    ],
    "code": "24-A-003",
-   "pic": "forst-v3-24a000-st6p-03.webp",
+   "pic": "forst-v4-24a000-st6p-03.webp",
    "wh": [
     480,
     360
@@ -748,7 +748,7 @@
     "Forst Clear Petrol Tank 35ltr (Includes Fuel Cap)"
    ],
    "code": "24-02-003",
-   "pic": "forst-v3-24a000-st6p-04.webp",
+   "pic": "forst-v4-24a000-st6p-04.webp",
    "wh": [
     480,
     341
@@ -794,7 +794,7 @@
     "Jockey wheel or prop stand clamp"
    ],
    "code": "12-10-238.A",
-   "pic": "forst-v3-24a000-st6p-05.webp",
+   "pic": "forst-v4-24a000-st6p-05.webp",
    "wh": [
     1980,
     1714
@@ -817,7 +817,7 @@
     "Light Board Assembly"
    ],
    "code": "12-A-098",
-   "pic": "forst-v3-24a000-st6p-06.webp",
+   "pic": "forst-v4-24a000-st6p-06.webp",
    "wh": [
     556,
     360
@@ -946,7 +946,7 @@
     "12v bolt on Socket for wiring loom"
    ],
    "code": "12-10-255",
-   "pic": "forst-v3-24a000-st6p-07.webp",
+   "pic": "forst-v4-24a000-st6p-07.webp",
    "wh": [
     480,
     360
@@ -992,7 +992,7 @@
     "Mudguard 4 Bolt Assy - Left"
    ],
    "code": "12-A-100",
-   "pic": "forst-v3-24a000-st6p-08.webp",
+   "pic": "forst-v4-24a000-st6p-08.webp",
    "wh": [
     523,
     360
@@ -1148,7 +1148,7 @@
     "Mudguard 4 Bolt Assy - Right"
    ],
    "code": "12-A-101",
-   "pic": "forst-v3-24a000-st6p-09.webp",
+   "pic": "forst-v4-24a000-st6p-09.webp",
    "wh": [
     480,
     360
@@ -1168,7 +1168,7 @@
      241,
      417,
      320,
-     "M417 256L401 241L396 241L394 259L296 289L291 282L289 253L280 251L258 255L251 249L246 249L246 289L258 302L264 304L264 312L270 320L299 320L310 314L371 302L417 279Z"
+     "M417 256L401 241L396 241L394 259L296 290L291 282L289 253L280 251L258 255L251 249L246 249L246 289L258 302L264 304L264 312L270 320L299 320L310 314L371 302L417 279Z"
     ],
     [
      "6",
@@ -1176,7 +1176,7 @@
      213,
      217,
      322,
-     "M201 213L188 213L183 217L130 227L124 233L124 244L118 248L118 287L122 289L122 312L130 322L149 322L154 318L205 308L217 301L217 246L213 244L213 233L207 226L207 221Z"
+     "M201 213L188 213L183 217L130 227L124 233L124 244L118 248L118 287L122 289L122 312L130 322L149 322L154 318L205 308L217 301L217 246L213 244L213 233Z"
     ],
     [
      "2",
@@ -1318,7 +1318,7 @@
     "Chipping Chamber"
    ],
    "code": "",
-   "pic": "forst-v3-24a000-st6p-10.webp",
+   "pic": "forst-v4-24a000-st6p-10.webp",
    "wh": [
     1168,
     1720
@@ -1843,7 +1843,7 @@
     "Chamber and Hopper Assembly"
    ],
    "code": "24-A-028",
-   "pic": "forst-v3-24a000-st6p-11.webp",
+   "pic": "forst-v4-24a000-st6p-11.webp",
    "wh": [
     1526,
     1368
@@ -2629,7 +2629,7 @@
     "Belt Tensioner Assembly"
    ],
    "code": "24-A-002",
-   "pic": "forst-v3-24a000-st6p-12.webp",
+   "pic": "forst-v4-24a000-st6p-12.webp",
    "wh": [
     558,
     485
@@ -2857,7 +2857,7 @@
     "Flywheel Assembly"
    ],
    "code": "24-A-013",
-   "pic": "forst-v3-24a000-st6p-13.webp",
+   "pic": "forst-v4-24a000-st6p-13.webp",
    "wh": [
     976,
     1070
@@ -3169,7 +3169,7 @@
     "Top Feed Roller Assembly"
    ],
    "code": "24-A-012",
-   "pic": "forst-v3-24a000-st6p-14.webp",
+   "pic": "forst-v4-24a000-st6p-14.webp",
    "wh": [
     1372,
     622
@@ -3634,7 +3634,7 @@
     "DSE - CH Control Panel Assembly"
    ],
    "code": "12-A-116",
-   "pic": "forst-v3-24a000-st6p-15.webp",
+   "pic": "forst-v4-24a000-st6p-15.webp",
    "wh": [
     480,
     360
@@ -3762,7 +3762,7 @@
     "Grease Manifold Assy"
    ],
    "code": "12-A-018",
-   "pic": "forst-v3-24a000-st6p-16.webp",
+   "pic": "forst-v4-24a000-st6p-16.webp",
    "wh": [
     480,
     360
@@ -3821,7 +3821,7 @@
     "Rear Hopper Support for ST6D/TR6D/ST6P"
    ],
    "code": "12-19-204",
-   "pic": "forst-v3-24a000-st6p-17.webp",
+   "pic": "forst-v4-24a000-st6p-17.webp",
    "wh": [
     1936,
     1693
@@ -3843,7 +3843,7 @@
     "ST6 E-Stop Assembly - Mushroom"
    ],
    "code": "12-A-084",
-   "pic": "forst-v3-24a000-st6p-18.webp",
+   "pic": "forst-v4-24a000-st6p-18.webp",
    "wh": [
     480,
     487
@@ -3930,7 +3930,7 @@
     "Chute Assembly complete with all fittings, in Black"
    ],
    "code": "12-A-007.B",
-   "pic": "forst-v3-24a000-st6p-19.webp",
+   "pic": "forst-v4-24a000-st6p-19.webp",
    "wh": [
     1872,
     1436
@@ -4130,7 +4130,7 @@
     "Chute Hood Assy - Black"
    ],
    "code": "12-19-151.B",
-   "pic": "forst-v3-24a000-st6p-20.webp",
+   "pic": "forst-v4-24a000-st6p-20.webp",
    "wh": [
     1001,
     794
@@ -4166,7 +4166,7 @@
     "Engine Bay"
    ],
    "code": "",
-   "pic": "forst-v3-24a000-st6p-21.webp",
+   "pic": "forst-v4-24a000-st6p-21.webp",
    "wh": [
     2211,
     1492
@@ -4631,7 +4631,7 @@
     "Bonnet Assembly"
    ],
    "code": "24-A-032",
-   "pic": "forst-v3-24a000-st6p-22.webp",
+   "pic": "forst-v4-24a000-st6p-22.webp",
    "wh": [
     1616,
     1514
@@ -4842,7 +4842,7 @@
     "Tray Assembly"
    ],
    "code": "24-A-029",
-   "pic": "forst-v3-24a000-st6p-23.webp",
+   "pic": "forst-v4-24a000-st6p-23.webp",
    "wh": [
     2400,
     1623
@@ -5144,7 +5144,7 @@
     "Captron Touch Sensor Assy - (Green Forward > Button)"
    ],
    "code": "12-10-383",
-   "pic": "forst-v3-24a000-st6p-24.webp",
+   "pic": "forst-v4-24a000-st6p-24.webp",
    "wh": [
     2399,
     1567
@@ -5167,7 +5167,7 @@
     "Hopper Tray Hinge Pin Assy"
    ],
    "code": "22-A-002",
-   "pic": "forst-v3-24a000-st6p-25.webp",
+   "pic": "forst-v4-24a000-st6p-25.webp",
    "wh": [
     1579,
     360
