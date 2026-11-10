@@ -211,8 +211,8 @@ async function runMachine(slug, S) {
     o.putImageData(wd, 0, 0);
     return out;
   };
-  // Decals and labels get no picture (they are flat stickers); everything else does.
-  const NOPIC = /\b(decal|sticker|label)\b/i;
+  // Every part gets a picture, decals and the smallest fasteners included.
+  const NOPIC = /^$/;
 
   try {
     S.phase = 'walk';
@@ -271,7 +271,7 @@ async function runMachine(slug, S) {
         if (W && !clean && t.url !== leaves[leaves.length - 1].url) clean = paintOut(W, Wg, c, grid);
         ref = grid;
         if (b) (spots[n.url] = spots[n.url] || []).push([t.base, b.x0, b.y0, b.x1, b.y1, c.width, c.height, b.mask, t.inst, Math.round(off * 10) / 10]);
-        if (b && !seen.has(t.base) && !NOPIC.test(t.name) && Math.max(b.x1 - b.x0, b.y1 - b.y0) >= 24) { part[t.base] = crop(c, b).toDataURL('image/webp', 0.92); seen.add(t.base); }
+        if (b && !seen.has(t.base) && !NOPIC.test(t.name) && Math.max(b.x1 - b.x0, b.y1 - b.y0) >= 8) { part[t.base] = crop(c, b).toDataURL('image/webp', 0.92); seen.add(t.base); }
         S.tWork = (S.tWork || 0) + Date.now() - q1;
       }
       asm[n.url] = (clean || W || A).toDataURL('image/webp', 0.9);
