@@ -18,6 +18,8 @@ FILES = 'https://cdn.shopify.com/s/files/1/0734/1477/0982/files/'
 FINDER = '/pages/fpg-part-finder'
 maker = json.loads((ROOT / 'assets' / 'fpg-maker-forst.json').read_text())
 ALL = MACHINES + LEGACY
+# Machines with a turning clip in Shopify Files.
+SPINS = {'st6p': 'fpgf-st6p-spin.mp4'}
 BY_SLUG = {m['slug']: m for m in ALL}
 # On a draft theme the machine pages are reached with ?view=forst (the products aren't switched to the template until go-live).
 VIEW = "{% if theme.role != 'main' %}?view=forst{% endif %}"
@@ -109,7 +111,9 @@ def machine_snippet(m):
              "<a class=\"fpg-fo-btn fpg-fo-btn--line\" href=\"tel:{{ shop.phone | default: '01443230000' | remove: ' ' }}\">Call {{ shop.phone | default: '01443 230000' }}</a></div>")
     o.append("{%- assign avail = product.metafields.custom.availability.value -%}{%- if avail != blank -%}<p class=\"fpg-fo-hero__stock{% if avail contains 'In stock' %} is-in{% endif %}\">{{ avail | escape }}{% if avail contains 'In stock' %} at Treforest{% endif %}</p>{%- endif -%}")
     o.append('</div>')
-    o.append(f'<div class="fpg-fo-hero__pic">{cut}</div></div>')
+    # A turning clip (made from Först's studio photos) that assets/fpg-forst.js steps through as the page scrolls.
+    spin = f' data-fo-spin="{FILES}{SPINS[m["slug"]]}"' if m['slug'] in SPINS else ''
+    o.append(f'<div class="fpg-fo-hero__pic"{spin}>{cut}</div></div>')
     o.append('<dl class="fpg-fo-facts">' + ''.join(f'<div><dt>{e(lbl)}</dt><dd>{e(val)}</dd></div>' for val, lbl in m['facts']) + '</dl>')
     o.append('</div></header>')
 

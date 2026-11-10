@@ -336,6 +336,24 @@
   filter: drop-shadow(0 28px 34px rgb(0 0 0 / 0.55));
 }
 
+/* The turning clip, once loaded, takes the still picture's place (assets/fpg-forst.js). */
+.fpg-fo-hero__pic.has-spin {
+  position: relative;
+}
+
+.fpg-fo-hero__pic.has-spin > img {
+  visibility: hidden;
+}
+
+.fpg-fo-hero__spin {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--fo-radius);
+  object-fit: cover;
+}
+
 .fpg-fo-hero__pic .fpg-fo-hero__own {
   max-width: 560px;
   margin-inline: auto;

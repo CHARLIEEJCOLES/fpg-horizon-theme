@@ -4,6 +4,7 @@
  *   and "Add the whole kit" adds every part on sale at once. Without this file the links go to the parts' pages.
  * - Photos open enlarged, with arrow keys to move between them.
  * - After the enquiry form is sent, the thank-you is brought into view.
+ * - A machine with a turning clip (data-fo-spin: a short video) turns as the page scrolls.
  * The basket is updated through FPGTools.addItemsToCart (assets/fpg-cart.js), so the cart icon and drawer follow.
  */
 
@@ -141,6 +142,42 @@ function sent() {
   note.focus({ preventScroll: true });
 }
 
+/**
+ * The hero machine turns with the scroll: a short clip (data-fo-spin) is stepped through as the page moves.
+ * Until it has loaded, on a small screen, or with reduced motion, the still picture stays.
+ */
+function spin() {
+  const pic = /** @type {HTMLElement | null} */ (document.querySelector('[data-fo-spin]'));
+  if (!pic || !pic.dataset.foSpin || window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.innerWidth < 990) return;
+  const clip = document.createElement('video');
+  clip.muted = true;
+  clip.playsInline = true;
+  clip.preload = 'auto';
+  clip.className = 'fpg-fo-hero__spin';
+  clip.setAttribute('aria-label', pic.querySelector('img')?.alt || '');
+  let queued = false;
+  const step = () => {
+    queued = false;
+    if (!clip.duration) return;
+    /* The whole clip over the first screen-and-a-bit of scrolling. */
+    const k = Math.max(0, Math.min(1, window.scrollY / (window.innerHeight * 1.1)));
+    const t = k * (clip.duration - 0.05);
+    if (Math.abs(clip.currentTime - t) > 0.02) clip.currentTime = t;
+  };
+  clip.addEventListener('loadeddata', () => {
+    pic.classList.add('has-spin');
+    pic.append(clip);
+    step();
+    window.addEventListener('scroll', () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(step);
+    }, { passive: true });
+  }, { once: true });
+  clip.src = pic.dataset.foSpin;
+}
+
 kits();
 photos();
 sent();
+spin();
