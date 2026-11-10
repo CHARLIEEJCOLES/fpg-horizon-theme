@@ -64,6 +64,9 @@ def main(files):
         nodes = []
 
         def walk(n):
+            # The track units carry their maker's CAD pieces ("Copy_of_..."): not Forst part numbers, so left out.
+            if n['path'] and n['path'][-1].startswith('Copy_of_'):
+                return
             if n.get('error'):
                 print('  skipped', ' > '.join(n['path']), n['error'])
                 return
@@ -83,6 +86,8 @@ def main(files):
             rows = {}
             for p in n['parts']:
                 no = part_no(p['href'])
+                if no.startswith('Copy.'):
+                    continue
                 if no in rows:
                     rows[no][2] += p['qty']
                 else:
@@ -95,9 +100,13 @@ def main(files):
                 no = base.replace('_', '.')
                 if no in ref and wh:
                     m.append([ref[no], x0 - off[0], y0 - off[1], x1 - off[0], y1 - off[1]])
+            if not rows:
+                continue
             secs.append({'name': name, 'code': n.get('code', ''), 'pic': pic, 'wh': list(wh) if wh else None, 'm': m, 'parts': [[ref[r[0]]] + r for r in rows]})
         for base, url in d['part'].items():
             no = base.replace('_', '.')
+            if no.startswith('Copy.'):
+                continue
             if no not in pics:
                 fn = 'forst-part-' + re.sub(r'[^0-9A-Za-z-]', '-', no) + '.webp'
                 save_webp(url, IMG / fn)
