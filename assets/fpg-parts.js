@@ -2021,11 +2021,10 @@ class FpgPartsFinder extends HTMLElement {
       const y1 = Math.min(...boxes.map((b) => b.y1));
       const x2 = Math.max(...boxes.map((b) => b.x2));
       const y2 = Math.max(...boxes.map((b) => b.y2));
-      /* Room around the part: never less than a fifth of the drawing, so a washer isn't blown up to fill the screen. */
-      const least = Math.min(w, h) * 0.22;
-      const fw = Math.max((x2 - x1) * 1.8, least);
-      const fh = Math.max((y2 - y1) * 1.8, least);
+      /* Room around the part, and never closer than three times the fitted drawing, so a washer isn't blown up to fill the screen. */
       const fit = Math.min((scroll.clientWidth - 16) / w, (scroll.clientHeight - 16) / h);
+      const fw = Math.max((x2 - x1) * 1.8, scroll.clientWidth / (fit * 3));
+      const fh = Math.max((y2 - y1) * 1.8, scroll.clientHeight / (fit * 3));
       const to = Math.max(1, Math.min(ZOOM_MAX, scroll.clientWidth / (fit * fw), scroll.clientHeight / (fit * fh)));
       const cx = (x1 + x2) / 2 / w;
       const cy = (y1 + y2) / 2 / h;
