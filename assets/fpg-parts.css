@@ -1553,3 +1553,188 @@ a.fpg-pf-mine__label:focus-visible {
   padding: 2px;
   object-fit: contain;
 }
+
+/* ---------- a brand shown as its machines, with photos (maker.cards, e.g. Forst) ---------- */
+.fpg-pf-show {
+  display: grid;
+  gap: clamp(24px, 3.5vw, 40px);
+}
+
+.fpg-pf-show__group {
+  display: grid;
+  gap: 14px;
+}
+
+.fpg-pf-show__h {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--fpg-pale, #e2e9e5);
+  font-family: var(--font-heading--family);
+  font-size: 1.1875rem;
+  color: var(--fpg-teal, #002d37);
+}
+
+.fpg-pf-show__h span {
+  font-family: var(--font-body--family);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--fpg-sage, #5f7d6d);
+}
+
+.fpg-pf-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 248px), 1fr));
+  gap: var(--pf-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fpg-pf-card {
+  position: relative;
+  height: 100%;
+  border: 1px solid var(--fpg-line, #d6ded9);
+  border-radius: var(--pf-radius);
+  background: #fff;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.25s, transform 0.25s var(--fpg-ease, ease);
+}
+
+.fpg-pf-card:hover,
+.fpg-pf-card:focus-within {
+  border-color: var(--fpg-sage, #5f7d6d);
+  box-shadow: var(--fpg-shadow-md, 0 16px 40px rgb(0 45 55 / 0.16));
+  transform: translateY(-3px);
+}
+
+/* The whole card opens the machine's parts; "See the machine" sits above it as its own link. */
+.fpg-pf-card__main {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  text-align: start;
+  cursor: pointer;
+}
+
+.fpg-pf-card__main::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.fpg-pf-card__main:focus-visible {
+  outline: none;
+}
+
+.fpg-pf-card:has(.fpg-pf-card__main:focus-visible) {
+  outline: 2px solid var(--fpg-teal, #002d37);
+  outline-offset: 2px;
+}
+
+/* Photos come on white or cut out: multiplied onto the panel, both sit on it without a white box. */
+.fpg-pf-card__pic {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  background: var(--fpg-mist, #f3f6f4);
+  color: var(--fpg-sage, #5f7d6d);
+  overflow: hidden;
+}
+
+.fpg-pf-card__pic img {
+  width: 100%;
+  height: 100%;
+  padding: 5%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  transition: transform 0.5s var(--fpg-ease, ease);
+}
+
+.fpg-pf-card:hover .fpg-pf-card__pic img {
+  transform: scale(1.05);
+}
+
+.fpg-pf-card__body {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 16px 18px 18px;
+}
+
+.fpg-pf-card__name {
+  font-family: var(--font-heading--family);
+  font-size: 1.5rem;
+  line-height: 1.1;
+  color: var(--fpg-teal, #002d37);
+}
+
+.fpg-pf-card__line {
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--fpg-ink, #12262b);
+}
+
+.fpg-pf-card__facts {
+  font-size: 0.8125rem;
+  color: var(--fpg-sage, #5f7d6d);
+}
+
+.fpg-pf-card__go {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: var(--fpg-teal, #002d37);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.fpg-pf-card__go svg {
+  transition: transform 0.2s var(--fpg-ease, ease);
+}
+
+.fpg-pf-card:hover .fpg-pf-card__go svg {
+  transform: translateX(3px);
+}
+
+.fpg-pf-card__more {
+  position: absolute;
+  inset-block-end: 18px;
+  inset-inline-end: 18px;
+  z-index: 1;
+  padding: 9px 2px;
+  font-size: 0.8125rem;
+  color: var(--fpg-teal, #002d37);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.fpg-pf-card__more:hover {
+  color: var(--fpg-sage, #5f7d6d);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fpg-pf-card,
+  .fpg-pf-card__pic img,
+  .fpg-pf-card__go svg {
+    transition: none;
+  }
+
+  .fpg-pf-card:hover,
+  .fpg-pf-card:focus-within,
+  .fpg-pf-card:hover .fpg-pf-card__pic img,
+  .fpg-pf-card:hover .fpg-pf-card__go svg {
+    transform: none;
+  }
+}

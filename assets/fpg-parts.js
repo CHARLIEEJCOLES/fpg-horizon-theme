@@ -1261,9 +1261,80 @@ class FpgPartsFinder extends HTMLElement {
     return ` · ${shown.toLocaleString('en-GB')}${shown < n ? '+' : ''} part${shown === 1 ? '' : 's'}`;
   }
 
+  /* ---------- a brand shown as its machines, with photos (maker.cards) */
+
+  /** The maker file that has photo cards for this brand's machines (cards: machine id -> { name, line, group, pic, handle }). */
+  cardsFor(/** @type {Brand} */ brand) {
+    return this.makers.find((/** @type {any} */ m) => m.cards && squash(brandName(m.brand || '')) === squash(brand.name)) || null;
+  }
+
+  /**
+   * A brand with few machines (Forst's nine chippers) skips "what kind of machine?": every machine is a card with
+   * its photo, its engine, how much of it is on the drawings, and a link to the machine itself.
+   */
+  renderShowcase(/** @type {Brand} */ brand, /** @type {any} */ maker) {
+    const models = brand.types.flatMap((t) => t.models);
+    /** @type {Map<string, { m: Model, c: any }[]>} */
+    const groups = new Map();
+    for (const m of models) {
+      const c = maker.cards[String(m.id)] || {};
+      const g = String(c.group || '');
+      if (!groups.has(g)) groups.set(g, []);
+      /** @type {{ m: Model, c: any }[]} */ (groups.get(g)).push({ m, c });
+    }
+    const facts = (/** @type {Model} */ m) => {
+      const secs = maker.models?.[String(m.id)]?.sections;
+      if (!Array.isArray(secs) || !secs.length) return 'Parts list';
+      const parts = new Set(secs.flatMap((/** @type {any} */ s) => (s.parts || []).map((/** @type {any[]} */ p) => p[1]))).size;
+      const drawings = secs.reduce((/** @type {number} */ n, /** @type {any} */ s) => n + (s.pics || []).length, 0);
+      return `${parts} parts on ${drawings} drawing${drawings === 1 ? '' : 's'}`;
+    };
+    const card = (/** @type {{ m: Model, c: any }} */ { m, c }) => `
+        <li>
+          <article class="fpg-pf-card">
+            <button type="button" class="fpg-pf-card__main" data-go-model="${m.id}">
+              <span class="fpg-pf-card__pic">${
+                c.pic
+                  ? `<img src="${esc(this.makerImage(c.pic, 640, maker))}" srcset="${esc(this.makerImage(c.pic, 640, maker))} 640w, ${esc(this.makerImage(c.pic, 1000, maker))} 1000w" sizes="(min-width: 990px) 320px, (min-width: 600px) 45vw, 92vw" alt="" loading="lazy" width="640" height="640">`
+                  : machineIcon(m.type.name, 64)
+              }</span>
+              <span class="fpg-pf-card__body">
+                <strong class="fpg-pf-card__name">${esc(c.name || m.name)}</strong>
+                ${c.line ? `<span class="fpg-pf-card__line">${esc(c.line)}</span>` : ''}
+                <span class="fpg-pf-card__facts">${esc(facts(m))}</span>
+                <span class="fpg-pf-card__go">Parts and drawings ${ARROW}</span>
+              </span>
+            </button>
+            ${c.handle ? `<a class="fpg-pf-card__more" href="/products/${encodeURIComponent(c.handle)}">See the machine</a>` : ''}
+          </article>
+        </li>`;
+    const kind = brand.types.length === 1 ? brand.types[0].name.toLowerCase() : 'machine';
+    this.view.innerHTML = `
+      <div class="fpg-pf-show">
+        <div class="fpg-pf-head">
+          ${brand.logo || brand.photo ? `<span class="fpg-pf-head__logo">${this.brandPic(brand)}</span>` : ''}
+          <div>
+            <h2 class="fpg-pf-h" tabindex="-1" data-focus>${esc(brand.name)} ${esc(kind)} parts</h2>
+            <p class="fpg-pf-lead">${esc(maker.lead || `Pick your ${kind} to open its parts drawings.`)}</p>
+          </div>
+        </div>
+        ${[...groups]
+          .map(
+            ([g, list]) => `
+        <section class="fpg-pf-show__group">
+          ${g ? `<h3 class="fpg-pf-show__h">${esc(g)} <span>${list.length} machine${list.length === 1 ? '' : 's'}</span></h3>` : ''}
+          <ul class="fpg-pf-cards" role="list">${list.map(card).join('')}</ul>
+        </section>`
+          )
+          .join('')}
+      </div>`;
+  }
+
   /* ---------- step 2: machine types */
 
   renderTypes(/** @type {Brand} */ brand) {
+    const cards = this.cardsFor(brand);
+    if (cards) return this.renderShowcase(brand, cards);
     const types = brand.types.filter((t) => t.models.length);
     if (types.length > 16) return this.renderTypeGroups(brand, types);
     this.view.innerHTML = `
@@ -1354,6 +1425,8 @@ class FpgPartsFinder extends HTMLElement {
   /* ---------- step 3: models */
 
   renderModels(/** @type {Type} */ type) {
+    const cards = this.cardsFor(type.brand);
+    if (cards) return this.renderShowcase(type.brand, cards);
     const draw = () => {
       const groups = new Map();
       for (const m of type.models) {

@@ -38,6 +38,18 @@ def norm(sku):
     return re.sub(r'[^0-9a-z]', '', sku.lower())
 
 
+# Each machine's card on Forst's page of the finder: parts finder id -> its short name, engine, group, our product photo and product.
+CARDS = {
+    '1097': {'name': 'ST6P', 'line': '37hp Briggs & Stratton petrol', 'group': 'Wheeled chippers', 'pic': 'Forst-ST6P-Main.png', 'handle': 'forst-st6p-wheeled-woodchipper'},
+    '1085': {'name': 'ST6D 24', 'line': '24hp Kubota diesel', 'group': 'Wheeled chippers', 'pic': 'ST6D-42-ST6D-24-FEAT.jpg', 'handle': 'forst-st6d24-wheeled-woodchipper'},
+    '1096': {'name': 'ST6D 42', 'line': '42hp Doosan diesel', 'group': 'Wheeled chippers', 'pic': 'ST6D-42-ST6D-24-FEAT_c721c205-e059-4832-9d50-457813174acc.jpg', 'handle': 'forst-st6d42-wheeled-woodchipper'},
+    '1095': {'name': 'ST8D', 'line': '55hp Doosan diesel', 'group': 'Wheeled chippers', 'pic': 'ST8D-Feature.jpg', 'handle': 'forst-st8d-wheeled-woodchipper'},
+    '1098': {'name': 'TR6P', 'line': '37hp Briggs & Stratton petrol', 'group': 'Tracked chippers', 'pic': 'TR6-Hero-No-BG_Update2022-scaled.jpg', 'handle': 'forst-tr6p-tracked-woodchipper'},
+    '1099': {'name': 'TR6D 24', 'line': '24hp Kubota diesel', 'group': 'Tracked chippers', 'pic': 'TR6d-comp-feat_1eb9ac86-f581-4b24-aaa3-404d404a79c3.jpg', 'handle': 'forst-tr6d24-tracked-woodchipper'},
+    '1110': {'name': 'TR6D 42', 'line': '42hp Doosan diesel', 'group': 'Tracked chippers', 'pic': 'TR6d-comp-feat_1c2dbab9-09a5-4648-a177-74e40e3ffc49.jpg', 'handle': 'forst-tr6d42-tracked-woodchipper'},
+    '1087': {'name': 'TR8D', 'line': '55hp Doosan diesel', 'group': 'Tracked chippers', 'pic': 'TR8D55-feat.jpg', 'handle': 'forst-tr8d-tracked-woodchipper'},
+    '1089': {'name': 'XR8D', 'line': '55hp Doosan diesel', 'group': 'Tracked chippers', 'pic': 'Forst-XR8-Main.png', 'handle': 'forst-xr8d-tracked-woodchipper'},
+}
 MIN_LINES = 12
 
 
@@ -147,6 +159,10 @@ def main():
         'pi': {no: fn for no, fn in pics.items() if no in used},
         'models': models,
         'h': h,
+        # The brand's page in the finder: a photo card per machine (our own product photos), and the same photo on the machine's page.
+        'lead': "Pick your chipper to open Forst's own 3D parts drawings. Click a part on the drawing to see its price and add it to the basket.",
+        'cards': CARDS,
+        'mi': {mid: c['pic'] for mid, c in CARDS.items()},
         # The brands page quotes this: every Forst part number across the machines' lists.
         'counts': {'Forst': len({r[1] for m in models.values() for sec in m['sections'] for r in sec['parts']})},
     }
