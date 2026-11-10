@@ -673,7 +673,8 @@
           "settings": {
             "name": "Forst",
             "logo": "shopify://shop_images/Forst.png",
-            "brand_id": 16
+            "brand_id": 16,
+            "link": "/pages/contact?view=forst"
           }
         }
       },

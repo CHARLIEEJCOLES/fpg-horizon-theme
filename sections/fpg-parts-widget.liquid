@@ -73,7 +73,8 @@
       <ul class="fpg-pw__brands" role="list">
         {%- for block in section.blocks -%}
           <li {{ block.shopify_attributes }}>
-            <a class="fpg-pw__brand" href="{{ finder_url }}?brand={{ block.settings.brand_id }}" aria-label="{{ block.settings.name | escape }} parts">
+            {%- capture brand_url -%}{{ finder_url }}?brand={{ block.settings.brand_id }}{%- endcapture -%}
+            <a class="fpg-pw__brand" href="{{ block.settings.link | default: brand_url }}" aria-label="{{ block.settings.name | escape }}{% if block.settings.link == blank %} parts{% endif %}">
               {%- if block.settings.logo != blank -%}
                 {%- comment -%} Sharp on retina screens: the tiles are about 170px wide, so offer up to 600px. {%- endcomment -%}
                 {{ block.settings.logo | image_url: width: 600 | image_tag: width: 300, height: 300, widths: '200, 300, 400, 600', sizes: '(min-width: 990px) 180px, (min-width: 750px) 22vw, 45vw', alt: block.settings.name, loading: 'lazy' }}
@@ -124,7 +125,8 @@
       "settings": [
         { "type": "text", "id": "name", "label": "Brand name" },
         { "type": "image_picker", "id": "logo", "label": "Logo" },
-        { "type": "number", "id": "brand_id", "label": "Brand number in the parts finder", "info": "The number after ?brand= on that brand's parts finder page." }
+        { "type": "number", "id": "brand_id", "label": "Brand number in the parts finder", "info": "The number after ?brand= on that brand's parts finder page." },
+        { "type": "url", "id": "link", "label": "Link to a page instead", "info": "Leave empty to open the brand in the parts finder." }
       ]
     }
   ],

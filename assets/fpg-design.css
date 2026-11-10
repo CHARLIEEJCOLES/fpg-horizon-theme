@@ -1074,8 +1074,8 @@ product-card product-price .fpg-vat,
 
 /* ---------- Först skin ----------
    Pages about Först (a chipper's page, the range page, Först in the parts finder) carry data-fpg-skin="forst".
-   On those pages the site's teal gives way to Först's charcoal, with a strip of their orange hazard chevrons
-   under the header. Everything else about the theme stays as it is. */
+   On those pages the site's teal gives way to Först's charcoal in the page itself, with a bar of their orange
+   under the header; the header keeps the site's own green. Everything else about the theme stays as it is. */
 html:has([data-fpg-skin='forst']) {
   --fpg-teal: #17191a;
   --fpg-teal-2: #2b3033;
@@ -1087,21 +1087,9 @@ html:has([data-fpg-skin='forst']) {
   --fpg-forst: #f05a22;
 }
 
-html:has([data-fpg-skin='forst']) .shopify-section-group-header-group :is(.header__row, .section-background, .mega-menu__link) {
-  --color-background: #17191a;
-  --color-background-rgb: 23 25 26;
-  background-color: #17191a;
-}
-
-/* The header paints its rows a second time on an underlay (seen when it sticks or a menu opens), from colours set inline. */
-html:has([data-fpg-skin='forst']) #header-component {
-  --color-background-top-row: #17191a !important;
-  --color-background-bottom-row: #17191a !important;
-}
-
 html:has([data-fpg-skin='forst']) .content-for-layout::before {
   content: '';
   display: block;
-  height: 8px;
-  background: repeating-linear-gradient(-45deg, #f05a22 0 14px, #17191a 14px 28px);
+  height: 6px;
+  background: #f05a22;
 }
