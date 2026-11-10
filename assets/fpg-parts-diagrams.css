@@ -436,16 +436,20 @@
   transition: fill 0.15s, stroke 0.15s;
 }
 
+/* The wide stroke stays invisible (it only makes small parts easier to hit). What shows is a tint, a fine line and a
+   glow, so a washer keeps its shape instead of vanishing under a thick outline. */
 .fpg-pf-viewer .fpg-pf-v__part:hover,
 .fpg-pf-viewer .fpg-pf-v__part:focus-visible {
-  fill: rgb(95 125 109 / 0.22);
-  stroke: rgb(95 125 109 / 0.55);
+  fill: rgb(95 125 109 / 0.26);
+  filter: drop-shadow(0 0 2px rgb(95 125 109 / 0.9));
   outline: none;
 }
 
 .fpg-pf-viewer .fpg-pf-v__part.is-on {
-  fill: rgb(217 72 15 / 0.24);
-  stroke: rgb(217 72 15 / 0.75);
+  fill: rgb(240 90 34 / 0.22);
+  stroke: rgb(240 90 34 / 0.95);
+  stroke-width: 1.5px;
+  filter: drop-shadow(0 0 3px rgb(240 90 34 / 0.95)) drop-shadow(0 0 7px rgb(240 90 34 / 0.55));
 }
 
 @media (prefers-reduced-motion: reduce) {
