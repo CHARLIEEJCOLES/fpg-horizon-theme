@@ -89,7 +89,7 @@ async function runMachine(slug, S) {
   };
   // The part's outline: yellow that was not yellow (nor right next to yellow) on the reference view. The biggest
   // patch, plus patches near it, is the part. Returns its box (full pixels) and its mask (grid cells) in that box.
-  const outline = (cur, base) => {
+  const outline = (cur, base, extras = 0) => {
     const { g, gw, gh } = cur;
     const nw = new Uint8Array(gw * gh);
     let count = 0;
@@ -122,16 +122,29 @@ async function runMachine(slug, S) {
     let { x0, y0, x1, y1 } = m;
     const keep = new Set([m.id]);
     for (const q of comps.slice(1)) if (q.n >= 4 && q.x1 >= x0 - pad && q.x0 <= x1 + pad && q.y1 >= y0 - pad && q.y0 <= y1 + pad) { keep.add(q.id); x0 = Math.min(x0, q.x0); y0 = Math.min(y0, q.y0); x1 = Math.max(x1, q.x1); y1 = Math.max(y1, q.y1); }
-    // The mask of the kept patches, cropped to their box, as a black-and-white PNG.
-    const mw = x1 - x0 + 1, mh = y1 - y0 + 1;
-    const k = document.createElement('canvas'); k.width = mw; k.height = mh;
-    const ctx = k.getContext('2d'); const id = ctx.createImageData(mw, mh);
-    for (let y = 0; y < mh; y++) for (let x = 0; x < mw; x++) {
-      const on = keep.has(lab[(y + y0) * gw + (x + x0)]);
-      const o = (y * mw + x) * 4; const v = on ? 255 : 0; id.data[o] = id.data[o + 1] = id.data[o + 2] = v; id.data[o + 3] = 255;
+    // The mask of the given patches, cropped to their box, as a black-and-white PNG.
+    const maskOf = (ids, bx0, by0, bx1, by1) => {
+      const mw = bx1 - bx0 + 1, mh = by1 - by0 + 1;
+      const k = document.createElement('canvas'); k.width = mw; k.height = mh;
+      const ctx = k.getContext('2d'); const id = ctx.createImageData(mw, mh);
+      for (let y = 0; y < mh; y++) for (let x = 0; x < mw; x++) {
+        const on = ids.has(lab[(y + by0) * gw + (x + bx0)]);
+        const o = (y * mw + x) * 4; const v = on ? 255 : 0; id.data[o] = id.data[o + 1] = id.data[o + 2] = v; id.data[o + 3] = 255;
+      }
+      ctx.putImageData(id, 0, 0);
+      return { x0: bx0 * 2, y0: by0 * 2, x1: bx1 * 2 + 1, y1: by1 * 2 + 1, mask: k.toDataURL('image/png') };
+    };
+    const out = { ...maskOf(keep, x0, y0, x1, y1), n: m.n, extra: [] };
+    // A part used more than once lights up in every place it sits: the other patches of about the same size are
+    // its other copies, each clickable on its own (at most one per extra copy the list gives).
+    if (extras > 0) {
+      for (const q of comps.slice(1)) {
+        if (out.extra.length >= extras) break;
+        if (keep.has(q.id) || q.n < Math.max(6, m.n * 0.35) || q.n > m.n * 2.5) continue;
+        out.extra.push(maskOf(new Set([q.id]), q.x0, q.y0, q.x1, q.y1));
+      }
     }
-    ctx.putImageData(id, 0, 0);
-    return { x0: x0 * 2, y0: y0 * 2, x1: x1 * 2 + 1, y1: y1 * 2 + 1, n: m.n, mask: k.toDataURL('image/png') };
+    return out;
   };
   // An assembly's own view: the camera glides to the assembly after the page changes, sometimes only after a pause,
   // so wait until it has moved and stopped (or 3 s with no movement), never the frame from before the glide.
@@ -236,7 +249,7 @@ async function runMachine(slug, S) {
         // Every instance of a part gets its own outline (a bolt used four times is clickable four times).
         if (here.has(inst)) continue;
         here.add(inst);
-        leaves.push({ url: p.href, inst, base: inst.replace(/_\d{3}$/, ''), name: p.name });
+        leaves.push({ url: p.href, inst, base: inst.replace(/_\d{3}$/, ''), name: p.name, qty: Number(p.qty) || 1 });
       }
       // The assembly's own page: the whole machine with the group lit. Only a fallback picture.
       await big();
@@ -264,13 +277,13 @@ async function runMachine(slug, S) {
         if (!c) continue;
         const q1 = Date.now();
         let grid = yellowGrid(c);
-        let b = outline(grid, ref);
-        if (!b) { S.retry = (S.retry || 0) + 1; await sleep(400); c = (await settled(4000, 150, 1)) || c; grid = yellowGrid(c); b = outline(grid, ref); }
+        let b = outline(grid, ref, t.qty - 1);
+        if (!b) { S.retry = (S.retry || 0) + 1; await sleep(400); c = (await settled(4000, 150, 1)) || c; grid = yellowGrid(c); b = outline(grid, ref, t.qty - 1); }
         // A group of one part: no second view to paint the highlight out with, so its picture shows it lit.
         if (!W) clean = c;
         if (W && !clean && t.url !== leaves[leaves.length - 1].url) clean = paintOut(W, Wg, c, grid);
         ref = grid;
-        if (b) (spots[n.url] = spots[n.url] || []).push([t.base, b.x0, b.y0, b.x1, b.y1, c.width, c.height, b.mask, t.inst, Math.round(off * 10) / 10]);
+        if (b) for (const e of [b, ...b.extra]) (spots[n.url] = spots[n.url] || []).push([t.base, e.x0, e.y0, e.x1, e.y1, c.width, c.height, e.mask, t.inst, Math.round(off * 10) / 10]);
         if (b && !seen.has(t.base) && !NOPIC.test(t.name) && Math.max(b.x1 - b.x0, b.y1 - b.y0) >= 8) { part[t.base] = crop(c, b).toDataURL('image/webp', 0.92); seen.add(t.base); }
         S.tWork = (S.tWork || 0) + Date.now() - q1;
       }
