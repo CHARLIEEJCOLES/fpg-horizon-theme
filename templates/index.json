@@ -674,7 +674,7 @@
             "name": "Forst",
             "logo": "shopify://shop_images/Forst.png",
             "brand_id": 16,
-            "link": "/pages/contact?view=forst"
+            "link": "/pages/forst-woodchippers"
           }
         }
       },
@@ -887,7 +887,7 @@
           "settings": {
             "name": "Forst",
             "logo": "shopify://shop_images/Forst.png",
-            "link": "/pages/contact?view=forst"
+            "link": "/pages/forst-woodchippers"
           }
         }
       },
