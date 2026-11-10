@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 HERE = Path(__file__).parent
-secs = json.loads((HERE / 'sections.json').read_text())
+secs = json.loads((HERE / ('sections_v2.json' if (HERE / 'sections_v2.json').exists() else 'sections.json')).read_text())
 known = json.loads((HERE / 'shop_skus.json').read_text()) if (HERE / 'shop_skus.json').exists() else {}
 looked = set(json.loads((HERE / 'looked_up.json').read_text())) if (HERE / 'looked_up.json').exists() else set()
 nos = sorted({r[1].split('.')[0] for s in secs.values() for sec in s for r in sec['parts']})
