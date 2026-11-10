@@ -151,7 +151,7 @@ function spin() {
   const pic = /** @type {HTMLElement | null} */ (document.querySelector('[data-fo-spin]'));
   if (!pic || !pic.dataset.foSpin || window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.innerWidth < 990) return;
   const clip = document.createElement('video');
-  if (!('requestVideoFrameCallback' in clip) || !('createImageBitmap' in window)) return;
+  if (!('createImageBitmap' in window)) return;
   clip.muted = true;
   clip.playsInline = true;
   clip.preload = 'auto';
@@ -160,8 +160,9 @@ function spin() {
   /** @type {ImageBitmap[]} */
   const frames = [];
   let taking = false;
-  const take = async (/** @type {number} */ _now, /** @type {{mediaTime: number}} */ meta) => {
-    if (!taking && frames.length < COUNT && meta.mediaTime >= (frames.length / COUNT) * clip.duration) {
+  /* Checked every screen frame while the clip plays: a video that isn't on the page gets no frame callbacks of its own. */
+  const take = async () => {
+    if (!taking && frames.length < COUNT && clip.currentTime >= (frames.length / COUNT) * clip.duration) {
       taking = true;
       try {
         frames.push(await createImageBitmap(clip, { resizeWidth: 720, resizeHeight: Math.round((720 * clip.videoHeight) / clip.videoWidth), resizeQuality: 'medium' }));
@@ -170,7 +171,7 @@ function spin() {
       }
       taking = false;
     }
-    if (!clip.ended) /** @type {any} */ (clip).requestVideoFrameCallback(take);
+    if (!clip.ended) requestAnimationFrame(take);
   };
   clip.addEventListener('ended', () => {
     if (frames.length < 12) return;
@@ -209,7 +210,7 @@ function spin() {
     }, { passive: true });
   }, { once: true });
   clip.addEventListener('loadeddata', () => {
-    /** @type {any} */ (clip).requestVideoFrameCallback(take);
+    requestAnimationFrame(take);
     clip.play().catch(() => {});
   }, { once: true });
   clip.src = pic.dataset.foSpin;
