@@ -964,10 +964,13 @@ class FpgPartsFinder extends HTMLElement {
     const sections = secs.map((/** @type {any} */ sec) => ({
       name: sec.name,
       diagrams: (sec.pics || []).map((/** @type {string} */ url, /** @type {number} */ i) => {
-        /* The maker's number boxes for its first drawing (m: [number, x1, y1, x2, y2] on a drawing of wh: [width, height]) make the numbers clickable. */
+        /* The maker's number boxes (m: [number, x1, y1, x2, y2, shape path] on a drawing of wh: [width, height]) make
+           the drawing clickable: for its first drawing, or per drawing (ms, whs) when a section has several. */
+        const m = Array.isArray(sec.ms) ? sec.ms[i] : i === 0 ? sec.m : null;
+        const wh = Array.isArray(sec.whs) ? sec.whs[i] : sec.wh;
         const inline =
-          i === 0 && Array.isArray(sec.m) && sec.m.length && Array.isArray(sec.wh)
-            ? { ok: true, image: url, w: sec.wh[0], h: sec.wh[1], maps: sec.m.map((/** @type {any[]} */ [a, x1, y1, x2, y2, d]) => ({ a: String(a), x1, y1, x2, y2, d: typeof d === 'string' ? d : '' })) }
+          Array.isArray(m) && m.length && Array.isArray(wh)
+            ? { ok: true, image: url, w: wh[0], h: wh[1], maps: m.map((/** @type {any[]} */ [a, x1, y1, x2, y2, d]) => ({ a: String(a), x1, y1, x2, y2, d: typeof d === 'string' ? d : '' })) }
             : null;
         return { view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600`, numbers: !!inline, inline };
       }),

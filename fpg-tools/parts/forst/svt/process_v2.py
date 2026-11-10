@@ -149,7 +149,7 @@ def main(files):
             m.sort(key=lambda e: -((e[3] - e[1]) * (e[4] - e[2])))
             nshapes += len(m)
             nlines += len(rows)
-            secs.append({'name': name, 'code': n.get('code', ''), 'pic': pic, 'wh': list(wh) if wh else None, 'm': m,
+            secs.append({'name': name, 'path': n['path'], 'code': n.get('code', ''), 'pic': pic, 'wh': list(wh) if wh else None, 'm': m,
                          'parts': [[ref[r[0]]] + r for r in rows]})
         cut = 0
         for base, url in d['part'].items():
