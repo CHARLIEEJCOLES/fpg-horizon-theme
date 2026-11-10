@@ -2187,7 +2187,8 @@ class FpgPartsFinder extends HTMLElement {
     if (!scrollList) dialog.querySelector('.fpg-pf-v__part.is-on')?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
     if (scrollList) {
       /** @type {HTMLElement | null} */ (first)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      say(first ? `Number ${box.a}` : `Number ${box.a} isn't in this list. Ask us and we'll look it up.`);
+      const what = box.d ? 'Part' : 'Number';
+      say(first ? `${what} ${box.a}` : `${what} ${box.a} isn't in this list. Ask us and we'll look it up.`);
     }
   }
 
