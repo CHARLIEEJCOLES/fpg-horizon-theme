@@ -1912,7 +1912,7 @@ class FpgPartsFinder extends HTMLElement {
       if (on) dialog.querySelector(`[data-v-row="${i}"]`)?.classList.add('is-on');
     });
 
-    const state = { zoom: 1, maps: /** @type {any[]} */ ([]), run: 0, drag: /** @type {any} */ (null), fly: 0, flying: false };
+    const state = { zoom: 1, maps: /** @type {any[]} */ ([]), run: 0, drag: /** @type {any} */ (null), fly: 0, flying: false, frame: /** @type {any} */ (null) };
     const secs = this.dealer?.sections || [];
     const secLabel = (/** @type {any} */ s) => sectionCode(sectionName(s?.name || '')).label;
     const foot =
@@ -2070,6 +2070,7 @@ class FpgPartsFinder extends HTMLElement {
       requestAnimationFrame(step);
     };
 
+    state.frame = frame;
     /* A part drawn here but listed in another section: open that section, on the drawing that shows the part. */
     const jump = (/** @type {any} */ box) => {
       const target = secs[box.to];
@@ -2385,7 +2386,11 @@ class FpgPartsFinder extends HTMLElement {
       if (want && want.sec === sec) {
         this.pendingPick = null;
         const box = state.maps.find((/** @type {any} */ b) => b.to == null && b.a === want.a);
-        if (box) this.showNumber(dialog, sec, box, state.maps, true, say);
+        if (box) {
+          this.showNumber(dialog, sec, box, state.maps, true, say);
+          /* And bring the drawing in on it, once the drawing has its size. */
+          setTimeout(() => state.frame?.([box]), 120);
+        }
       }
       return;
     }
