@@ -143,36 +143,74 @@ function sent() {
 }
 
 /**
- * The hero machine turns with the scroll: a short clip (data-fo-spin) is stepped through as the page moves.
- * Until it has loaded, on a small screen, or with reduced motion, the still picture stays.
+ * The hero machine turns with the scroll. A short clip (data-fo-spin) is played through once out of sight and
+ * its frames kept, so scrolling can show any of them at once: stepping a video's own clock stutters.
+ * Until the frames are ready, on a small screen, or with reduced motion, the still picture stays.
  */
 function spin() {
   const pic = /** @type {HTMLElement | null} */ (document.querySelector('[data-fo-spin]'));
   if (!pic || !pic.dataset.foSpin || window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.innerWidth < 990) return;
   const clip = document.createElement('video');
+  if (!('requestVideoFrameCallback' in clip) || !('createImageBitmap' in window)) return;
   clip.muted = true;
   clip.playsInline = true;
   clip.preload = 'auto';
-  clip.className = 'fpg-fo-hero__spin';
-  clip.setAttribute('aria-label', pic.querySelector('img')?.alt || '');
-  let queued = false;
-  const step = () => {
-    queued = false;
-    if (!clip.duration) return;
-    /* The whole clip over the first screen-and-a-bit of scrolling. */
-    const k = Math.max(0, Math.min(1, window.scrollY / (window.innerHeight * 1.1)));
-    const t = k * (clip.duration - 0.05);
-    if (Math.abs(clip.currentTime - t) > 0.02) clip.currentTime = t;
+  clip.crossOrigin = 'anonymous';
+  const COUNT = 48;
+  /** @type {ImageBitmap[]} */
+  const frames = [];
+  let taking = false;
+  const take = async (/** @type {number} */ _now, /** @type {{mediaTime: number}} */ meta) => {
+    if (!taking && frames.length < COUNT && meta.mediaTime >= (frames.length / COUNT) * clip.duration) {
+      taking = true;
+      try {
+        frames.push(await createImageBitmap(clip, { resizeWidth: 720, resizeHeight: Math.round((720 * clip.videoHeight) / clip.videoWidth), resizeQuality: 'medium' }));
+      } catch {
+        /* a frame that can't be read is skipped */
+      }
+      taking = false;
+    }
+    if (!clip.ended) /** @type {any} */ (clip).requestVideoFrameCallback(take);
   };
-  clip.addEventListener('loadeddata', () => {
+  clip.addEventListener('ended', () => {
+    if (frames.length < 12) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = frames[0].width;
+    canvas.height = frames[0].height;
+    canvas.className = 'fpg-fo-hero__spin';
+    canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', pic.querySelector('img')?.alt || '');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    let at = 0;
+    let shown = -1;
+    let running = false;
+    const target = () => Math.max(0, Math.min(1, window.scrollY / (window.innerHeight * 1.1))) * (frames.length - 1);
+    const draw = () => {
+      /* Ease towards where the scroll is, so a flick of the wheel still turns the machine smoothly. */
+      const to = target();
+      at += (to - at) * 0.18;
+      if (Math.abs(to - at) < 0.05) at = to;
+      const i = Math.round(at);
+      if (i !== shown) {
+        shown = i;
+        ctx.drawImage(frames[i], 0, 0);
+      }
+      running = at !== to;
+      if (running) requestAnimationFrame(draw);
+    };
+    draw();
     pic.classList.add('has-spin');
-    pic.append(clip);
-    step();
+    pic.append(canvas);
     window.addEventListener('scroll', () => {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(step);
+      if (running) return;
+      running = true;
+      requestAnimationFrame(draw);
     }, { passive: true });
+  }, { once: true });
+  clip.addEventListener('loadeddata', () => {
+    /** @type {any} */ (clip).requestVideoFrameCallback(take);
+    clip.play().catch(() => {});
   }, { once: true });
   clip.src = pic.dataset.foSpin;
 }
