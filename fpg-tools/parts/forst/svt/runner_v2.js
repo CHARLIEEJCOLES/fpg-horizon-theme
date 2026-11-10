@@ -170,7 +170,7 @@ async function runMachine(slug, S) {
     g.drawImage(c, cx - s / 2, cy - s / 2, s, s, 0, 0, size, size);
     return k;
   };
-  // Render the 3D view big: the catalogue caps its pixel ratio at 2, so make its box 1400 x 1000 (2800 x 2000 pixels).
+  // Render the 3D view big: the catalogue caps its pixel ratio at 2, so make its box 1200 x 860 (2400 x 1720 pixels).
   // The catalogue only draws at full speed while its pane is on screen: wait for that (checked before each group).
   const visible = async () => {
     for (;;) {
@@ -184,9 +184,9 @@ async function runMachine(slug, S) {
   const big = async () => {
     await visible();
     const cv = [...document.querySelectorAll('canvas')].sort((a, b) => b.clientWidth * b.clientHeight - a.clientWidth * a.clientHeight)[0];
-    if (!cv || cv.clientWidth === 1400) return;
+    if (!cv || cv.clientWidth === 1200) return;
     const box = cv.parentElement.parentElement.parentElement.parentElement;
-    box.style.cssText = 'position:fixed;left:0;top:0;width:1400px;height:1000px;z-index:99999;background:#fff';
+    box.style.cssText = 'position:fixed;left:0;top:0;width:1200px;height:860px;z-index:99999;background:#fff';
     window.dispatchEvent(new Event('resize'));
     await sleep(1500);
   };
@@ -254,21 +254,25 @@ async function runMachine(slug, S) {
         if (window.__svtStop) throw new Error('stopped');
         // Only the highlight changes between parts (same camera), so a quick look is enough; if no new outline
         // shows up, the highlight hadn't moved yet: look again after a pause.
+        const q0 = Date.now();
         await go(t.url, 250);
         let c = await settled(9000, 150, 1);
+        S.tLook = (S.tLook || 0) + Date.now() - q0;
         let off = c ? thumbDiff(thumb(c), refT) : 99;
-        if (c && off > 3) { c = (await settledAfterMove(6000)) || c; off = thumbDiff(thumb(c), refT); }
+        if (c && off > 6) { S.moved = (S.moved || 0) + 1; c = (await settledAfterMove(4000)) || c; off = thumbDiff(thumb(c), refT); }
         S.done++;
         if (!c) continue;
+        const q1 = Date.now();
         let grid = yellowGrid(c);
         let b = outline(grid, ref);
-        if (!b) { await sleep(700); c = (await settled()) || c; grid = yellowGrid(c); b = outline(grid, ref); }
+        if (!b) { S.retry = (S.retry || 0) + 1; await sleep(400); c = (await settled(4000, 150, 1)) || c; grid = yellowGrid(c); b = outline(grid, ref); }
         // A group of one part: no second view to paint the highlight out with, so its picture shows it lit.
         if (!W) clean = c;
         if (W && !clean && t.url !== leaves[leaves.length - 1].url) clean = paintOut(W, Wg, c, grid);
         ref = grid;
         if (b) (spots[n.url] = spots[n.url] || []).push([t.base, b.x0, b.y0, b.x1, b.y1, c.width, c.height, b.mask, t.inst, Math.round(off * 10) / 10]);
         if (b && !seen.has(t.base) && !NOPIC.test(t.name) && Math.max(b.x1 - b.x0, b.y1 - b.y0) >= 24) { part[t.base] = crop(c, b).toDataURL('image/webp', 0.92); seen.add(t.base); }
+        S.tWork = (S.tWork || 0) + Date.now() - q1;
       }
       asm[n.url] = (clean || W || A).toDataURL('image/webp', 0.9);
     }
