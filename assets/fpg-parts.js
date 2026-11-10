@@ -436,6 +436,37 @@ function makerStock(/** @type {string} */ base, /** @type {string} */ supplier, 
 
 /* ---------------------------------------------------------------- diagrams */
 
+/**
+ * A drawing we host on Shopify's CDN at the width the screen needs (the CDN resizes with ?width=); others as they are.
+ * @param {string} url
+ * @param {number} px
+ */
+const sizedUrl = (url, px) => {
+  if (!/(cdn\.shopify\.com|\/cdn\/shop\/)/.test(url) || /[?&]width=/.test(url)) return url;
+  const w = [800, 1200, 1600, 2000, 2400].find((x) => x >= px);
+  return w ? `${url}${url.includes('?') ? '&' : '?'}width=${w}` : url;
+};
+
+/**
+ * As the drawing is zoomed, swap in a sharper copy once it has loaded (never a smaller one), so zooming in stays crisp.
+ * @param {HTMLImageElement} img
+ * @param {number} shown the drawing's width on screen, in CSS pixels
+ */
+const sharpen = (img, shown) => {
+  const base = img.dataset.base;
+  if (!base) return;
+  const want = sizedUrl(base, Math.round(shown * (window.devicePixelRatio || 1)));
+  const rank = (/** @type {string} */ u) => Number((u.match(/[?&]width=(\d+)/) || [])[1]) || Infinity;
+  if (rank(want) <= rank(img.currentSrc || img.src) || img.dataset.want === want) return;
+  img.dataset.want = want;
+  const next = new Image();
+  next.decoding = 'async';
+  next.onload = () => {
+    if (img.dataset.want === want && img.isConnected) img.src = want;
+  };
+  next.src = want;
+};
+
 const ZOOM_STEPS = [1, 1.5, 2, 3, 4, 6, 8];
 const ZOOM_MAX = 8;
 /** Clickable numbers per drawing URL: the request in flight, and answers that have arrived. */
@@ -936,7 +967,7 @@ class FpgPartsFinder extends HTMLElement {
         /* The maker's number boxes for its first drawing (m: [number, x1, y1, x2, y2] on a drawing of wh: [width, height]) make the numbers clickable. */
         const inline =
           i === 0 && Array.isArray(sec.m) && sec.m.length && Array.isArray(sec.wh)
-            ? { ok: true, image: url, w: sec.wh[0], h: sec.wh[1], maps: sec.m.map((/** @type {any[]} */ [a, x1, y1, x2, y2]) => ({ a: String(a), x1, y1, x2, y2 })) }
+            ? { ok: true, image: url, w: sec.wh[0], h: sec.wh[1], maps: sec.m.map((/** @type {any[]} */ [a, x1, y1, x2, y2, d]) => ({ a: String(a), x1, y1, x2, y2, d: typeof d === 'string' ? d : '' })) }
             : null;
         return { view: url, thumb: `${url}${url.includes('?') ? '&' : '?'}width=600`, numbers: !!inline, inline };
       }),
@@ -1827,7 +1858,7 @@ class FpgPartsFinder extends HTMLElement {
           </header>
           <p class="fpg-pf-v__hint" data-v-hint aria-live="polite">${pic ? '' : 'There is no drawing for this section.'}</p>
           <div class="fpg-pf-v__body${pic ? '' : ' fpg-pf-v__body--nopic'}">
-            ${pic ? `<div class="fpg-pf-v__scroll" data-v-scroll data-loading="true"><div class="fpg-pf-v__stage" data-v-stage><img src="${esc(this.diagramUrl(first))}" alt="${esc(sectionName(sec.name))} diagram" draggable="false" fetchpriority="high"${known ? ` data-w="${esc(known.w)}" data-h="${esc(known.h)}"` : ''}><div class="fpg-pf-v__hot" data-v-hot></div></div><p class="fpg-pf-v__loading" aria-hidden="true">Loading the drawing…</p></div>` : ''}
+            ${pic ? `<div class="fpg-pf-v__scroll" data-v-scroll data-loading="true"><div class="fpg-pf-v__stage" data-v-stage><img src="${esc(sizedUrl(this.diagramUrl(first), 1200))}" data-base="${esc(this.diagramUrl(first))}" alt="${esc(sectionName(sec.name))} diagram" draggable="false" fetchpriority="high"${known ? ` data-w="${esc(known.w)}" data-h="${esc(known.h)}"` : ''}><div class="fpg-pf-v__hot" data-v-hot></div></div><p class="fpg-pf-v__loading" aria-hidden="true">Loading the drawing…</p></div>` : ''}
             <div class="fpg-pf-v__list">${rows}</div>
           </div>
           ${foot}
@@ -1869,7 +1900,9 @@ class FpgPartsFinder extends HTMLElement {
       const h = Number(img.dataset.h) || img.naturalHeight;
       if (!w || !h) return;
       const fit = Math.min((scroll.clientWidth - 16) / w, (scroll.clientHeight - 16) / h);
-      img.style.width = `${Math.max(40, Math.round(w * fit * state.zoom))}px`;
+      const shown = Math.max(40, Math.round(w * fit * state.zoom));
+      img.style.width = `${shown}px`;
+      sharpen(img, shown);
       scroll.dataset.zoomed = String(state.zoom > 1);
       const label = dialog.querySelector('[data-v-zoom-label]');
       if (label) label.textContent = state.zoom <= 1 ? '' : `${Math.round(state.zoom * 100)}%`;
@@ -1898,7 +1931,7 @@ class FpgPartsFinder extends HTMLElement {
       const t = /** @type {HTMLElement} */ (e.target);
       if (t === dialog || t.closest('[data-v-close]')) return shut();
       const hot = t.closest('[data-hot]');
-      if (hot instanceof HTMLElement) return this.showNumber(dialog, sec, state.maps[Number(hot.dataset.hot)], state.maps, true, say);
+      if (hot instanceof HTMLElement || hot instanceof SVGElement) return this.showNumber(dialog, sec, state.maps[Number(hot.dataset.hot)], state.maps, true, say);
       const secStep = t.closest('[data-v-sec]');
       if (secStep instanceof HTMLElement) {
         const to = index + Number(secStep.dataset.vSec);
@@ -1951,6 +1984,12 @@ class FpgPartsFinder extends HTMLElement {
     dialog.addEventListener('pointercancel', endDrag);
     dialog.addEventListener('keydown', (e) => {
       if (e.target instanceof HTMLInputElement) return;
+      /* A traced part shape works like a button from the keyboard too. */
+      const shape = e.target instanceof SVGElement ? e.target.closest('[data-hot]') : null;
+      if (shape instanceof SVGElement && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        return this.showNumber(dialog, sec, state.maps[Number(shape.dataset.hot)], state.maps, true, say);
+      }
       if (e.key === 'ArrowRight' && at < pics.length - 1) {
         at++;
         paint();
@@ -2092,7 +2131,11 @@ class FpgPartsFinder extends HTMLElement {
     img.dataset.w = data.w;
     img.dataset.h = data.h;
     const want = this.diagramUrl(data.image);
-    if (img.getAttribute('src') !== want) img.setAttribute('src', want);
+    if (img.dataset.base !== want) {
+      img.dataset.base = want;
+      delete img.dataset.want;
+      img.setAttribute('src', sizedUrl(want, 1200));
+    }
     size();
     if (this.dealer?.source === 'husqvarna' && !data.snapped) {
       try {
@@ -2107,10 +2150,19 @@ class FpgPartsFinder extends HTMLElement {
     const layer = dialog.querySelector('[data-v-hot]');
     const pct = (/** @type {number} */ v, /** @type {number} */ of) => `${((100 * v) / of).toFixed(3)}%`;
     if (layer) {
-      layer.innerHTML = data.maps
+      /* Parts traced to their exact shape (d: an SVG path on the drawing) are drawn as that shape; others as boxes. */
+      const shapes = data.maps
         .map((/** @type {any} */ b, /** @type {number} */ i) =>
-          `<button type="button" class="fpg-pf-v__num" data-hot="${i}" aria-label="Number ${esc(b.a || '?')}" style="left:${pct(b.x1, data.w)};top:${pct(b.y1, data.h)};width:${pct(b.x2 - b.x1, data.w)};height:${pct(b.y2 - b.y1, data.h)}"></button>`)
+          b.d ? `<path class="fpg-pf-v__part" d="${esc(b.d)}" data-hot="${i}" tabindex="0" role="button" aria-label="Part ${esc(b.a || '?')}"></path>` : '')
         .join('');
+      layer.innerHTML =
+        data.maps
+          .map((/** @type {any} */ b, /** @type {number} */ i) =>
+            b.d ? '' : `<button type="button" class="fpg-pf-v__num" data-hot="${i}" aria-label="Number ${esc(b.a || '?')}" style="left:${pct(b.x1, data.w)};top:${pct(b.y1, data.h)};width:${pct(b.x2 - b.x1, data.w)};height:${pct(b.y2 - b.y1, data.h)}"></button>`)
+          .join('') +
+        (shapes ? `<svg class="fpg-pf-v__shapes" viewBox="0 0 ${esc(data.w)} ${esc(data.h)}" preserveAspectRatio="none" focusable="false">${shapes}</svg>` : '');
+      say(shapes ? 'Tap a part on the drawing to find it in the list.' : 'Tap a number on the drawing to find its part.');
+      return;
     }
     say('Tap a number on the drawing to find its part.');
   }
@@ -2128,6 +2180,8 @@ class FpgPartsFinder extends HTMLElement {
       row.classList.toggle('is-on', on);
       if (on && !first) first = /** @type {HTMLElement} */ (row);
     });
+    /* Picked from the list: bring its place on a zoomed drawing into view. */
+    if (!scrollList) dialog.querySelector('.fpg-pf-v__part.is-on')?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
     if (scrollList) {
       /** @type {HTMLElement | null} */ (first)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       say(first ? `Number ${box.a}` : `Number ${box.a} isn't in this list. Ask us and we'll look it up.`);

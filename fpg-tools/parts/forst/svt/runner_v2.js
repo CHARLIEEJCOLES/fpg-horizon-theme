@@ -1,0 +1,254 @@
+/* Forst parts catalogue capture, version 2 (run in the catalogue page, forst.svt-app.com).
+ * For every machine in window.__svtQueue: walks the assembly tree, then for every assembly takes its 3D view at
+ * high resolution and, for every part in it (fasteners too), the same view with that part highlighted. Partful
+ * outlines the selected part in yellow: the yellow that is new against the previous part's view is that part's
+ * outline. Saves per part its box, its outline mask (half resolution, PNG) and, the first time a part is seen, a
+ * full-resolution crop round it for its picture. Downloads svt2-<slug>.json per machine.
+ * Status: window.__svt (current), window.__svtLog (finished). */
+// Pixel ratio chosen per machine so the 3D view renders about 2,700 pixels wide whatever the pane's size.
+const WANT_W = 2700;
+async function runMachine(slug, S) {
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const anchors = () => [...document.querySelectorAll(`ul a[href*="/product-library/${slug}/parts-catalogue/"]`)].filter((a) => a.textContent.trim());
+  const key = () => anchors().map((a) => a.getAttribute('href')).join('|');
+  history.pushState({}, '', `/product-library/${slug}`);
+  window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
+  for (let i = 0; i < 150 && !anchors().length; i++) await sleep(200);
+  if (!anchors().length) throw new Error('machine did not open: ' + slug);
+  for (let i = 0; i < 60 && /LOADING/i.test(document.body.innerText); i++) await sleep(500);
+  await sleep(4000);
+  const cv0 = [...document.querySelectorAll('canvas')].sort((a, b) => b.clientWidth * b.clientHeight - a.clientWidth * a.clientHeight)[0];
+  const DPR = Math.min(8, Math.max(2.5, WANT_W / Math.max(1, cv0 ? cv0.clientWidth : 670)));
+  S.dpr = DPR;
+  Object.defineProperty(window, 'devicePixelRatio', { get: () => DPR, configurable: true });
+  window.dispatchEvent(new Event('resize'));
+  await sleep(1200);
+
+  const listLinks = () => anchors().map((a) => {
+    const href = a.getAttribute('href');
+    const qty = (a.textContent.match(/Qty\s*(\d+)\s*$/) || [])[1];
+    return { name: a.textContent.replace(/Qty\s*\d+\s*$/, '').trim(), href, leaf: /[?&]mesh=/.test(href), qty: qty ? +qty : 1 };
+  });
+  const pageCode = () => { const m = document.body.innerText.match(/\n(\d{2}-[0-9A-Z]{1,3}-[0-9A-Z._]+)\n/); return m ? m[1] : ''; };
+  const go = async (url, settle) => { history.pushState({}, '', url); window.dispatchEvent(new PopStateEvent('popstate', { state: {} })); await sleep(settle); };
+  const open = async (url) => {
+    const prevK = key();
+    history.pushState({}, '', url);
+    window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
+    for (let i = 0; i < 80; i++) { await sleep(150); const k = key(); if (k && k !== prevK) { await sleep(400); return true; } }
+    return false;
+  };
+  async function walk(path, depth, url) {
+    const here = { path, url, code: pageCode(), parts: [], children: [] };
+    const links = listLinks();
+    for (const l of links) if (l.leaf) here.parts.push({ name: l.name, href: l.href, qty: l.qty });
+    for (const l of links.filter((x) => !x.leaf)) {
+      if (depth > 6) continue;
+      if (!(await open(l.href))) { here.children.push({ path: [...path, l.name], href: l.href, error: 'no nav' }); await open(url); continue; }
+      here.children.push(await walk([...path, l.name], depth + 1, l.href));
+      await open(url);
+      S.done++;
+    }
+    return here;
+  }
+
+  const grab = () => new Promise((resolve) => {
+    const cv = [...document.querySelectorAll('canvas')].sort((a, b) => b.width * b.height - a.width * a.height)[0];
+    const orig = window.requestAnimationFrame;
+    const t = setTimeout(() => { window.requestAnimationFrame = orig; resolve(null); }, 3000);
+    window.requestAnimationFrame = (cb) => orig((ts) => {
+      cb(ts);
+      window.requestAnimationFrame = orig;
+      clearTimeout(t);
+      try { const c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; c.getContext('2d').drawImage(cv, 0, 0); resolve(c); } catch (e) { resolve(null); }
+    });
+  });
+  // Wait until the 3D camera has stopped moving (two small frames in a row the same), then keep that frame.
+  const settled = async (maxMs = 9000) => {
+    const small = (c) => { const k = document.createElement('canvas'); k.width = 200; k.height = Math.round(200 * c.height / c.width); k.getContext('2d').drawImage(c, 0, 0, k.width, k.height); return k.getContext('2d').getImageData(0, 0, k.width, k.height).data; };
+    const t0 = Date.now();
+    let prev = null, last = null, still = 0;
+    while (Date.now() - t0 < maxMs) {
+      last = await grab();
+      if (!last) return null;
+      const cur = small(last);
+      if (prev && prev.length === cur.length) {
+        let diff = 0; for (let i = 0; i < cur.length; i += 4) diff += Math.abs(cur[i] - prev[i]) + Math.abs(cur[i + 1] - prev[i + 1]);
+        diff /= cur.length / 2;
+        still = diff < 0.5 ? still + 1 : 0;
+        if (still >= 2) return last;
+      }
+      prev = cur;
+      await sleep(300);
+    }
+    return last;
+  };
+  // Partful's highlight yellow, on a grid of every 2nd pixel.
+  const yellowGrid = (c) => {
+    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    const gw = Math.ceil(c.width / 2), gh = Math.ceil(c.height / 2), g = new Uint8Array(gw * gh);
+    for (let y = 0; y < c.height; y += 2) for (let x = 0; x < c.width; x += 2) {
+      const i = (y * c.width + x) * 4, r = d[i], gg = d[i + 1], b = d[i + 2];
+      if (r > 150 && gg > 150 && b < 100 && Math.abs(r - gg) < 75) g[(y >> 1) * gw + (x >> 1)] = 1;
+    }
+    return { g, gw, gh };
+  };
+  // The part's outline: yellow that was not yellow (nor right next to yellow) on the reference view. The biggest
+  // patch, plus patches near it, is the part. Returns its box (full pixels) and its mask (grid cells) in that box.
+  const outline = (cur, base) => {
+    const { g, gw, gh } = cur;
+    const nw = new Uint8Array(gw * gh);
+    let count = 0;
+    for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) {
+      if (!g[y * gw + x]) continue;
+      if (base && base.gw === gw) {
+        let old = false;
+        for (let dy = -1; dy <= 1 && !old; dy++) for (let dx = -1; dx <= 1; dx++) { const yy = y + dy, xx = x + dx; if (yy >= 0 && yy < gh && xx >= 0 && xx < gw && base.g[yy * gw + xx]) { old = true; break; } }
+        if (old) continue;
+      }
+      nw[y * gw + x] = 1; count++;
+    }
+    if (count < 6) return null;
+    const lab = new Int32Array(gw * gh), comps = [];
+    for (let i = 0; i < nw.length; i++) {
+      if (!nw[i] || lab[i]) continue;
+      const id = comps.length + 1, st = [i]; lab[i] = id;
+      let n = 0, x0 = 1e9, y0 = 1e9, x1 = -1, y1 = -1;
+      while (st.length) {
+        const k = st.pop(), x = k % gw, y = (k / gw) | 0; n++;
+        if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const yy = y + dy, xx = x + dx; if (yy < 0 || yy >= gh || xx < 0 || xx >= gw) continue; const kk = yy * gw + xx; if (nw[kk] && !lab[kk]) { lab[kk] = id; st.push(kk); } }
+      }
+      comps.push({ id, n, x0, y0, x1, y1 });
+    }
+    comps.sort((a, b) => b.n - a.n);
+    const m = comps[0];
+    if (!m || m.n < 6) return null;
+    const pad = Math.max(gw, gh) * 0.12;
+    let { x0, y0, x1, y1 } = m;
+    const keep = new Set([m.id]);
+    for (const q of comps.slice(1)) if (q.n >= 4 && q.x1 >= x0 - pad && q.x0 <= x1 + pad && q.y1 >= y0 - pad && q.y0 <= y1 + pad) { keep.add(q.id); x0 = Math.min(x0, q.x0); y0 = Math.min(y0, q.y0); x1 = Math.max(x1, q.x1); y1 = Math.max(y1, q.y1); }
+    // The mask of the kept patches, cropped to their box, as a black-and-white PNG.
+    const mw = x1 - x0 + 1, mh = y1 - y0 + 1;
+    const k = document.createElement('canvas'); k.width = mw; k.height = mh;
+    const ctx = k.getContext('2d'); const id = ctx.createImageData(mw, mh);
+    for (let y = 0; y < mh; y++) for (let x = 0; x < mw; x++) {
+      const on = keep.has(lab[(y + y0) * gw + (x + x0)]);
+      const o = (y * mw + x) * 4; const v = on ? 255 : 0; id.data[o] = id.data[o + 1] = id.data[o + 2] = v; id.data[o + 3] = 255;
+    }
+    ctx.putImageData(id, 0, 0);
+    return { x0: x0 * 2, y0: y0 * 2, x1: x1 * 2 + 1, y1: y1 * 2 + 1, n: m.n, mask: k.toDataURL('image/png') };
+  };
+  // An assembly's own view: the camera glides to the assembly after the page changes, sometimes only after a pause,
+  // so wait until it has moved and stopped (or 3 s with no movement), never the frame from before the glide.
+  const settledAfterMove = async (maxMs = 14000) => {
+    const small = (c) => { const k = document.createElement('canvas'); k.width = 200; k.height = Math.round(200 * c.height / c.width); k.getContext('2d').drawImage(c, 0, 0, k.width, k.height); return k.getContext('2d').getImageData(0, 0, k.width, k.height).data; };
+    const t0 = Date.now();
+    let prev = null, last = null, still = 0, moved = false;
+    while (Date.now() - t0 < maxMs) {
+      last = await grab();
+      if (!last) return null;
+      const cur = small(last);
+      if (prev && prev.length === cur.length) {
+        let diff = 0; for (let i = 0; i < cur.length; i += 4) diff += Math.abs(cur[i] - prev[i]) + Math.abs(cur[i + 1] - prev[i + 1]);
+        diff /= cur.length / 2;
+        if (diff >= 1.5) moved = true;
+        still = diff < 0.5 ? still + 1 : 0;
+        if (still >= 3 && (moved || Date.now() - t0 > 3000)) return last;
+      }
+      prev = cur;
+      await sleep(250);
+    }
+    return last;
+  };
+  // How far a part's view is from its assembly's view (camera moved = big): mean difference of 200px thumbnails.
+  const thumb = (c) => { const k = document.createElement('canvas'); k.width = 200; k.height = Math.round(200 * c.height / c.width); k.getContext('2d').drawImage(c, 0, 0, k.width, k.height); return k.getContext('2d').getImageData(0, 0, k.width, k.height).data; };
+  const thumbDiff = (a, b) => { if (!a || !b || a.length !== b.length) return 99; let d = 0; for (let i = 0; i < a.length; i += 4) d += Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]); return d / (a.length * 0.75); };
+  // A square crop round the part at full resolution, with room round it, for its picture (cut out later).
+  const crop = (c, box, out = 1024) => {
+    const bg = c.getContext('2d').getImageData(4, 4, 1, 1).data;
+    const w = box.x1 - box.x0, h = box.y1 - box.y0, s = Math.max(w, h) * 1.25 + 24;
+    const cx = (box.x0 + box.x1) / 2, cy = (box.y0 + box.y1) / 2;
+    const size = Math.min(out, Math.max(256, Math.round(s)));
+    const k = document.createElement('canvas'); k.width = size; k.height = size;
+    const g = k.getContext('2d'); g.fillStyle = `rgb(${bg[0]},${bg[1]},${bg[2]})`; g.fillRect(0, 0, size, size);
+    g.imageSmoothingQuality = 'high';
+    g.drawImage(c, cx - s / 2, cy - s / 2, s, s, 0, 0, size, size);
+    return k;
+  };
+  // Decals and labels get no picture (they are flat stickers); everything else does.
+  const NOPIC = /\b(decal|sticker|label)\b/i;
+
+  try {
+    S.phase = 'walk';
+    const rootHref = location.href;
+    const tree = await walk([], 0, location.pathname + location.search);
+    const nodes = [];
+    (function f(n) { if (n.error) return; if (n.parts.length && (!window.__svtOnly || n.path.join(' > ').includes(window.__svtOnly))) nodes.push(n); n.children.forEach(f); })(tree);
+    const asm = {}, part = {}, spots = {}, baseYellow = {}, lastPart = {}, asmThumb = {};
+    const seen = new Set();
+    const todo = [];
+    for (const n of nodes) {
+      todo.push({ kind: 'asm', url: n.url });
+      const here = new Set();
+      const leaves = n.parts.filter((p) => /[?&]mesh=/.test(p.href) && !/mesh=Copy_of_/.test(p.href));
+      // A warm-up part view first, so the first real part is compared with a part view (same rendering).
+      if (leaves.length > 1) todo.push({ kind: 'warm', url: leaves[leaves.length - 1].href, asm: n.url });
+      for (const p of leaves) {
+        const mesh = (p.href.match(/[?&]mesh=([^&]+)/) || [])[1];
+        const inst = decodeURIComponent(mesh);
+        const base = inst.replace(/_\d{3}$/, '');
+        // Every instance of a part gets its own outline (a bolt used four times is clickable four times).
+        if (here.has(inst)) continue;
+        here.add(inst);
+        todo.push({ kind: 'part', url: p.href, base, inst, asm: n.url, pic: !seen.has(base) && !NOPIC.test(p.name) });
+        seen.add(base);
+      }
+    }
+    S.phase = 'capture'; S.done = 0; S.total = todo.length;
+    for (const t of todo) {
+      if (window.__svtStop) throw new Error('stopped');
+      await go(t.url, t.kind === 'asm' ? 300 : 600);
+      let c = t.kind === 'asm' ? await settledAfterMove() : await settled();
+      // A part view should keep the assembly's camera; if it doesn't yet, give the camera time to come back.
+      let off = 0;
+      if (c && t.kind === 'part') {
+        off = thumbDiff(thumb(c), asmThumb[t.asm]);
+        if (off > 3) { c = (await settledAfterMove(6000)) || c; off = thumbDiff(thumb(c), asmThumb[t.asm]); }
+      }
+      if (c && t.kind === 'warm') lastPart[t.asm] = yellowGrid(c);
+      else if (c) {
+        if (t.kind === 'asm') { asm[t.url] = c.toDataURL('image/webp', 0.9); baseYellow[t.url] = yellowGrid(c); asmThumb[t.url] = thumb(c); }
+        else {
+          const grid = yellowGrid(c);
+          const b = outline(grid, lastPart[t.asm] || baseYellow[t.asm]);
+          lastPart[t.asm] = grid;
+          if (b) (spots[t.asm] = spots[t.asm] || []).push([t.base, b.x0, b.y0, b.x1, b.y1, c.width, c.height, b.mask, t.inst, Math.round(off * 10) / 10]);
+          if (b && t.pic && Math.max(b.x1 - b.x0, b.y1 - b.y0) >= 24 && !part[t.base]) part[t.base] = crop(c, b).toDataURL('image/webp', 0.92);
+        }
+      }
+      S.done++;
+    }
+    S.phase = 'save';
+    const blob = new Blob([JSON.stringify({ v: 2, slug, root: rootHref, tree, asm, part, spots })], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = `svt2-${slug}${window.__svtOnly ? '-test' : ''}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    S.phase = 'done'; S.slug = slug; S.size = blob.size; S.asm = Object.keys(asm).length; S.part = Object.keys(part).length;
+    S.spots = Object.values(spots).reduce((n, v) => n + v.length, 0);
+  } catch (e) { S.err = String(e && e.stack || e); }
+}
+window.runMachine = runMachine;
+(async () => {
+  const Q = window.__svtQueue || [];
+  window.__svtLog = [];
+  for (const slug of Q) {
+    const S = (window.__svt = { slug, phase: 'start', done: 0, total: 0, err: null, t0: Date.now() });
+    await runMachine(slug, S);
+    S.secs = Math.round((Date.now() - S.t0) / 1000);
+    window.__svtLog.push({ ...S });
+    await new Promise((r) => setTimeout(r, 4000));
+  }
+  window.__svtAll = 'done';
+})();
+'queue started';

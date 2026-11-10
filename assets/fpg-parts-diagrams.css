@@ -406,6 +406,45 @@
   background: rgb(217 72 15 / 0.22);
 }
 
+/* Parts traced to their exact shape: invisible until pointed at, then lit in their own outline. A clear 8px
+   stroke (the same on screen at any zoom) makes small parts like bolts easy to hit; it is the visible edge when lit. */
+.fpg-pf-v__shapes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.fpg-pf-viewer .fpg-pf-v__part {
+  fill: rgb(95 125 109 / 0);
+  stroke: rgb(95 125 109 / 0);
+  stroke-width: 8px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: all;
+  cursor: pointer;
+  transition: fill 0.15s, stroke 0.15s;
+}
+
+.fpg-pf-viewer .fpg-pf-v__part:hover,
+.fpg-pf-viewer .fpg-pf-v__part:focus-visible {
+  fill: rgb(95 125 109 / 0.22);
+  stroke: rgb(95 125 109 / 0.55);
+  outline: none;
+}
+
+.fpg-pf-viewer .fpg-pf-v__part.is-on {
+  fill: rgb(217 72 15 / 0.24);
+  stroke: rgb(217 72 15 / 0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fpg-pf-viewer .fpg-pf-v__part {
+    transition: none;
+  }
+}
+
 .fpg-pf-v__list {
   min-height: 0;
   overflow: auto;
