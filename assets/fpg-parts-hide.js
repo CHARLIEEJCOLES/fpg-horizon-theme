@@ -678,7 +678,8 @@ customElements.whenDefined('fpg-parts-finder').then(() => {
   if (typeof hits === 'function' && !hits.fpgPn2) {
     /** @this {any} */
     async function makerPartHitsPlus(/** @type {string} */ text) {
-      const main = (await hits.call(this, text)) || [];
+      /* A part number that only fits machines left out of the finder (a hidden brand's) is not offered. */
+      const main = ((await hits.call(this, text)) || []).filter((/** @type {any} */ h) => h.machines.length);
       const first = String(this.dataset.makerPn || '');
       const q = squash(text).toLowerCase();
       if (!first || !this.data || q.length < 5 || (q.match(/\d/g) || []).length < 4) return main;
